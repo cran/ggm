@@ -57,7 +57,7 @@ drawGraph(amat, coor = NULL, bid = TRUE, adjust = TRUE, alpha = 1, beta = 3, lwd
   \url{http://www.graphviz.org}.
 }
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{UG}},\code{\link{DAG}},\code{\link{makeAG}}}
+\seealso{\code{\link{UG}}, \code{\link{DAG}}, \code{\link{makeAG}}}
 \examples{
 ## A directed acyclic graph
 d <- DAG(y1 ~ y2+y6, y2 ~ y3, y3 ~ y5+y6, y4 ~ y5+y6)

@@ -25,7 +25,7 @@ findPath(amat, st, en, path = c())
 }
 \references{Python Softftware Foundation (2003). Python Patterns ---
   Implementing Graphs. \url{http://www.python.org/docs/essays/graphs.html}.}
-\author{Giovanni M. Marchetti, translating the original \pkg{python}
+\author{Giovanni M. Marchetti, translating the original \pkg{Python}
   code (see references).}
 \seealso{\code{\link{fundCycles}}}
 \examples{

@@ -24,7 +24,7 @@ correlations(x)
 \author{Giovanni M. Marchetti} 
 \seealso{\code{\link{parcor}},  \code{\link{cor}}}
 \examples{
-## See Table 6.1 in Wermuth & Cox (1996)
+## See Table 6.1 in Cox & Wermuth (1996)
 data(glucose)
 correlations(glucose)
 }

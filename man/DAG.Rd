@@ -12,7 +12,7 @@ DAG(..., order = FALSE)
 \arguments{
   \item{\dots}{a sequence of model formulae}
   \item{order}{logical, defaulting to \code{FALSE}. If \code{TRUE} the nodes of the
-    DAG are permuted to obtain and upper triangular edge matrix. If
+    DAG are permuted according to the topological order. If
     \code{FALSE} the nodes are in the order they first appear in the model
     formulae (from left to right).}
 }
@@ -33,8 +33,8 @@ DAG(..., order = FALSE)
   
   If \code{order = TRUE} the
   adjacency matrix is permuted to have  parents before  children.
-  This can always be done (in more than one way) for DAGs). The resulting
-  adjacency matrix is lower triangular. 
+  This can always be done (in more than one way) for DAGs. The resulting
+  adjacency matrix is upper triangular. 
 }
 \references{
   Lauritzen, S. (1996). \emph{Graphical models}. Oxford:

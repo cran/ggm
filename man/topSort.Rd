@@ -20,7 +20,7 @@ topOrder(amat)
   After the permutation the adjacency matrix of the graph is
   upper triangular. The function is a translation of
   the Matlab function \code{topological_sort} in Toolbox
-  \emph{BNT} written by Kevin P. Murphy. 
+  \pkg{BNT} written by Kevin P. Murphy. 
 }
 \value{
   \code{topSort(amat)} returns a vector of integers representing

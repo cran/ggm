@@ -27,11 +27,12 @@ makeAG(dag = NULL, ug = NULL, bg = NULL)
 
   The function checks if, given the matrices
   of the undirected, directed and bidirected edges, the above three conditions
-  are respected. If so, a resulting adjacency matrix \eqn{A} is
+  are respected. If so, a resulting adjacency matrix \eqn{E=[e_{ij}} is
   returned, with the following convention. If \eqn{(i,j)} is a directed
-  edge, then \eqn{A_{ij} = 1}.  If \eqn{(i,j)} is an undirected
-  edge, then \eqn{A_{ij} = A_{ji} = 1}. Finally, if \eqn{(i,j)} is a bidirected
-  edge, then \eqn{A_{ij} = A_{ji} = 2}.
+  edge, then \eqn{e_{ij} = 1} and \eqn{e_{ji}=0}.
+  If \eqn{(i,j)} is an undirected
+  edge, then \eqn{e_{ij} = e_{ji} = 1}. Finally, if \eqn{(i,j)} is a bidirected
+  edge, then \eqn{e_{ij} = e_{ji} = 2}.
 
   Note that the three adjacency matrices must have labels and
   may be defined using the functions \code{DAG} and \code{UG}.

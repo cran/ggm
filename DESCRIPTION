@@ -1,6 +1,6 @@
 Package: ggm
-Version: 0.8
-Date: 2003-11-13
+Version: 0.8-1
+Date: 2003-11-14
 Title: Graphical Gaussian Models
 Author: Giovanni M. Marchetti, Mathias Drton
 Maintainer: Giovanni M. Marchetti <gmm@ds.unifi.it>

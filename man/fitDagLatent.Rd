@@ -7,7 +7,7 @@ of the graph is latent and it is marginalised over.
 }
 \usage{
 fitDagLatent(amat, Syy, n, latent, norm = 1, seed = 144,
-             maxit = 9000, tol = 1e-06, pri = TRUE)
+             maxit = 9000, tol = 1e-06, pri = FALSE)
 }
 \arguments{
   \item{amat}{a square matrix with dimnames representing
