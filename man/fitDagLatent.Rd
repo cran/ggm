@@ -1,24 +1,24 @@
 \name{fitDagLatent}
 \alias{fitDagLatent}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{Gaussian DAG model with one latent variable}
+\title{Fitting Gaussian DAG models with one latent variable}
 \description{
 Fits by maximum likelihood a Gaussian DAG model where one of the nodes
 of the graph is latent and it is marginalised over.
 }
 \usage{
-fitDagLatent(gmat, Syy, n, latent, norm = 1, seed = 144, maxit = 9000, tol = 1e-06, pri = TRUE)
+fitDagLatent(amat, Syy, n, latent, norm = 1, seed = 144,
+             maxit = 9000, tol = 1e-06, pri = TRUE)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a square Boolean matrix with dimnames, the edge matrix of
-    the DAG.}
-  \item{Syy}{a symmetric positive definite matrix, with dimnames, the sample covariance
-  matrix. The order of the rows needs not match the order of the nodes
-  of the graph. However, the set of nodes of the graph must be a subset
-  of the set of the names of the variables in \code{Syy}.}
+  \item{amat}{a square matrix with dimnames representing
+    the adjacency matrix of the DAG.}
+  \item{Syy}{a symmetric positive definite matrix,
+    with dimnames, the sample covariance
+    matrix of the observed variables.
+    The set of the observed nodes of the graph must be a subset
+    of the set of the names of the variables in \code{Syy}.}
   \item{n}{a positive integer, the sample size.}
-  \item{latent}{the name of the hidden node.}
+  \item{latent}{the name of the latent variable.}
   \item{norm}{an integer, the kind of normalization of the latent
     variable.
     If \code{norm=1}, the latent is scaled to have unit variance. If
@@ -35,33 +35,37 @@ fitDagLatent(gmat, Syy, n, latent, norm = 1, seed = 144, maxit = 9000, tol = 1e-
   each iteration is printed.}
 }
 \details{
-The EM algorithm used is due to Kiivery (1987).  
+For the EM algorithm used see Kiivery (1987).  
 }
 \value{
   \item{Shat}{
-    a symmetric matrix, the fitted covariance matrix of all the variables
-    including the latent one. 
+    the fitted covariance matrix of all the variables
+    including the latent one. The latent variable is the last.
+    If \code{norm=1} then the variance of the latent variable
+    is constrained to 1.
   }
-  \item{Khat}{
-    a symmetric matrix, the fitted concentration matrix,
-    i.e. the inverse of \code{Shat}.
+  \item{Ahat}{
+   a square matrix of the fitted regression coefficients. The entry
+    \code{Ahat[i,j]} is minus the regression coefficient of variable
+    \code{i} in the regression equation \code{j}. Thus there is
+    a non zero partial regression coefficient \code{Ahat[i,j]}
+    corresponding to each non zero value  \code{amat[j,i]} in
+    the adjacency matrix.
   }
-  \item{A}{
-    a square matrix with ones along the diagonal,
-    resulting from the triangular decomposition
-    of \code{Shat}. The non diagonal entries are partial regression
-    coefficients, with sign changed, attached to the edges of the fitted
-    DAG.
-  }
-  \item{Delta}{
-    a numeric vector resulting from triangular decomposition of
-    \code{Shat}. The values are the partial variances.
+  \item{Dhat}{
+    a vector containing the partial variances of each
+    variable given the parents. If \code{norm=2} then the
+    partial variance of the latent variable is constrained to 1. 
   }
   \item{dev}{
-    the `deviance' (\eqn{-2 \log L}) of the model.
-    }
-    \item{it}{a positive integer, the number of EM algorithm iterations at convergence.}
-  \item{df}{a positive integer, degrees of freedom of the model.}
+    the `deviance' of the model.
+  }
+  \item{df}{
+    the degrees of freedom of the model.
+  }
+  \item{it}{
+    the number of EM algorithm iterations at convergence.
+  }
 }
 \references{
   Kiiveri,H. T. (1987). An incomplete data approach to the

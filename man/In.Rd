@@ -1,6 +1,5 @@
 \name{In}
 \alias{In}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Indicator matrix}
 \description{
   Finds the indicator matrix of the zeros of a matrix.
@@ -28,7 +27,8 @@ element iff the corresponding element of \code{A} is (exactly) zero.
 \examples{
 ## A simple way to find the overall induced coincentration graph
 ## The DAG on p. 198 of Cox & Wermuth (1996)
-A <- DAG(y1 ~ y2 + y3, y3 ~ y5, y4 ~ y5)
+amat <- DAG(y1 ~ y2 + y3, y3 ~ y5, y4 ~ y5)
+A <- edgeMatrix(amat)
 In(crossprod(A))
 }
 \keyword{array}

@@ -1,6 +1,5 @@
 \name{triDec}
 \alias{triDec}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Triangular decomposition of a covariance matrix}
 \description{
   Decomposes a symmetric positive definite matrix with a variant of the
@@ -9,16 +8,18 @@
 \usage{
 triDec(Sigma)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{Sigma}{a symmetric positive definite matrix.}
 }
 \details{
-  Any symmetric positive definite matrix \eqn{\Sigma} can be decomposed as
-  \eqn{\Sigma = B \Delta B'} where \eqn{B} is upper triangular with ones
-  along the main diagonal and \eqn{\Delta} is diagonal. If \eqn{\Sigma} is a covariance
-  matrix the concentration matrix is \eqn{\Sigma^{-1} = A' \Delta^{-1} A} where
-  \eqn{A = B^{-1}} is the matrix of the regression coefficients
+  Any symmetric positive definite matrix \eqn{\Sigma}{Sigma}
+  can be decomposed as
+  \eqn{\Sigma = B \Delta B^T}{Sigma = B \%*\% Delta \%*\% t(B)}
+  where \eqn{B} is upper triangular with ones
+  along the main diagonal and \eqn{\Delta}{Delta} is diagonal. If
+  \eqn{\Sigma}{Sigma} is a covariance
+  matrix, the concentration matrix is \eqn{\Sigma^{-1} = A^T \Delta^{-1}
+    A} where  \eqn{A = B^{-1}} is the matrix of the regression coefficients
   (with the sign changed) of a system of linear recursive regression
   equations  with independent residuals. In the equations each variable 
   \eqn{i} is regressed on the variables \eqn{i+1, \dots, d}.

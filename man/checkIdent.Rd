@@ -1,19 +1,18 @@
 \name{checkIdent}
 \alias{checkIdent}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Identifiability of a model with one latent variable}
 \description{
-  Checks  four sufficient conditions for identifiability of a Gaussian DAG model
-with one latent variable.
+  Checks  four sufficient conditions for
+  identifiability of a Gaussian DAG model
+  with one latent variable.
 }
 \usage{
-checkIdent(gmat, hidden)
+checkIdent(amat, latent)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a square Boolean matrix with dimnames, the edge matrix of
-    a DAG.}
-  \item{hidden}{an integer representing the latent variables among the
+  \item{amat}{a square matrix with dimnames,
+    representing the adjacency matrix of a DAG.}
+  \item{latent}{an integer representing the latent variables among the
     nodes, or the name of the node.}
 }
 \details{
@@ -25,23 +24,25 @@ checkIdent(gmat, hidden)
   Theorem 1, (i) and (ii) and of Theorem 2 (i) and (ii).
 }
 \value{
-  a vector of logical values, indicating if each of the  four 
-  conditions of theorems 1 and 2 in Stanghellini \& Wermuth are
-  \code{TRUE} or \code{FALSE}.
+  a vector of length  four, indicating if the model is identified
+  according to the conditions of theorems 1 and 2 in Stanghellini
+  \& Wermuth (2003). The answer is \code{TRUE} if the  condition holds
+  and thus the model is globally identified or \code{FALSE} if the
+  condition fails, and thus we do not know if the model is identifiable.
 }
 \references{
   Stanghellini, E. \& Wermuth, N. (2003). On the
-  identification of directed acyclic graph models with one
+  identification of path-analysis models with one
   hidden variable. Submitted and available at
   \url{http://psystat.sowi.uni-mainz.de}.
 }
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{is.Gident}},  \code{\link{InducedGraphs}}}
+\seealso{\code{\link{isGident}},  \code{\link{InducedGraphs}}}
 \examples{
 ## See DAG in Figure 4 (a) in Stanghellini & Wermuth (2003)
 d <- DAG(y1 ~ y3, y2 ~ y3 + y5, y3 ~ y4 + y5, y4 ~ y6)
 checkIdent(d, "y3")  # Identifiable
-checkIdent(d, "y4")  # Not identifiable
+checkIdent(d, "y4")  # Not identifiable?
 
 ## See DAG in Figure 5 (a) in Stanghellini & Wermuth (2003)
 d <- DAG(y1 ~ y5+y4, y2 ~ y5+y4, y3 ~ y5+y4)
@@ -49,20 +50,23 @@ checkIdent(d, "y4")  # Identifiable
 checkIdent(d, "y5")  # Identifiable
 
 ## A simple function to check identifiability for each node
-"is.ident" <-
-function(gmat, compact=TRUE){
-### Check suff. conditions marginalising on each node of a DAG. 
-    a <- rownames(gmat)
+
+is.ident <- function(amat){
+### Check suff. conditions on each node of a DAG.
+   p <- nrow(amat)
+   ## Degrees of freedom
+     df <- p*(p+1)/2 - p  - sum(amat==1) - p + 1
+   if(df <= 0)
+       warning(paste("The degrees of freedom are ", df))
+    a <- rownames(amat)
     for(i in a) {
-        b <- checkIdent(gmat, hidden=i)
-      if(compact)
-        b <- any(b)
-      
-      cat("Node: ", i, "\n")
-      print(b)
+      b <- checkIdent(amat, latent=i)
+      if(TRUE \%in\% b)
+        cat("Node", i, names(b)[!is.na(b)], "\n")
+      else
+        cat("Unknown.\n")
     }
   }
-
 }
 \keyword{graphs}
 \keyword{models}

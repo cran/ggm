@@ -1,16 +1,15 @@
 \name{conComp}
 \alias{conComp}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Connectivity components}
 \description{
 Finds the connectivity components of a graph.
 }
 \usage{
-conComp(gmat)
+conComp(amat)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a square Boolean matrix with dimnames, the edge matrix of
+  \item{amat}{a square matrix with dimnames, the adjacency matrix of
     a DAG or a UG.}
 }
 \value{
@@ -19,7 +18,7 @@ conComp(gmat)
 \references{Lauritzen, S. (1996). \emph{Graphical models}. Oxford:
 Clarendon Press.}
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{UG}}, \code{\link{anGraph}}}
+\seealso{\code{\link{UG}}}
 \examples{
 ## three connected components
 conComp(UG(~a*c+c*d+e+g*o*u))

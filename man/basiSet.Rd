@@ -1,6 +1,5 @@
 \name{basiSet}
 \alias{basiSet}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Basis set of a DAG}
 \description{
   Finds a basis set for the conditional independencies
@@ -8,25 +7,24 @@
   independencies that imply all the other ones.
 }
 \usage{
-basiSet(A)
+basiSet(amat)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{A}{a square Boolean matrix with dimnames representing the edge
-    matrix of a DAG.}
+  \item{amat}{a square matrix with dimnames representing the adjacency matrix
+    of a DAG.}
 }
 \details{
   Given a DAG and a pair of non adjacent nodes
   \eqn{(i,j)} such that \eqn{j} has higher causal order than \eqn{i},
   the set of independency statements \eqn{i} independent of
   \eqn{j} given the union of the parents of both \eqn{i} and \eqn{j}
-  is a basis set (cfr. Shipley, 2000). This basis set has the property
+  is a basis set (see Shipley, 2000). This basis set has the property
   to lead to independent test statistics.
 }
 \value{
   a list of vectors representing several conditional independence
   statements. Each vector contains the names of two non adjacent
-  nodes plus the names of the nodes in the conditioning set (which
+  nodes followed by the names of nodes in the conditioning set (which
   may be empty).
 }
 \references{Shipley, B. (2000). A new inferential test

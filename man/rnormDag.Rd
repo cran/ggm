@@ -1,6 +1,5 @@
 \name{rnormDag}
 \alias{rnormDag}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Random sample from a decomposable Gaussian model}
 \description{
   Generates a sample from a mean centered  multivariate normal
@@ -10,7 +9,6 @@
 \usage{
 rnormDag(n, A, Delta)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{n}{an integer > 0, the sample size.}
   \item{A}{a square, upper triangular matrix with ones along the
@@ -32,7 +30,8 @@ rnormDag(n, A, Delta)
 }
 \value{a matrix with \code{n} rows and \code{nrow(A)} columns,
   a sample from a multivariate normal distribution with mean zero
-  and covariance matrix \code{S = solve(A) \%*\% diag(Delta) \%*\% t(solve(A))}.
+  and covariance matrix
+  \code{S = solve(A) \%*\% diag(Delta) \%*\% t(solve(A))}.
 }
 \references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
   dependencies}. London: Chapman \& Hall.}
@@ -41,7 +40,7 @@ rnormDag(n, A, Delta)
 \seealso{\code{\link{triDec}}, \code{\link{fitDag}}}
 \examples{
 ## Generate a sample of 100 observation from a multivariate normal
-## The 
+## The matrix of the path coefficients 
 A <- matrix(
 c(1, -2, -3,  0, 0,  0,  0,
   0,  1,  0, -4, 0,  0,  0,

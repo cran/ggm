@@ -1,16 +1,15 @@
 \name{fundCycles}
 \alias{fundCycles}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fundamental cycles}
 \description{
 Finds the list of fundamental cycles of a connected undirected graph.
 }
 \usage{
-fundCycles(gmat)
+fundCycles(amat)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a symmetric matrix with dimnames denoting the edge matrix
+  \item{amat}{a symmetric matrix with dimnames denoting the adjacency matrix
     of the undirected graph. The graph must be connected, otherwise
     the function returns an error message.}
 }
@@ -29,16 +28,12 @@ fundCycles(gmat)
     algorithms}. New York: Wiley.
 }
 \author{Giovanni M. Marchetti}
-\note{This function is used by \code{cycleMatrix} and \code{is.Gident}.}
+\note{This function is used by \code{cycleMatrix} and \code{isGident}.}
 \seealso{\code{\link{UG}},\code{\link{findPath}},
-  \code{\link{cycleMatrix}}, \code{\link{is.Gident}},\code{\link{bfs}}}
+  \code{\link{cycleMatrix}}, \code{\link{isGident}},\code{\link{bfs}}}
   \examples{
-## One cycle
-cycleMatrix(UG(~a*b*d + d*e + e*a*f))
 ## Three fundamental cycles
 fundCycles(UG(~a*b*d + d*e + e*a*f))
-## No cycles
-cycleMatrix(UG(~a*b + b*d + d*e))
 }
 \keyword{graphs}
 \keyword{models}

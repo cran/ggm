@@ -1,6 +1,5 @@
 \name{pcor.test}
 \alias{pcor.test}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Test for zero partial association}
 \description{
   Test for conditional independence between two variables, given the
@@ -9,7 +8,6 @@
 \usage{
 pcor.test(r, q, n)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{r}{a partial correlation coefficient, computed by \code{\link{pcor}}.}
   \item{q}{the number of variables in the conditioning set.}

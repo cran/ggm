@@ -5,11 +5,11 @@
 \description{Breadth-first search of a connected undirected graph.
 }
 \usage{
-bfs(gmat, v = 1)
+bfs(amat, v = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a symmetric matrix with dimnames specifying the edge
+  \item{amat}{a symmetric matrix with dimnames specifying the adjacency
     matrix of the undirected graph}
   \item{v}{an integer, indicating the starting node of the
     search. Defaults to the first node.
@@ -17,7 +17,7 @@ bfs(gmat, v = 1)
 }
 \details{
   Breadth-first search is a systematic method for exploring a graph.
-  The algorithms is taken from Aho, Hopcroft \& Ullman (1983).
+  The algorithm is taken from Aho, Hopcroft \& Ullman (1983).
 }
 \value{
   \item{tree}{the edge matrix of the resulting spanning tree}
@@ -34,7 +34,7 @@ Aho, A.V., Hopcrtoft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
     algorithms}. New York: Wiley.
 }
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{UG}},\code{\link{findPath}}, \code{\link{cycleMatrix}}}
+\seealso{\code{\link{UG}}, \code{\link{findPath}}, \code{\link{cycleMatrix}}}
 \examples{
 ## Finding a spanning tree of the butterfly graph
 bfs(UG(~ a*b*o + o*u*j))

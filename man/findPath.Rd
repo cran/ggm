@@ -1,16 +1,15 @@
 \name{findPath}
 \alias{findPath}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Finding paths}
 \description{
 Finds one path between two nodes of a graph.
 }
 \usage{
-findPath(gmat, st, en, path = c())
+findPath(amat, st, en, path = c())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a square Boolean matrix with dimnames, the edge matrix of a graph.}
+  \item{amat}{a square Boolean matrix with dimnames, the adjacency matrix of a graph.}
   \item{st}{an integer, the starting node.}
   \item{en}{an integer, the ending node.}
   \item{path}{a vector of integers, used in recursive calls. At the
@@ -26,8 +25,8 @@ findPath(gmat, st, en, path = c())
 }
 \references{Python Softftware Foundation (2003). Python Patterns ---
   Implementing Graphs. \url{http://www.python.org/docs/essays/graphs.html}.}
-\author{Giovanni M. Marchetti, translating the original python code (see
-references).}
+\author{Giovanni M. Marchetti, translating the original \pkg{python}
+  code (see references).}
 \seealso{\code{\link{fundCycles}}}
 \examples{
 ## A (single) path on a spanning tree

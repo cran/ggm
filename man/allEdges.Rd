@@ -1,18 +1,16 @@
-\name{edges}
-\alias{edges}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{Edges of a graph}
+\name{allEdges}
+\alias{allEdges}
+\title{All edges of a graph}
 \description{
   Finds the set of edges of a graph. That is
   the set of undirected edges if the graph is undirected
   and the set of arrows if the graph is directed.
 }
 \usage{
-edges(gmat)
+allEdges(amat)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a square Boolean matrix, with dimnames, and edge matrix of
+  \item{amat}{a square Boolean matrix, with dimnames, the adjacency matrix of
     a graph.}
 }
 \value{
@@ -24,10 +22,10 @@ edges(gmat)
 \seealso{\code{\link{cycleMatrix}}}
 \examples{
 ## A UG graph
-edges(UG(~ y*v*k +v*k*d+y*d))
+allEdges(UG(~ y*v*k +v*k*d+y*d))
 
 ## A DAG
-edges(DAG(u~h+o+p, h~o, o~p))
+allEdges(DAG(u~h+o+p, h~o, o~p))
 }
 \keyword{graphs}
 \keyword{models}

@@ -1,6 +1,5 @@
 \name{UG}
 \alias{UG}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Defining an undirected graph (UG)}
 \description{
   A simple way to define an undirected graph by means of a single
@@ -9,7 +8,6 @@
 \usage{
 UG(f)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{f}{a single model formula without response}
 }
@@ -31,13 +29,15 @@ UG(f)
   The dimnames of the edge matrix are the nodes of the UG.
 }
 \value{
-the edge matrix of the undirected graph.
+  a Boolean matrix with dimnames, 
+  the adjacency matrix of the undirected graph.
 }
 \references{Lauritzen, S. (1996). \emph{Graphical models}. Oxford:
 Clarendon Press.}
 \author{Giovanni M. Marchetti}
 \note{} 
-\seealso{\code{\link{fitUg}}, \code{\link{DAG}}}
+\seealso{\code{\link{fitConGraph}}, \code{\link{fitCovGraph}}},
+\code{\link{DAG}}}
 \examples{
 ## X independent of Y given Z
 UG(~ X*Z + Y*Z)

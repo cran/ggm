@@ -1,23 +1,21 @@
 \name{parcor}
 \alias{parcor}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Partial correlations}
 \description{
   Finds the matrix of the partial correlations between pairs
   of variables given the rest.
 }
 \usage{
-parcor(Smat)
+parcor(S)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{Smat}{a symmetric positive definite matrix, representing a
+  \item{S}{a symmetric positive definite matrix, representing a
     covariance matrix.}
 }
 \details{
   The algorithm computes \eqn{- \sigma^{rs}/(\sigma^{rr}
-    \sigma^{ss})^{1/2}} where the \eqn{\sigma}s are concentrations.
-  
+    \sigma^{ss})^{1/2}} where the \eqn{\sigma^{rs}} are concentrations,
+    i.e. elements of the inverse covariance matrix.  
 }
 \value{
   A symmetric matrix with ones along the diagonal and in position

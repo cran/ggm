@@ -1,6 +1,5 @@
 \name{correlations}
 \alias{correlations}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Marginal and partial correlations}
 \description{
   Computes a correlation matrix with ones along the

@@ -1,19 +1,18 @@
 \name{dSep}
 \alias{dSep}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{d-separation}
 \description{
 Determines if in a directed acyclic graph two set of nodes a d-separated
 by a third set of nodes.
 }
 \usage{
-dSep(gmat, first, second, cond)
+dSep(amat, first, second, cond)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a Boolean matrix with dimnames, representing a directed
+  \item{amat}{a Boolean matrix with dimnames, representing the adjacency matrix of a directed
     acyclic graph. The function does not check if this is the case. See
-    the function \code{is.acyclic}. }
+    the function \code{isAcyclic}. }
   \item{first}{a vector representing  a subset of nodes of the DAG.
     The vector should be a character vector of the
     names of the variables matching the names of the nodes in
@@ -27,7 +26,7 @@ dSep(gmat, first, second, cond)
   }
 }
 \details{
- d-separation is a fundamental concept discovered by Pearl (1988). 
+ d-separation is a fundamental concept introduced by Pearl (1988). 
 }
 \value{
   a logical value. \code{TRUE} if \code{first} and \code{second} are d-separated

@@ -1,31 +1,31 @@
 \name{topSort}
 \alias{topSort}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{topOrder}
 \title{Topological sort}
 \description{
-Permutates the nodes of a directed acyclic graph in such a way its edge
-matrix is upper triangular.
+  \code{topOrder} returns the topological order of a directed
+  acyclic graph (parents, before children). \code{topSort} permutates
+  the adjacency matrix according to the topological order.
 }
 \usage{
-topSort(gmat)
+topSort(amat)
+topOrder(amat)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a square Boolean matrix with dimnames representing the
-    edge matrix of a directed acyclic graph.}
+  \item{amat}{a square Boolean matrix with dimnames, representing the
+    adjacency matrix of a directed acyclic graph.}
 }
 \details{
-The edge matrix of a directed acyclic graph (DAG) can always transformed
-into an upper triangular matrix by a permutation applied both to rows
-and columns.  The ordering needs not to be unique.
-The algorithm to perform the ordering of the nodes is
-called topological sort.
-
+  The topological order needs not to be unique.
+  After the permutation the adjacency matrix of the graph is
+  upper triangular. The function is a translation of
+  the Matlab function \code{topological_sort} in Toolbox
+  \emph{BNT} written by Kevin P. Murphy. 
 }
 \value{
-  \item{triu}{the sorted edge matrix in upper triangular form. If the
-    edge matrix is already in upper triangular form it is leaved untrasformed.}
-  \item{perm}{the vector of the permutation.}
+  \code{topSort(amat)} returns a vector of integers representing
+  the permutation of the nodes. \code{topSort(amat)} returns
+  the adjacency matrix with rows and columns permutated.
 }
 \note{
   The order of the nodes defined by \code{DAG} is that of their first
@@ -35,18 +35,17 @@ called topological sort.
   Aho, A.V., Hopcrtoft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
     and algorithms.} Reading: Addison-Wesley.
     
-    Lauritzen, S. (1996). \emph{Graphical models}. Oxford:
-Clarendon Press.
+  Lauritzen, S. (1996). \emph{Graphical models}. Oxford:
+  Clarendon Press.
 }
-\author{Giovanni M. Marchetti} 
-\seealso{\code{\link{DAG}}, \code{\link{is.acyclic}}}
+\author{Kevin P. Murphy, Giovanni M. Marchetti} 
+\seealso{\code{\link{DAG}}, \code{\link{isAcyclic}}}
 \examples{
 ## A simple example
 dag <- DAG(a ~ b, c ~ a + b, d ~ c + b)
 dag
-m <- topSort(dag)
-m
-dag[m$perm, m$perm]
+topOrder(dag)
+topSort(dag)
 }
 \keyword{graphs}
 \keyword{models}

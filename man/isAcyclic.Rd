@@ -1,32 +1,33 @@
-\name{is.acyclic}
-\alias{is.acyclic}
+\name{isAcyclic}
+\alias{isAcyclic}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Graph queries}
 \description{
   Checks if a given graph is acyclic.
 }
 \usage{
-is.acyclic(A)
+isAcyclic(amat)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{A}{a square Boolean matrix with dimnames, the edge matrix of a graph.}
+  \item{amat}{a square Boolean matrix with dimnames, the adjacency matrix
+    of a graph.}
 }
 \value{
   a logical value, \code{TRUE} if the graph is acyclic and \code{FALSE}
   otherwise.
 }
 \references{
-  Aho, A.V., Hopcrtoft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
+  Aho, A.V., Hopcroft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
     and algorithms.} Reading: Addison-Wesley.
 }
 \author{Giovanni M. Marchetti} 
-\seealso{\code{\link{ancGraph}}}
 \examples{
-## Force a cyclic graph
-d <- DAG(y ~ x, x ~ z, z~ y, test=FALSE)
-## Test acyclicity
-is.acyclic(d)
+## A cyclic graph
+d <- matrix(0,3,3)
+rownames(d) <- colnames(d) <- c("x", "y", "z")
+d["x","y"] <- d["y", "z"] <- d["z", "x"] <- 1
+## Test if the graph is acyclic
+isAcyclic(d)
 }
 \keyword{graphs}
 \keyword{models}

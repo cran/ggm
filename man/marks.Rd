@@ -9,11 +9,11 @@ Examination marks of 88 students in five subjects.
 \format{
   A data frame with 88 observations on the following 5 variables.
   \describe{
-    \item{mec}{a numeric vector, mark in Mechanics}
-    \item{vec}{a numeric vector, mark in Vectors}
-    \item{alg}{a numeric vector, mark in Algebra}
-    \item{ana}{a numeric vector, mark in Analysis}
-    \item{sta}{a numeric vector, mark in Statistics }
+    \item{mechanics}{a numeric vector, mark in Mechanics}
+    \item{vectors}{a numeric vector, mark in Vectors}
+    \item{algebra}{a numeric vector, mark in Algebra}
+    \item{analysis}{a numeric vector, mark in Analysis}
+    \item{statistics}{a numeric vector, mark in Statistics }
   }
 }
 \details{

@@ -1,16 +1,15 @@
 \name{cmpGraph}
 \alias{cmpGraph}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{The complementary graph}
 \description{
 Finds the complementary graph of an undirected graph.
 }
 \usage{
-cmpGraph(gmat)
+cmpGraph(amat)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{the edge matrix of an undirected graph}
+  \item{amat}{the adjacency matrix of an undirected graph}
 }
 \details{
   The complementary graph of an UG is the graph that has the same set
@@ -27,7 +26,7 @@ Clarendon Press.}
 \examples{
 ## A chordless four-cycle
 four <- UG(~ a*b + b*d + d*e + e*a)
-print(four)
+four
 cmpGraph(four)
 }
 \keyword{graphs}

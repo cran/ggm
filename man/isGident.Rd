@@ -1,35 +1,32 @@
-\name{is.Gident}
-\alias{is.Gident}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{isGident}
+\alias{isGident}
 \title{G-identifiability of an UG}
 \description{
 Tests if an undirected graph is G-identifiable. 
 }
 \usage{
-is.Gident(gmat)
+isGident(amat)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a symmetric matrix with dimnames representing the edge
+  \item{amat}{a symmetric matrix with dimnames representing the adjacency
     matrix of an undirected graph}
 }
 \details{
-  An undirected graph is G-identifiable if every connected component of
-  the complementary graph contains an odd cycle (cfr. Stanghellini and
-  Wermuth, 2003). The algorithm used follows suggestions by
-  Tarantola and Vicard (2002).
+  An undirected graph is said G-identifiable if every connected component of
+  the complementary graph contains an odd cycle (Stanghellini and
+  Wermuth, 2003). See also Tarantola and Vicard (2002).
 }
 \value{
   a logical value, \code{TRUE} if the graph is G-identifiable and
   \code{FALSE} if it is not.
 }
 \references{Stanghellini, E. \& Wermuth, N. (2003). On the
-  identification of directed acyclic graph models with one
+  identification of path-analysis models with one
   hidden variable. Submitted and available at
   \url{http://psystat.sowi.uni-mainz.de}.
   
   Stanghellini, E. (1997). Identification of a single-factor
-  model using graphical Gaussian rules. \emph{Biometrika}, 87, 199--205.
+  model using graphical Gaussian rules. \emph{Biometrika}, 84, 241--244.
 
   Tarantola, C. \& Vicard, P. (2002). Spanning trees and identifiability
   of a single-factor model. \emph{Statistical Methods \& Applications},
@@ -39,14 +36,17 @@ is.Gident(gmat)
   with correlated residuals. \emph{Biometrika}, 87, 199--205.
 }
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{UG}}, \code{\link{cycleMatrix}}}
+\seealso{\code{\link{UG}}, \code{\link{cmpGraph}}, \code{\link{cycleMatrix}}}
 \examples{
 ## A not G-identifiable UG
 G1 <- UG(~ a*b + u*v)
-is.Gident(G1)
+isGident(G1)
 ## G-identifiable UG
 G2 <- UG(~ a + b + u*v)
-is.Gident(G2)
+isGident(G2)
+## G-identifiable UG
+G3 <- cmpGraph(UG(~a*b*c+x*y*z))
+isGident(G3)
 }
 \keyword{graphs}
 \keyword{models}

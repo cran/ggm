@@ -1,21 +1,19 @@
 \name{shipley.test}
 \alias{shipley.test}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{Test of all independencies implied by a DAG}
+\title{Test of all independencies implied by a given DAG}
 \description{
   Computes a simultaneous test of all independence relationships
   implied by a given Gaussian model  defined according to
   a directed acyclic graph, based on the sample covariance matrix.
 }
 \usage{
-shipley.test(S, n, A)
+shipley.test(amat, S, n)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{amat}{a square Boolean matrix, of the same dimension as \code{S},
+    representing the adjacency matrix of a DAG.}
   \item{S}{a symmetric positive definite matrix, the sample covariance matrix.}
   \item{n}{a positive integer, the sample size.}
-  \item{A}{a square Boolean matrix, of the same dimension as \code{S},
-    representing the edge matrix of a DAG.}
 }
 }
 \details{
@@ -40,8 +38,8 @@ for path models based on directed acyclic graphs. \emph{Structural
 \examples{
 ## A decomposable model for the mathematics marks data
 data(marks)
-dag <- DAG(mec ~ vec+alg, vec ~ alg, sta ~ alg+ana, ana ~ alg)
-shipley.test(cov(marks), n=88, dag)
+dag <- DAG(mechanics ~ vectors+algebra, vectors ~ algebra, statistics ~ algebra+analysis, analysis ~ algebra)
+shipley.test(dag, cov(marks), n=88)
 }
 \keyword{graphs}
 \keyword{models}

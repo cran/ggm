@@ -1,6 +1,5 @@
 \name{pcor}
 \alias{pcor}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Partial correlation}
 \description{
   Computes the partial correlation between two variables given
@@ -9,7 +8,6 @@
 \usage{
 pcor(u, S)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{u}{a vector of integers of length > 1. The first two integers are
     the indices of variables the correlation of which must be
@@ -26,14 +24,14 @@ pcor(u, S)
 \seealso{\code{\link{cor}},  \code{\link{parcor}}, \code{\link{correlations}}}
 \examples{
 data(marks)
-## The correlation between vec and alg given ana and sta
- pcor(c("vec", "alg", "ana", "sta"), var(marks))
+## The correlation between vectors and algebra given analysis and statistics
+ pcor(c("vectors", "algebra", "analysis", "statistics"), var(marks))
 ## The same
 pcor(c(2,3,4,5), var(marks))
-## The correlation between vec and alg given sta
- pcor(c("vec", "alg", "sta"), var(marks))
-## The marginal correlation between ana and sta 
-pcor(c("ana","sta"), var(marks))
+## The correlation between vectors and algebra given statistics
+ pcor(c("vectors", "algebra", "statistics"), var(marks))
+## The marginal correlation between analysis and statistics 
+pcor(c("analysis","statistics"), var(marks))
 }
 \keyword{models}
 \keyword{multivariate}

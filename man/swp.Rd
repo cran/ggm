@@ -1,6 +1,5 @@
 \name{swp}
 \alias{swp}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Sweep operator}
 \description{
 Sweeps a covariance matrix with respect to a subset of indices. 
@@ -8,14 +7,13 @@ Sweeps a covariance matrix with respect to a subset of indices.
 \usage{
 swp(V, b)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{V}{a symmetric positive definite matrix, the covariance matrix.}
   \item{b}{a subset of indices of the columns of \code{V}.}
 }
 \details{
 The sweep operator has been introduced by Beaton (1964) as a tool for
-inverting symmetric matrices (cfr. Dempster, 1969).
+inverting symmetric matrices (see Dempster, 1969).
 }
 \value{
   a square matrix \code{U} of the same order as \code{V}. If \code{a} is

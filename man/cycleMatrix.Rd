@@ -1,16 +1,15 @@
 \name{cycleMatrix}
 \alias{cycleMatrix}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Fundamental cycles}
 \description{
 Finds the matrix of fundamental cycles of a connected undirected graph. 
 }
 \usage{
-cycleMatrix(gmat)
+cycleMatrix(amat)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{gmat}{a symmetric matrix with dimnames denoting the edge matrix
+  \item{amat}{a symmetric matrix with dimnames denoting the adjacency matrix
     of the undirected graph. The graph must be connected, otherwise
     the function returns an error message.}
 }
@@ -29,10 +28,10 @@ cycleMatrix(gmat)
     algorithms}. New York: Wiley.
 }
 \author{Giovanni M. Marchetti}
-\note{This function is used by \code{is.Gident}. The row sum of the
+\note{This function is used by \code{isGident}. The row sum of the
   matrix gives the length of the cycles.}
 \seealso{\code{\link{UG}}, \code{\link{findPath}},
-  \code{\link{fundCycles}}, \code{\link{is.Gident}}, \code{\link{bfs}}}
+  \code{\link{fundCycles}}, \code{\link{isGident}}, \code{\link{bfs}}}
   \examples{
 ## Three cycles
 cycleMatrix(UG(~a*b*d+d*e+e*a*f))
