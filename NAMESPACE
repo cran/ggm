@@ -1,0 +1,13 @@
+export(basiSet, bd,edgeMatrix, swp, adjMatrix, 
+        bfs, ch, checkIdent, cliques,  cmpGraph,
+        conComp, correlations, cycleMatrix, 
+        DAG, dSep, shipley.test, allEdges, findPath,
+        fitDag, fitDagLatent, fitCovGraph, fitConGraph,
+        fundCycles, In, icf,topOrder,
+        inducedCovGraph, transClos,
+        inducedConGraph, inducedRegGraph,inducedChainGraph,
+        inducedDAG,isAcyclic, isGident, pa, parcor, 
+        pcor, pcor.test, rcorr, rsphere,  topSort, 
+        triDec, UG, rnormDag, drawGraph, makeAG, icfmag,
+        fitAncestralGraph, unmakeAG, vertices, essentialGraph)
+

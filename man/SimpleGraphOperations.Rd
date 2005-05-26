@@ -2,11 +2,13 @@
 \alias{bd}
 \alias{ch}
 \alias{pa}
+\alias{vertices}
 \title{Simple graph operations}
 \description{
-Finds the boundary, children, parents of a subset of nodes of a graph.
+Finds the vertices, boundary, children, parents of a subset of nodes of a graph.
 }
 \usage{
+vertices(amat)
 bd(nn, amat)
 ch(nn, amat)
 pa(nn, amat)
@@ -17,10 +19,12 @@ pa(nn, amat)
     of the \code{rownames} of the edge matrix.}
   \item{amat}{a square matrix with dimnames specifying the adjacency matrix of the graph}
 }
-\details{For definitions of these operators see Lauritzen (1996).
+\details{For definitions of the operators see Lauritzen (1996).
 }
 \value{
-  A vector, specifying the boundary or the children or the parents of nodes  \code{nn}
+\code{vertices} returns a character vector with the names of the
+vertices of the graph with adjacency matrix \code{amat}.
+  The other operators return a character vector specifying the boundary or the children or the parents of nodes  \code{nn}
   in the graph.  This is a numeric or a character vector depending
   on the mode of \code{nn}.
 }
@@ -32,6 +36,7 @@ Clarendon Press.}
 \examples{
 ## find boundary of a subset of nodes of a DAG
 G <- DAG(y ~ x+b+a, b~a, x~a)
+vertices(G)
 bd("b", G)
 bd(c("b", "x"), G)
 bd("x", G)

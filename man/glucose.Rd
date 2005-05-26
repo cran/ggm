@@ -3,7 +3,7 @@
 \docType{data}
 \title{Glucose control}
 \description{
-Data on glucose control of diabetes patients.  
+Data on glucose control of diabetes patients.
 }
 \usage{data(glucose)}
 \format{
@@ -11,10 +11,10 @@ Data on glucose control of diabetes patients.
   \describe{
     \item{Y}{a numeric vector, Glucose control (glycosylated
     haemoglobin), values up to about 7 or 8 indicate good glucose control.}
-    \item{X}{a numeric vector, a score for knowdledge about the illness.} 
+    \item{X}{a numeric vector, a score for knowledge about the illness.}
     \item{Z}{a numeric vector, a score for fatalistic externality (mere
       chance determines what occurs).}
-    \item{U}{a numeric vector, a score for social externaliy (powerful
+    \item{U}{a numeric vector, a score for social externality (powerful
       others are responsible).}
     \item{V}{a numeric vector, a score for internality (the patient is
     him or herself responsible).}
@@ -29,15 +29,15 @@ Data on glucose control of diabetes patients.
   collected at the University of Mainz to identify psychological
   and socio-economic variables possibly important for glucose control,
   when patients choose the appropriate dose of treatment depending
-  on the level of blood glucose measured several times per day.  
+  on the level of blood glucose measured several times per day.
 
   The variable   of primary interest is \code{Y}, glucose control, measured
-  by  glycosylated haemoglobin. \code{X}, knowdledge about the illness,
+  by  glycosylated haemoglobin. \code{X}, knowledge about the illness,
   is a response of secondary interest. Variables \code{Z}, \code{U} and
   \code{V} measure patients' type of attribution, called fatalistic
   externality, social externality and internality. These are intermediate
   variables. Background   variables are \code{W}, the duration of the
-  illness, \code{A} the duration of formal schooling and \code{A},
+  illness, \code{A} the duration of formal schooling and \code{B},
   gender. These are intrinsic variables.
 }
 \source{
@@ -47,7 +47,7 @@ Cox & Wermuth (1996), p. 229.
   dependencies}. London: Chapman \& Hall.}
 \examples{
 data(glucose)
-## See Cox & Wermuth (1996), Figure 6.3 p. 140 
-coplot(Y ~ W | A, data=glucose) 
+## See Cox & Wermuth (1996), Figure 6.3 p. 140
+coplot(Y ~ W | A, data=glucose)
 }
 \keyword{datasets}

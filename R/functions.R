@@ -6,6 +6,7 @@ function (A)
   diag(E) <- 0
   E
 }
+
 "allEdges" <-
 function(amat){
 ### Finds all the edges of a graph with edge matrix amat.
@@ -23,11 +24,12 @@ function(amat){
     }
     E
   }
+
 "basiSet" <-
 function(amat){
 ### Basis set of a DAG with adjacency matrix amat.
     amat <- topSort(amat)
-    nod <- rownames(amat)
+    nod <- vertices(amat)
     dv <- length(nod)
     ind <- NULL
     ## NOTE. This is correct if the adj mat is upper triangular.
@@ -49,11 +51,12 @@ function(amat){
     ##      ind <- lapply(ind, function(x) nn[x])
     ind
   }
+
 "bd" <-
 function (nn, amat) 
 {
 ### Boundary of the nodes nn for a graph with adjacency matrix amat.
-  nod <- rownames(amat)
+  nod <- vertices(amat)
   if(is.null(nod)) stop("The edge matrix must have dimnames!")
   if(!all(is.element(nn, nod))) stop("Some of the nodes are not among the vertices.")
   b <- vector(length(nn), mode="list")
@@ -65,6 +68,7 @@ function (nn, amat)
   b <- unique(unlist(b))
   setdiff(b, nn)
 }
+
 "bfs" <-
 function(amat, v=1) {
 ### Breadth-first search of a connected UG with adjacency matrix amat.
@@ -97,11 +101,12 @@ function(amat, v=1) {
     dimnames(E) <- list(rep("", nrow(E)), rep("", 2))
     list(tree = tree, branches = E,chords = V ) 
   }
+
 "ch" <-
 function (nn, amat) 
 {
 ### List of the children of nodes nn for a given with adjacency matrix amat.
-  nod <- rownames(amat)
+  nod <- vertices(amat)
   if(is.null(nod)) stop("The adjacency matrix must have dimnames!")
   if(!all(is.element(nn, nod))) stop("Some of the nodes are not among the vertices.")
   k <- length(nn)
@@ -112,6 +117,7 @@ function (nn, amat)
   }
   setdiff(unique(unlist(p)), nn)
 }
+
 "checkIdent" <-
 function(amat, latent) {
 ### Checks SW sufficient conditions for identifiability of a DAG
@@ -126,7 +132,7 @@ function(amat, latent) {
          lapply(H, function(i) n[i])
        }
    
-    nod <- rownames(amat)
+    nod <- vertices(amat)
     if(is.null(nod)) stop("The adjacency matrix must have dimnames.")
     gcov <- inducedCovGraph(amat, sel=nod, cond=NULL)
     L <- latent
@@ -159,6 +165,7 @@ function(amat, latent) {
         cond.iii <- FALSE
       }
       else {
+        cond.iii <- FALSE
         H <- allSubsets(first) # in all subsets of these variables
         for(h in H){           # look for a G-identifiable cov. or con. graph
           isgid <- isGident(inducedCovGraph(amat, sel=a, cond=union(L, h)))
@@ -180,6 +187,7 @@ function(amat, latent) {
         cond.iv <- FALSE
       }
       else {
+        cond.iv <- FALSE
         H <- allSubsets(second)  # in all subsets of these variables
         for(h in H){             # look for a G-identifiable cov. or con. graph
           isgid <- isGident(inducedCovGraph(amat, sel=a, cond=union(L, h)))
@@ -204,6 +212,7 @@ function(amat, latent) {
    c(T1.i = cond.i, T1.ii = cond.ii,
      T2.i = cond.iii, T2.ii = cond.iv)
  }
+
 "cliques" <-
 function(amat){
 ### Finds the cliques of an UG. Mathias Drton, 2003.
@@ -244,7 +253,7 @@ function(amat){
     }
     ## Finds the adjacency list
     alist <- split(amat, row(amat))
-    nod <- 1:nrow(amat) #  nod <- rownames(amat)
+    nod <- 1:nrow(amat) #  nod <- vertices(amat)
     alist <- lapply(alist, function(x) nod[x==1])
 
     ## Start
@@ -273,9 +282,10 @@ function(amat){
         index <- setdiff(index, i)
       }
     }
-    nod <- rownames(amat)
+    nod <- vertices(amat)
     lapply(cli, function(x) nod[x])
   }
+
 "cmpGraph" <-
 function(amat){
 ### Adjacency matrix of the complementary graph
@@ -283,6 +293,7 @@ function(amat){
     diag(g) <- 0
     g
   }
+
 "conComp" <-
 function (amat) 
 {
@@ -296,6 +307,7 @@ function (amat)
   u <- A %*% 2^((n - 1):0)
   return(match(u, unique(u)))
 }
+
 "correlations" <-
 function (x)
 {
@@ -312,6 +324,7 @@ function (x)
   r[upper.tri(r)] <- rp[upper.tri(rp)]
   r
 }
+
 "cycleMatrix" <-
 function(amat){
 ### Fundamental Cycle matrix of the UG amat.
@@ -333,6 +346,7 @@ function(amat){
     dimnames(cmat) <- list(1:k, paste(E[,1], E[,2]))
     cmat       
   }
+
 "DAG" <-
 function (...,order=FALSE) 
 {
@@ -367,9 +381,10 @@ function (...,order=FALSE)
   }
   amat
 }
+
 "drawGraph" <-
-function(amat, coor=NULL, bid = TRUE, adjust=TRUE, alpha = 1, beta = 3, lwd=1){
-### A small function to plot a graph with adjancency matrix amat.
+function(amat, coor=NULL, adjust=TRUE, alpha = 1.2, beta = 3, lwd=1, ecol = "blue", left=FALSE){
+### A small function to plot mixed graphs with adjancency matrix amat.
 
     ## Some local functions
     
@@ -384,14 +399,14 @@ function(amat, coor=NULL, bid = TRUE, adjust=TRUE, alpha = 1, beta = 3, lwd=1){
       }
       text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
     }
-    double.edges <- function(x1, x2, y1, y2, lwd){
+    double.edges <- function(x1, x2, y1, y2, lwd, ecol){
       ## Double edges  for summary graphs
-      arrows(x1, x2, y1, y2, lty=1, code=1, length=.1, lwd=lwd)
+      arrows(x1, x2, y1, y2, lty=1, code=1, angle=20, length=.1, lwd=lwd, col=ecol)
       m1 <- (x1+y1)/2; m2 <- (x2+y2)/2
       a1 <- c(x1, m1+alpha, y1);  a2 <- c(x2, m2+alpha, y2)
-      lines(a1, a2,  lwd=lwd, lty=2)
+      lines(a1, a2,  lwd=lwd, lty=2, col=ecol)
     }
-     draw.edges <-  function(coor, u, alpha, type, bid, lwd) {
+    draw.edges <-  function(coor, u, alpha, type, lwd, ecol) {
       ## type = 0, 1, 2, 3 for undirected, directed, bidirected, double edges
       for (k in 1:nrow(u)) {
         a <- coor[u[k, 1], ]
@@ -401,16 +416,18 @@ function(amat, coor=NULL, bid = TRUE, adjust=TRUE, alpha = 1, beta = 3, lwd=1){
         x <- a + ba*alpha
         y <- b - ba*alpha
         switch(type+1, 
-               segments(x[1], x[2], y[1], y[2], lty = 1, lwd=lwd),
-               arrows(x[1], x[2], y[1], y[2], code=2, length=.1, lty = 1, lwd=lwd),
-               arrows(x[1], x[2], y[1], y[2], code=3,
-                      length = ifelse(bid, 0.1, 0), lty = ifelse(bid, 1, 2), lwd=lwd),
-               double.edges(x[1], x[2], y[1], y[2], lwd=lwd)
+               segments(x[1], x[2], y[1], y[2], lty = 1, lwd=lwd, col=ecol),
+               arrows(x[1], x[2], y[1], y[2], code=2, angle=20, length=.1, lty = 1, lwd=lwd, col=ecol),
+##               {arrows(x[1], x[2], y[1], y[2], code=3,length = 0.1, lty = 1, lwd=lwd);
+##                segments(x[1], x[2], y[1], y[2], lty=1, lwd=lwd, col="white");
+##                segments(x[1], x[2], y[1], y[2], lty=2, lwd=lwd)},
+               arrows(x[1], x[2], y[1], y[2], code=3, angle=20, length = 0.1, lty = 5, lwd=lwd, col=ecol),
+               double.edges(x[1], x[2], y[1], y[2], lwd=lwd, ecol)
                )
       }
     }
     def.coor <- function(ce, k, h, w) {
-      ## Default coords of the dots
+      ## Default coords of the dots for an UG.
       if (k == 1) 
         return(ce)
       else if (k == 2) {
@@ -437,7 +454,19 @@ function(amat, coor=NULL, bid = TRUE, adjust=TRUE, alpha = 1, beta = 3, lwd=1){
       }
       cbind(r1, r2)
     }
-                                        
+    def.coor.dag <- function(amat, w, h, left){
+      nod <- rownames(amat)
+      o <- topOrder(amat)
+      if(left)
+        o <- rev(o)
+      k <- length(nod)
+      x <- seq(0, 100, len=k)
+      y <- rep(c(20, 40, 60, 80),ceiling(k/4))[1:k] 
+      xy <- cbind(x, y)
+      rownames(xy) <- nod[o]
+      xy[nod,]
+    }    
+    
     ## Basic definitions
     
     v <- rownames(amat)
@@ -458,35 +487,40 @@ function(amat, coor=NULL, bid = TRUE, adjust=TRUE, alpha = 1, beta = 3, lwd=1){
     
     ## Default coordinates of the dots    
     if (is.null(coor)) {
-      coor <- def.coor(center, n, 100, 100)
+      isdag <- isAcyclic(amat)
+      if(isdag)
+        coor <- def.coor.dag(amat, 100, 100, left=left)
+      else
+        coor <- def.coor(center, n, 100, 100)
     }
-    ## Finds the undirected edges
+    ## Find the undirected edges
     g0 <- amat * ((amat == 1) & (t(amat) == 1))
     g0[lower.tri(g0)] <- 0
 
-    ## Finds the directed edges                                    
+    ## Find the directed edges                                    
     g1 <- amat * ((amat == 1)  & !((amat > 0) & (t(amat) > 0)))
     
-    ## Finds the bidirected edges (for ancestral graphs)
+    ## Find the bidirected edges (for ancestral graphs)
     g2 <- amat * ((amat == 2) & (t(amat) == 2))
     g2[lower.tri(g2)] <- 0    
 
-    ## Finds the double edges (for summary graphs)    
-    g3 <-  amat *( ((amat == 3)  & (t(amat) == 2)) | ( (t(amat) == 3)  & (amat == 2)))
-   
+    ## Find the double edges (for summary graphs)    
+    g3 <-  amat *( ((amat == 2)  & (t(amat) == 3)))
+    
     i <- expand.grid(1:n, 1:n)
     u0 <- i[g0 > 0, ]
     u1 <- i[g1 > 0, ]
     u2 <- i[g2 > 0, ]
     u3 <- i[g3 > 0, ]
- 
-    ## Plot the dots and the edges
     
+    ## Plot the dots and the edges
+    if(nrow(coor) !=  length(v))
+      stop("Wrong coordinates of the vertices.")  
     plot.dots(coor, v, dottype, n, beta)  
-    draw.edges(coor, u0, alpha, type=0, bid=bid, lwd=lwd) 
-    draw.edges(coor, u1, alpha, type=1, bid=bid, lwd=lwd) 
-    draw.edges(coor, u2, alpha, type=2, bid=bid, lwd=lwd)
-    draw.edges(coor, u3, alpha, type=3, bid=bid, lwd=lwd) 
+    draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol) 
+    draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
+    draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
+    draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
 
     ## Adjust the plot
     if(adjust){
@@ -502,21 +536,23 @@ function(amat, coor=NULL, bid = TRUE, adjust=TRUE, alpha = 1, beta = 3, lwd=1){
         plot(c(0, 100), c(0, 100), type = "n", axes = FALSE,
              xlab = "", ylab = "")
         plot.dots(coor, v, dottype, n, beta)
-        draw.edges(coor, u0, alpha, type=0, bid=bid, lwd=lwd)
-        draw.edges(coor, u1, alpha, type=1, bid=bid, lwd=lwd) 
-        draw.edges(coor, u2, alpha, type=2, bid=bid, lwd=lwd)
-        draw.edges(coor, u3, alpha, type=3, bid=bid, lwd=lwd) 
+        draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol)
+        draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
+        draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
+        draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
       }
     }
     colnames(coor) <- c("x", "y")
     return(invisible(coor))
   }
+
 "dSep" <-
 function(amat, first, second, cond) {
 ### Are first and second d-Separated by cond in a DAG? 
     e <- inducedCovGraph(amat, sel=c(first,second), cond=cond)
     all(e[first,second] == 0)
   }
+
 "edgeMatrix" <-
 function (E, inv=FALSE) 
 {
@@ -530,6 +566,79 @@ function (E, inv=FALSE)
   diag(A) <- 1
   A
 }
+
+"essentialGraph" <-
+function(dagx){
+### Converts a DAG into Essential Graph. 
+### Is implemented by the algorithm by D.M.Chickering (1995).
+### A transformational characterization of equivalent Bayesian network
+### structures. Proceedings of Eleventh Conference on Uncertainty in
+### Artificial Intelligence, Montreal, QU, pages 87-98. Morgan Kaufmann 
+### http://research.microsoft.com/~dmax/publications/uai95.pdf 
+### Implemented in Matlab by Tomas Kocka, AAU.
+### Translated in R by Giovanni Marchetti, University of Florence.
+  
+  ord <- topOrder(dagx);      # get the topological order of nodes 
+  n <- nrow(dagx)             # gets the number of nodes
+  i <- expand.grid(1:n, 1:n)  # finds all nonzero elements in the adj matrix
+  IJ <- i[dagx==1,]           # sort the arcs from lowest possible y
+  I <- IJ[, 1]; J <- IJ[, 2]  # and highest possible x, arcs are x->y
+  e <- 1
+  for(y in 1:n){
+    for(x in n:1){
+      if(dagx[ord[x], ord[y]] == 1) { 
+        I[e] <- ord[x]
+        J[e] <- ord[y]
+        e <- e + 1
+      }
+    }
+  }
+  ## Now we have to decide which arcs are part of the essential graph and
+  ## which are undirected edges in the essential graph.
+  ## Undecided arc in the DAG are 1, directed in EG are 2 and undirected in EG are 3.
+  
+  for(e in 1:length(I)){
+    if(dagx[I[e],J[e]] == 1){
+      cont <- TRUE
+      for(w in 1:n){ 
+        if(dagx[w,I[e]] == 2){
+          if(dagx[w,J[e]] != 0)
+            dagx[w,J[e]] <- 2
+          else {
+            for(ww in 1:n){
+              if(dagx[ww,J[e]] != 0)
+                      dagx[ww,J[e]] <- 2
+            } # skip the rest and start with another arc from the list
+            w <- n
+            cont <- FALSE
+          }
+        }
+      }
+      if(cont){
+        exists <- FALSE
+        for(z in 1:n){
+          if((dagx[z,J[e]] != 0) & (z != I[e]) & (dagx[z,I[e]] == 0)){
+            exists <- TRUE
+            for(ww in 1:n){
+              if(dagx[ww,J[e]] == 1){
+                dagx[ww,J[e]] <- 2
+              }
+            }
+          }
+        }
+        if(!exists){
+          for(ww in 1:n){
+            if(dagx[ww,J[e]] == 1){
+              dagx[ww,J[e]] <- 3
+            }
+          } 
+        }
+      }
+    }          
+  }
+  (dagx==2) + (dagx==3) + t(dagx==3)
+}
+
 "findPath" <-
 function (amat, st, en, path = c()) 
 {
@@ -549,11 +658,12 @@ function (amat, st, en, path = c())
     }
   }
 }
+
 "fitAncestralGraph" <-
 function (amat, S, n, tol = 1e-06){
 ### Fit Ancestral Graph. Mathias Drton, 2003.
     nam <- rownames(S)
-    nod <- rownames(amat)
+    nod <- vertices(amat)
     ## permute graph to have same layout as S
     if(is.null(nod)){
       stop("The adjacency matrix has no labels!")
@@ -585,12 +695,13 @@ function (amat, S, n, tol = 1e-06){
     return(list(Shat=temp$Sigmahat, Lhat=temp$Lambdahat, Bhat=Beta,
                 Ohat=temp$Omegahat, dev = dev, df = df, it=temp$iterations))
   }
+
 "fitConGraph" <-
 function (amat, S, n, pri=FALSE, alg=2, tol = 1e-06)
 {
 ### Fits a concentration graph G.
   nam <- rownames(S)
-  nod <- rownames(amat)
+  nod <- vertices(amat)
   if(is.null(nod)){
     stop("The adjacency matrix has no labels.")
   }
@@ -600,7 +711,7 @@ function (amat, S, n, pri=FALSE, alg=2, tol = 1e-06)
     sek <- intersect(nam, nod)
   S <- S[sek,sek, drop=FALSE]              # Resizes eventually S
   amat <- amat[sek,sek, drop=FALSE]        # and reorders amat
-  nod <- rownames(amat)        
+  nod <- vertices(amat)        
   cli <- cliques(amat)              # Finds the cliques
 
   lik <-  function(K, S, n, k){
@@ -666,13 +777,14 @@ function (amat, S, n, pri=FALSE, alg=2, tol = 1e-06)
   dev <- lik(solve(V), S, n, k) 
   list(Shat = V, dev = dev, df = df, it=it)
 }
+
 "fitCovGraph" <-
 function (amat, S, n, alg="icf", dual.alg=2, start.icf=NULL, tol = 1e-06){
 ### Fits a Covariance Graph. Mathias Drton, 2003
 ### amat: adjacency matrix; S: covariance matrix; n: sample size.
     amat <- In(amat) # Forces the ones in a bidirected graph defined with makeAG
     nam <- rownames(S)
-    nod <- rownames(amat)
+    nod <- vertices(amat)
     if(is.null(nod)){
       stop("The adjacency matrix has no labels.")
     }
@@ -707,6 +819,7 @@ function (amat, S, n, alg="icf", dual.alg=2, start.icf=NULL, tol = 1e-06){
     dev <- lik(solve(temp$Sigmahat), S, n, k) 
     return(list(Shat=temp$Sigmahat, dev = dev, df = df, it=temp$iterations))
   }
+
 "fitDag" <-
 function (amat, S, n)
 {
@@ -717,7 +830,7 @@ function (amat, S, n)
     dimnames(amat) <- dimnames(S)
   }
   nam <- rownames(S)
-  nod <- rownames(amat)
+  nod <- vertices(amat)
   if(is.null(nod))
     stop("The adjacency matrix has no labels.")
   if(!all(is.element(nod, nam)))
@@ -752,6 +865,7 @@ function (amat, S, n)
   df <- p*(p+1)/2 - sum(amat==1) - p
   list(Shat=Shat, Ahat = A, Dhat=Delta, dev=dev, df=df)
 }
+
 "fitDagLatent" <-
 function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=FALSE) 
 {
@@ -852,7 +966,7 @@ function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=F
   }
   ## Beginning  of the main function
   nam <- rownames(Syy)        # Names of the variables (they can be more than the nodes)
-  nod <- rownames(amat)       # Names of the nodes of the DAG (that contains the latent)
+  nod <- vertices(amat)       # Names of the nodes of the DAG (that contains the latent)
  
   if(is.null(nod))
     stop("The adjacency matrix has no labels.")
@@ -863,7 +977,7 @@ function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=F
   Syy <- Syy[sek,sek, drop=FALSE]          # Resizes eventually S
   sek <- c(sek, latent)
   amat <- amat[sek,sek, drop=FALSE]        # and reorders amat
-  nod <- rownames(amat)
+  nod <- vertices(amat)
   paz <- pa(latent, amat)                  # Parents of the latent
   paz <- is.element(nod, paz)
   dn <- list(nod,nod)
@@ -911,9 +1025,9 @@ function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=F
   dimnames(Shat) <- dn
   Khat <- solve(Shat)
   fit <- fitDag(amat, Shat, n)
-  Delta <- fit$Delta
-  list(Shat=Shat, Ahat=fit$A, Dhat=Delta, dev=dev, it=it, df=df) 
+  list(Shat=Shat, Ahat=fit$Ahat, Dhat=fit$Dhat, dev=dev, df=df, it=it) 
 }
+
 "fundCycles" <-
 function(amat){
 ### Finds a set of fundamental cycles for an UG with adj. matrix amat.
@@ -936,6 +1050,7 @@ function(amat){
     }
     fc 
   }
+
 "icf" <-
 function(bi.graph, S, start=NULL, tol = 1e-06){
 ### Iterative conditional fitting for bidirected graphs. Mathias Drton, 2003
@@ -1032,6 +1147,7 @@ function(bi.graph, S, start=NULL, tol = 1e-06){
     dimnames(Sigma) <- dimnames(S)
     return(list(Sigmahat=Sigma, iterations=i))
   }
+
 "icfmag" <-
 function(mag, S, tol = 1e-06){
     ## Iterative conditional fitting for ancestral graphs. Mathias Drton, 2003.
@@ -1150,14 +1266,89 @@ function(mag, S, tol = 1e-06){
     return(list(Sigmahat=Sigma, Bhat=B, Omegahat=Omega, Lambdahat=Lambda,
                 iterations=i))
   }
+
 "In" <-
 function (A) 
 {
 ### Indicator matrix of structural zeros.
   abs(sign(A)) 
 }
+
+"inducedChainGraph" <-
+function(amat, cc=vertices(amat), cond=NULL, type="LWF"){
+### Induced chain graph with chain components cc.
+    inducedBlockGraph <- function(amat, sel, cond){
+      S <- inducedConGraph(amat, sel=union(cond, sel), cond=NULL)
+      S[cond, sel, drop=FALSE]
+    }
+    nod <- vertices(amat)
+    nam <- c(list(cond), cc)
+    if(!all(unlist(nam) %in% nod))
+      stop("The chain components or the conditioning set are wrong.")
+    for(h in nam){
+      for(k in nam){
+        h <- unlist(h)
+        k <- unlist(k)
+        if (setequal(h,k))
+          next
+        if(length(intersect(h,k) > 0))
+          stop("The sets are not disjoint!")
+      }
+    }
+    nam <- unlist(nam)
+    cg <- matrix(0, length(nam),length(nam))
+    dimnames(cg) <- list(nam,nam)
+    kc <- length(cc)
+    if(type=="AMP"){
+      for(i in 1:kc){
+        past <-  unlist(cc[0:(i-1)]) 
+        Past <- union(cond,past)
+        g <- cc[[i]]
+        
+        Sgg.r <- inducedConGraph(amat, sel=g, cond=Past)
+        cg[g, g] <- Sgg.r
+        if(length(past) !=0){
+          Pgr <- inducedRegGraph(amat, sel=g, cond=Past)
+          cg[Past, g] <- Pgr
+        }
+      }
+    }
+    else if(type=="LWF"){
+      for(i in 1:kc){
+        past <-  unlist(cc[0:(i-1)]) 
+        Past <- union(cond,past)
+        g <- cc[[i]]
+        
+        Sgg.r <- inducedConGraph(amat,sel=g, cond=Past)
+        cg[g, g] <- Sgg.r
+        if(length(past) !=0){
+          Cgr <- inducedBlockGraph(amat, sel=g, cond=Past)
+          cg[Past, g] <- Cgr
+        }
+      }
+    }
+    else if(type=="MRG"){
+      for(i in 1:kc){
+        past <-  unlist(cc[0:(i-1)]) 
+        Past <- union(cond,past)
+        g <- cc[[i]]
+        
+        Sgg.r <- inducedCovGraph(amat, sel=g, cond=Past)
+        cg[g, g] <- Sgg.r
+        if(length(past) != 0){
+          Pgr <- inducedRegGraph(amat, sel=g, cond=Past)
+          cg[Past, g] <- Pgr
+        }
+      }
+    }
+    else
+      stop("Wrong type.")
+    n <- unlist(cc)
+    cg[n,n, drop=FALSE]
+  }
+
 "inducedConGraph" <-
-function(amat, sel=rownames(amat), cond=NULL){
+function(amat, sel=vertices(amat), cond=NULL){
 ### Induced concentration graph for a set of nodes given a conditioning set.
     ancGraph <- function(A) {
       ## Edge matrix of the overall ancestor graph.
@@ -1166,22 +1357,14 @@ function(amat, sel=rownames(amat), cond=NULL){
       else
         return(In(solve(2*diag(nrow(A)) - A)))
     }
-    triu <- function(A) {
-      ## Upper tri of A including the diagonal.
-      A[lower.tri(A)] <- 0
-      A
-    }
-    clos <- function(M) {
-      ## Transitive closure. See Wermuth and Cox (2003). 
-      M1 <- In(triu(M))
-      M2 <- In(crossprod(M1))
-      p <- nrow(M)
-      M3 <- ancGraph(triu(M2)) #  In(solve(2*diag(p) - triu(M2)))
-      In(M3 %*% t(M3))
+   
+   trclos <- function(M) {
+      ## Transitive closure of an UG with edge matrix M. See Wermuth and Cox (2004). 
+     edgeMatrix(transClos(adjMatrix(M)))
     }
 
     A <- edgeMatrix(amat) # From the adjacency matrix to edge matrix    
-    nod <- rownames(A)
+    nod <- vertices(A)
       if(!all(cond %in% nod))
         stop("Conditioning nodes are not among the vertices.")
     if(!all(sel %in% nod))
@@ -1201,12 +1384,13 @@ function(amat, sel=rownames(amat), cond=NULL){
                 A[R,l, drop=FALSE]%*% Al %*% A[l,R, drop=FALSE])
     TRl <- In(A[R,l,drop=FALSE] %*% Al)
     DRl <- In(diag(length(R)) + TRl %*% t(TRl))
-    out <- In(t(ARR.l) %*% clos(DRl) %*% ARR.l)
+    out <- In(t(ARR.l) %*% trclos(DRl) %*% ARR.l)
     out <- out[g,g, drop=FALSE]
     adjMatrix(out)
   }
+
 "inducedCovGraph" <-
-function(amat, sel=rownames(amat), cond=NULL){
+function(amat, sel=vertices(amat), cond=NULL){
 ### Induced covariance graph for a set of nodes given a conditioning set.
     ancGraph <- function(A) {
       ## Edge matrix of the overall ancestor graph.
@@ -1215,21 +1399,12 @@ function(amat, sel=rownames(amat), cond=NULL){
       else
         return(In(solve(2*diag(nrow(A)) - A)))
     }
-    triu <- function(A) {
-      ## Upper tri of A including the diagonal.
-      A[lower.tri(A)] <- 0
-      A
+     trclos <- function(M) {
+      ## Transitive closure of an UG with edge matrix M. See Wermuth and Cox (2004). 
+     edgeMatrix(transClos(adjMatrix(M)))
     }
-    clos <- function(M) {
-      ## Transitive closure. See Wermuth and Cox (2003).
-      M1 <- In(triu(M))
-      M2 <- In(crossprod(M1))
-      M3 <- ancGraph(triu(M2)) 
-      In(M3 %*% t(M3))
-    }
-    
     A <- edgeMatrix(amat) # From the adjacency matrix to edge matrix
-    nod <- rownames(A)
+    nod <- vertices(A)
     if(!all(cond %in% nod))
       stop("Conditioning nodes are not among the vertices.")
     if(!all(sel %in% nod))
@@ -1245,11 +1420,57 @@ function(amat, sel=rownames(amat), cond=NULL){
     AL <-  ancGraph(A[L,L,drop=FALSE]) # In(solve(2*diag(length(L)) - A[L,L]))
     TrL <- In(A[r,L,drop=FALSE] %*% AL)
     DLr <- In(diag(length(L)) + t(TrL) %*% TrL)
-    cl <- clos(DLr)
+    cl <- trclos(DLr)
     out <- In(AL %*% cl %*% t(AL))
     out <- out[g,g, drop=FALSE]
     adjMatrix(out)
   }
+
+"inducedDAG" <-
+function(amat, order, cond=NULL){
+### Induced DAG in a new ordering.
+    cc=as.list(order)
+    inducedChainGraph(amat, cc=cc, cond=cond)
+  }
+
+"inducedRegGraph" <-
+function(amat, sel=vertices(amat), cond=NULL){
+### Induced regression graph for a set of nodes given a conditioning set.
+    ancGraph <- function(A) {
+      ## Edge matrix of the overall ancestor graph.
+      if(sum(dim(A)) == 0)
+        return(A)
+      else
+        return(In(solve(2*diag(nrow(A)) - A)))
+    }
+    trclos <- function(M) {
+      ## Transitive closure of an UG with edge matrix M. See Wermuth and Cox (2004). 
+     edgeMatrix(transClos(adjMatrix(M)))
+    }
+    A <- edgeMatrix(amat) # From the adjacency matrix to edge matrix
+    nod <- vertices(A)
+    if(!all(cond %in% nod))
+      stop("Conditioning nodes are not among the vertices.")
+    if(!all(sel %in% nod))
+      stop("Selected nodes are not among the vertices.")
+    if(length(intersect(sel,cond) > 0))
+      stop("The sets are not disjoint!")
+    l <- setdiff(nod, union(sel, cond))  # Nodes marginalized over
+    g <- sel
+    r <- cond
+    L <- union(l,g)
+    R <- union(g,r)
+    
+    AL <-  ancGraph(A[L,L,drop=FALSE])          # A^{LL} 
+    TrL <- In(A[r,L,drop=FALSE] %*% AL)         # T_{rL}
+    DrL <- In(diag(length(r)) + TrL %*% t(TrL)) # D_{rr-L}
+    Arr.L <-  In(A[r,r, drop=FALSE] + A[r,L, drop=FALSE] %*% AL 
+                 %*% A[L,r, drop=FALSE])        # A_{rr.L}
+    FLr <- In(AL %*% A[L, r, drop=FALSE])       # F_{Lr} 
+    out <- In(AL %*% t(TrL) %*% trclos(DrL) %*% Arr.L + FLr)
+    t(out[g,r, drop=FALSE])
+  }
+
 "isAcyclic" <-
 function (amat) 
 {
@@ -1260,6 +1481,7 @@ function (amat)
   com <- (l&u)
   all(!com)
 }
+
 "isGident" <-
 function(amat){
 ### Is the UG with adjacency matrix amat G-identifiable?
@@ -1286,12 +1508,13 @@ function(amat){
     }
     all(g)
   }
+
 "makeAG" <-
 function(dag = NULL, ug = NULL, bg = NULL) {
 ### Builds an ancestral graph from the adj.mat of: dag, ug, bg
-    dag.nodes <- rownames(dag)
-    ug.nodes <- rownames(ug) # ; print(ug.nodes)
-    bg.nodes <- rownames(bg) # ; print(bg.nodes)
+    dag.nodes <- vertices(dag)
+    ug.nodes <- vertices(ug) # ; print(ug.nodes)
+    bg.nodes <- vertices(bg) # ; print(bg.nodes)
     if(all((!is.null(ug)) & (!is.null(bg)))){
       if(length(intersect(ug.nodes, bg.nodes)) > 0)
         warning("Undirected edges meeting an arrowhead.")
@@ -1310,13 +1533,13 @@ function(dag = NULL, ug = NULL, bg = NULL) {
     amat.ug <- amat
     amat.bg <- amat
     if(!is.null(dag))
-      amat.dag [dag.nodes, dag.nodes] <- dag # directed edges
+      amat.dag[dag.nodes, dag.nodes] <- dag # directed edges
     if(!is.null(ug)){
-      if(any(amat[ug.nodes, ug.nodes] & ug))
+      if(any(amat.dag[ug.nodes, ug.nodes] & ug))
         warning("Overlapping directed and undirected edges.")
     }
     if(!is.null(bg)){
-      if(any(amat[bg.nodes, bg.nodes] & bg))
+      if(any(amat.dag[bg.nodes, bg.nodes] & bg))
         warning("Overlapping directed and bi-directed edges.")
     }
     if(!is.null(ug))
@@ -1332,6 +1555,7 @@ function(dag = NULL, ug = NULL, bg = NULL) {
       warning("Spouses cannot be ancestors.")
     amat
   }
+
 "pa" <-
 function (nn, amat) 
 {
@@ -1347,6 +1571,7 @@ function (nn, amat)
   }
   setdiff(unique(unlist(p)), nn)
 }
+
 "parcor" <-
 function (S)
 {
@@ -1360,6 +1585,7 @@ function (S)
   dimnames(out) <- dimnames(S)
   out
 }
+
 "pcor" <-
 function (u, S) 
 {
@@ -1367,6 +1593,7 @@ function (u, S)
   k <- solve(S[u,u])
   -k[1,2]/sqrt(k[1,1]*k[2,2])
 }
+
 "pcor.test" <-
 function(r, q, n){
                 df = n - 2 - q
@@ -1375,6 +1602,7 @@ function(r, q, n){
   list(tval = tval, df = df, pvalue = pv)
 
 }
+
 "rcorr" <-
 function(d)
 {
@@ -1383,6 +1611,7 @@ function(d)
  h<-rsphere(d,d)
  h %*% t(h)
 }
+
 "rnormDag" <-
 function (n, A, Delta) 
 {
@@ -1398,6 +1627,7 @@ function (n, A, Delta)
   colnames(Y) <- colnames(A)
   Y
 }
+
 "rsphere" <-
 function(n, d)
 {
@@ -1407,6 +1637,7 @@ function(n, d)
   d <- apply(X, 1, function(x) sqrt(sum(x*x)))
   sweep(X, 1, d, "/")
 }
+
 "shipley.test" <-
 function (amat, S, n) 
 {
@@ -1431,6 +1662,7 @@ function (amat, S, n)
   pv <- 1 - pchisq(ctest, df)
   list(ctest=ctest, df=df, pvalue=pv)
 }
+
 "swp" <-
 function (V, b) 
 {
@@ -1457,6 +1689,7 @@ function (V, b)
   }
   ## list(swept = out, coef = out[a, b], rss = out[a, a, drop = F])
 }
+
 "topOrder" <-
 function (amat) 
 {
@@ -1493,12 +1726,14 @@ function (amat)
   }
   ord
 }
+
 "topSort" <-
 function (amat) {
 ### Topological sort of the DAG with adjacency matrix amat.
     ord <- topOrder(amat)
     amat[ord, ord]
 }
+
 "transClos" <-
 function (amat) 
 {
@@ -1516,6 +1751,7 @@ function (amat)
   diag(A) <- 0
   A
 }
+
 "triDec" <-
 function(Sigma){
 ### Triangular decomposition of covariance matrix Sigma.  
@@ -1527,6 +1763,7 @@ function(Sigma){
   B = solve(A) 
   list(A = A, B = B, Delta = 1/(D^2))
 }
+
 "UG" <-
 function (f) 
 {
@@ -1550,6 +1787,7 @@ function (f)
   dimnames(amat) <- list(N, N)
   amat
 }
+
 "unmakeAG" <-
 function(mag){
     ### Returns a list with the three components of an Ancestral Graph.
@@ -1561,3 +1799,7 @@ function(mag){
     bg[temp==4] <- 1
     return(list(dag = dag, ug = ug, bg = bg))
   }
+
+"vertices" <-
+function(amat) rownames(amat)
+

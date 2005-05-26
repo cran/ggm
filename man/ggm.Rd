@@ -19,6 +19,10 @@ cliques, connected components, fundamental cycles, d-separation):
 \item Function for finding covariance and concentration graphs
 induced by marginalization and conditioning:
 \code{\link{inducedCovGraph}}, \code{\link{inducedConGraph}};
+\item Functions for finding multivariate regression graphs and chain
+graphs induced by marginalization and conditioning:
+\code{\link{inducedRegGraph}},  \code{\link{inducedChainGraph}},
+\code{\link{inducedDAG}};
 \item Functions for fitting by ML Gaussian DAGs, concentration graphs, 
 covariance graphs and ancestral graphs:
 \code{\link{fitDag}}, \code{\link{fitConGraph}},
@@ -40,12 +44,15 @@ derscribed by Lauritzen (2002).
 Giovanni M. Marchetti, Dipartimento di Statistica ``G. Parenti''.
 Universit\`a di Firenze, Italy; 
  
-Mathias Drton,  Department of Statistics, University of Washington, USA.
+Mathias Drton,  Department of Statistics, University of Chicago, USA.
 }
 \section{Acknowledgements}{
 Many thanks to Fulvia Pennoni for testing some of 
-the functions, and to Elena Stanghellini for discussion and
-examples. Thanks also to Michael Perlman and Thomas Richardson.
+the functions, to Elena Stanghellini for discussion and
+examples and to Claus Dethlefsen and Jens Henrik Badsberg for
+suggestions and corrections. Helpful discussions with Nanny Wermuth,
+are gratefully acknowledged. Thanks also to Michael Perlman and
+Thomas Richardson.
 
 Giovanni Marchetti has been supported by MIUR, Italy, under grant 
 scheme PRIN 2002, and Mathias Drton has been supported by NSF grant 

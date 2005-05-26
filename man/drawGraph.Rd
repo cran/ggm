@@ -1,37 +1,34 @@
 \name{drawGraph}
 \alias{drawGraph}
 \title{Drawing a graph with a simple point and click interface.}
-\description{
-  Draw a graph from its adjacency matrix representation.
-}
+\description{Draw a graph from its adjacency matrix representation.}
 \usage{
-drawGraph(amat, coor = NULL, bid = TRUE, adjust = TRUE, alpha = 1, beta = 3, lwd = 1)
+drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.2,
+                beta = 3, lwd = 1, ecol = "blue", left = FALSE)
 }
 \arguments{
   \item{amat}{the adjacency matrix representation of the graph. This
-  can be an undirected graph a directed acyclic graph or an ancestral graph.}
-\item{coor}{an optional matrix of dimensions \eqn{p \times 2} where
-  \eqn{p} is the number of vertices of the graph.If \code{coor=NULL}
-  then the function chooses a default position for the nodes.}
-  \item{bid}{a logical value indicating if the edges of a covariance 
-    graph must be plotted as bidirected (\code{bid=TRUE})or as dashed
-    lines (\code{bid=FALSE}).
-  }
+    can be an undirected graph a directed acyclic graph or an ancestral graph.}
+  \item{coor}{an optional matrix of dimensions \eqn{p \times 2} where
+    \eqn{p} is the number of vertices of the graph. If \code{coor=NULL}
+    then the function chooses a default position for the nodes.}
   \item{adjust}{a logical value. If \code{TRUE} the graph is plotted and
     the system waits until the mouse button is pressed (same behaviour
     of \code{locator} function.}  
   \item{alpha}{a positive value between controlling the
-    distance from the end of the edges to the nodes of the graph.
-  }
+    distance from the end of the edges to the nodes of the graph.}
   \item{beta}{a positive value controlling the distance of the labels of
-  the variables from the nodes.}
-  \item{lwd}{line width of the edges.}
+    the variables from the nodes.}
+  \item{lwd}{line width of the edges (default: 1).}
+  \item{ecol}{color of the edges (default: "blue").}
+  \item{left}{a logical value. If \code{TRUE} the default location of
+    the vertices of DAGs in topological order is from right to left.}
 }
 \details{
   The function is a very simple tool useful for displaying small graphs,
   with a rudimentary interface for moving nodes and edges of a given
   graph and  adjusting the final plot. For better displays use
-  \pkg{Rgraphviz} package in Bioconductor project.
+  \pkg{DinamicGraph} or \pkg{Rgraphviz} package in Bioconductor project.
 }
 \value{
   The function plots the graph with a initial positioning of the nodes,
@@ -43,7 +40,8 @@ drawGraph(amat, coor = NULL, bid = TRUE, adjust = TRUE, alpha = 1, beta = 3, lwd
   Thus, one must be careful to click closer to
   the selected node than to any other node. 
   The nodes can be moved to any position by repeating the
-  previous operation.  The adjustment process is terminated by pressing any mouse
+  previous operation.
+  The adjustment process is terminated by pressing any mouse
   button other than the first.
 
   At the end of the process, the function returns invisibly the
@@ -51,7 +49,7 @@ drawGraph(amat, coor = NULL, bid = TRUE, adjust = TRUE, alpha = 1, beta = 3, lwd
   redisplay the graph.
 }
 \references{
-  \pkg{Rgraphwiz}, \url{http://www.bioconductor.org}.
+\pkg{DinamicGraph}, \pkg{Rgraphwiz}, \url{http://www.bioconductor.org}.
   
   GraphViz, Graph Visualization Project. AT\&T Research.
   \url{http://www.graphviz.org}.

@@ -36,7 +36,7 @@ UG(f)
 Clarendon Press.}
 \author{Giovanni M. Marchetti}
 \note{} 
-\seealso{\code{\link{fitConGraph}}, \code{\link{fitCovGraph}}},
+\seealso{\code{\link{fitConGraph}}, \code{\link{fitCovGraph}}}
 \code{\link{DAG}}}
 \examples{
 ## X independent of Y given Z
