@@ -36,8 +36,7 @@ UG(f)
 Clarendon Press.}
 \author{Giovanni M. Marchetti}
 \note{} 
-\seealso{\code{\link{fitConGraph}}, \code{\link{fitCovGraph}}}
-\code{\link{DAG}}}
+\seealso{\code{\link{fitConGraph}}, \code{\link{fitCovGraph}}, \code{\link{DAG}}}
 \examples{
 ## X independent of Y given Z
 UG(~ X*Z + Y*Z)

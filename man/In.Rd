@@ -18,9 +18,9 @@ element iff the corresponding element of \code{A} is (exactly) zero.
 \value{a matrix of the same dimensions as \code{A}.
 }
 \references{
-  Wermuth, N. \& Cox, D.R. (2003). Joint response graphs
-  and separation induced by triangular systems. Submitted and available at
-  \url{http://psystat.sowi.uni-mainz.de}.
+  Wermuth, N. \& Cox, D.R. (2004). Joint response graphs
+  and separation induced by triangular systems. \emph{J.R. Statist. Soc. B},
+  66, Part 3, 687-717.
 }
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{DAG}}, \code{\link{inducedCovGraph}}, \code{\link{inducedConGraph}}}

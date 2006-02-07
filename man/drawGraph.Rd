@@ -3,7 +3,7 @@
 \title{Drawing a graph with a simple point and click interface.}
 \description{Draw a graph from its adjacency matrix representation.}
 \usage{
-drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.2,
+drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.5,
                 beta = 3, lwd = 1, ecol = "blue", left = FALSE)
 }
 \arguments{
@@ -28,7 +28,7 @@ drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.2,
   The function is a very simple tool useful for displaying small graphs,
   with a rudimentary interface for moving nodes and edges of a given
   graph and  adjusting the final plot. For better displays use
-  \pkg{DinamicGraph} or \pkg{Rgraphviz} package in Bioconductor project.
+  \pkg{dynamicGraph} or \pkg{Rgraphviz} package in Bioconductor project.
 }
 \value{
   The function plots the graph with a initial positioning of the nodes,
@@ -49,7 +49,7 @@ drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.2,
   redisplay the graph.
 }
 \references{
-\pkg{DinamicGraph}, \pkg{Rgraphwiz}, \url{http://www.bioconductor.org}.
+\pkg{dynamicGraph}, \pkg{Rgraphwiz}, \url{http://www.bioconductor.org}.
   
   GraphViz, Graph Visualization Project. AT\&T Research.
   \url{http://www.graphviz.org}.

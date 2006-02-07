@@ -27,7 +27,7 @@ fitAncestralGraph(amat, S, n, tol = 1e-06)
   parameters by fitting a concentration  
   graph model. The MLE \eqn{\hat B}{\code{Bhat}} of the regression coefficients and
   the MLE \eqn{\hat\Omega}{\code{Ohat}} of the error covariances are obtained by
-  iterative conditional fitting (Drton \& Richardson, 2003a, b). The
+  iterative conditional fitting (Drton \& Richardson, 2003, 2004). The
   three sets of parameters are 
   combined to the MLE \eqn{\hat\Sigma}{\code{Shat}} of the covariance matrix by
   matrix multiplication: 
@@ -55,18 +55,18 @@ fitAncestralGraph(amat, S, n, tol = 1e-06)
   \item{df}{the degrees of freedom.}
   \item{it}{the iterations.}
 }
-\references{
-  Drton, M. \& Richardson, T. S. (2003a). Iterative Conditional Fitting
-  for Gaussian Ancestral Graph Models.  Department of Statistics,
-  University of Washington, Technical Report 437, under preparation.
-  (Compare also \url{http://www.math.auc.dk/gr/gr2003/material/drton.pdf})
- 
-  Drton, M. \& Richardson, T. S. (2003b). A new algorithm for
+\references{ 
+  Drton, M. \& Richardson, T. S. (2003). A new algorithm for
   maximum likelihood estimation in Gaussian graphical models for
   marginal independence. \emph{Proceedings
     of the Nineteenth Conference on Uncertainty in Artificial
     Intelligence}, 184--191.
 
+  Drton, M. \& Richardson, T. S. (2004). Iterative Conditional Fitting
+  for Gaussian Ancestral Graph Models.  Proceedings
+  of the 20th Conference on Uncertainty in Artificial Intelligence,
+  Department of Statistics, 130--137.
+  
   Richardson, T. Spirtes, P. (2002). Ancestral Graph Markov
   Models. \emph{Annals of Statistics}. 30, 4, 962--1030.
 }

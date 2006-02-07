@@ -134,7 +134,7 @@ function(amat, latent) {
    
     nod <- vertices(amat)
     if(is.null(nod)) stop("The adjacency matrix must have dimnames.")
-    gcov <- inducedCovGraph(amat, sel=nod, cond=NULL)
+    gcov <- inducedCovGraph(amat, sel=nod, cond=NULL); gcov <- sign(gcov)
     L <- latent
     if(length(L) > 1)
       stop("I have an answer only for one latent variable.")
@@ -142,7 +142,7 @@ function(amat, latent) {
     m <-  bd(L, gcov)
     ## Theorem 1
     if(length(m) > 2){ 
-      G <- inducedCovGraph(amat, sel=O, cond=L)
+      G <- inducedCovGraph(amat, sel=O, cond=L); G <- sign(G)
       cond.i <- isGident(G[m,m,drop=FALSE])
     }
     else
@@ -158,7 +158,7 @@ function(amat, latent) {
     a <- union(pa(L, amat), ch(L, amat))
     if(length(a) > 2){
       Oa <- setdiff(O, a)   # O \ a
-      S.a <- inducedCovGraph(amat, sel=union(Oa, L), cond=a)
+      S.a <- inducedCovGraph(amat, sel=union(Oa, L), cond=a); S.a <- sign(S.a)
       first <- S.a[Oa, L]
       first <- Oa[first==0]  # variables that satisfy condition (i) of thm. 2.
       if(length(first)==0){
@@ -168,7 +168,7 @@ function(amat, latent) {
         cond.iii <- FALSE
         H <- allSubsets(first) # in all subsets of these variables
         for(h in H){           # look for a G-identifiable cov. or con. graph
-          isgid <- isGident(inducedCovGraph(amat, sel=a, cond=union(L, h)))
+          isgid <- isGident(sign(inducedCovGraph(amat, sel=a, cond=union(L, h))))
           if(isgid){
             cond.iii <- TRUE
             break
@@ -190,7 +190,7 @@ function(amat, latent) {
         cond.iv <- FALSE
         H <- allSubsets(second)  # in all subsets of these variables
         for(h in H){             # look for a G-identifiable cov. or con. graph
-          isgid <- isGident(inducedCovGraph(amat, sel=a, cond=union(L, h)))
+          isgid <- isGident(sign(inducedCovGraph(amat, sel=a, cond=union(L, h))))
           if(isgid){
             cond.iv <- TRUE
             break
@@ -383,49 +383,92 @@ function (...,order=FALSE)
 }
 
 "drawGraph" <-
-function(amat, coor=NULL, adjust=TRUE, alpha = 1.2, beta = 3, lwd=1, ecol = "blue", left=FALSE){
+function(amat, coor=NULL, adjust=TRUE, alpha = 1.5, beta = 3, lwd=1, ecol = "blue", left=FALSE){
 ### A small function to plot mixed graphs with adjancency matrix amat.
 
-    ## Some local functions
-    
-    plot.dots <- function(xy, v, dottype, n, beta) {
-      for (i in 1:n) {
-        if (dottype[i] == 1) {
-          points(xy[i, 1], xy[i, 2], pch = 1, cex = 1.2, lwd=lwd)
-        }
-        else if (dottype[i] == 2) {
-          points(xy[i, 1], xy[i, 2], pch = 16, cex = 1.2)
-        }
+  ## Some local functions
+  
+  plot.dots <- function(xy, v, dottype, n, beta) {
+    for (i in 1:n) {
+      if (dottype[i] == 1) {
+        points(xy[i, 1], xy[i, 2], pch = 1, cex = 1.2, lwd=lwd)
       }
-      text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
-    }
-    double.edges <- function(x1, x2, y1, y2, lwd, ecol){
-      ## Double edges  for summary graphs
-      arrows(x1, x2, y1, y2, lty=1, code=1, angle=20, length=.1, lwd=lwd, col=ecol)
-      m1 <- (x1+y1)/2; m2 <- (x2+y2)/2
-      a1 <- c(x1, m1+alpha, y1);  a2 <- c(x2, m2+alpha, y2)
-      lines(a1, a2,  lwd=lwd, lty=2, col=ecol)
-    }
-    draw.edges <-  function(coor, u, alpha, type, lwd, ecol) {
-      ## type = 0, 1, 2, 3 for undirected, directed, bidirected, double edges
-      for (k in 1:nrow(u)) {
-        a <- coor[u[k, 1], ]
-        b <- coor[u[k, 2], ]
-        ba <- b-a
-        ba <- ba/sqrt(sum(ba*ba))
-        x <- a + ba*alpha
-        y <- b - ba*alpha
-        switch(type+1, 
-               segments(x[1], x[2], y[1], y[2], lty = 1, lwd=lwd, col=ecol),
-               arrows(x[1], x[2], y[1], y[2], code=2, angle=20, length=.1, lty = 1, lwd=lwd, col=ecol),
-##               {arrows(x[1], x[2], y[1], y[2], code=3,length = 0.1, lty = 1, lwd=lwd);
-##                segments(x[1], x[2], y[1], y[2], lty=1, lwd=lwd, col="white");
-##                segments(x[1], x[2], y[1], y[2], lty=2, lwd=lwd)},
-               arrows(x[1], x[2], y[1], y[2], code=3, angle=20, length = 0.1, lty = 5, lwd=lwd, col=ecol),
-               double.edges(x[1], x[2], y[1], y[2], lwd=lwd, ecol)
-               )
+      else if (dottype[i] == 2) {
+        points(xy[i, 1], xy[i, 2], pch = 16, cex = 1.2)
       }
     }
+    text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
+  }
+  ##double.edges <- function(x1, x2, y1, y2, lwd, ecol){
+  ##  ## Double edges  for summary graphs
+  ##  arrows(x1, x2, y1, y2, lty=1, code=1, angle=20, length=.1, lwd=lwd, col=ecol)
+  ##  m1 <- (x1+y1)/2; m2 <- (x2+y2)/2
+  ##  a1 <- c(x1, m1+alpha, y1);  a2 <- c(x2, m2+alpha, y2)
+  ##  lines(a1, a2,  lwd=lwd, lty=2, col=ecol)
+  ## }
+  angle <- function(v,alpha=pi/2){
+    ## Finds a vector of IR^2 with an agle of alpha with vector v.
+    theta <- Arg(complex(real=v[1], imag=v[2]))
+    z <- complex(argument=theta+alpha)
+    c(Re(z), Im(z))
+  }
+  double.edges <- function(x1,x2, y1, y2, lwd, ecol){
+    ## Draw a double edge for summary graphs.
+    ## d is the apothema, n is the no. of points, dd the size of the arrow.
+      d <- 50; n <- 30; dd <- 2
+      k <- length(x1)
+      if(is.na(x1)) return()
+      for(i in 1:k){
+        x <- c(x1[i], x2[i])
+        y <- c(y1[i], y2[i])
+        m <- (x+y)/2
+        cen <- m + d * angle(y-x)
+        xm <- x - cen
+        ym <- y - cen
+        thetax <- Arg(complex(real=xm[1], imag=xm[2]))
+        thetay <- Arg(complex(real=ym[1], imag=ym[2]))
+        theta <- seq(thetax, thetay, len=n)
+        l <- crossprod(y-m)
+        delta <- sqrt(d^2 + l)
+        lx <- cen[1] + delta * cos(theta)
+        ly <- cen[2] + delta * sin(theta)
+        lines(lx,ly, lty=2, col=ecol, lwd=lwd)
+        ## draw the two  arrows
+        vy <- angle(y-cen)
+        vx <- angle(x-cen)
+        vx1 <- x + dd * angle(vx, alpha=pi/12)
+        vx2 <- x + dd * angle(vx, alpha=-pi/12)
+        vy1 <- y + dd * angle(vy, alpha=11*pi/12)
+        vy2 <- y + dd * angle(vy, alpha=-11*pi/12)
+        segments(x[1], x[2], vx1[1], vx1[2], col=ecol, lwd=lwd)
+        segments(x[1], x[2], vx2[1], vx2[2], col=ecol, lwd=lwd)
+        segments(y[1], y[2], vy1[1], vy1[2], col=ecol, lwd=lwd)
+        segments(y[1], y[2], vy2[1], vy2[2], col=ecol, lwd=lwd)
+        ex = x + 0.05 * (y-x)
+        ey = x + 0.95 * (y-x)
+        arrows(ex[1], ex[2], ey[1], ey[2], lty=1, code=1, angle=20, length=.1, lwd=lwd, col=ecol)
+      }
+    }
+  draw.edges <-  function(coor, u, alpha, type, lwd, ecol) {
+    ## type = 0, 1, 2, 3 for undirected, directed, bidirected, double edges
+    for (k in 1:nrow(u)) {
+      a <- coor[u[k, 1], ]
+      b <- coor[u[k, 2], ]
+      ba <- b-a
+      ba <- ba/sqrt(sum(ba*ba))
+      x <- a + ba*alpha
+      y <- b - ba*alpha
+      switch(type+1, 
+             segments(x[1], x[2], y[1], y[2], lty = 1, lwd=lwd, col=ecol),
+             arrows(x[1], x[2], y[1], y[2], code=2, angle=20, length=.1, lty = 1, lwd=lwd, col=ecol),
+             ##               {arrows(x[1], x[2], y[1], y[2], code=3,length = 0.1, lty = 1, lwd=lwd);
+             ##                segments(x[1], x[2], y[1], y[2], lty=1, lwd=lwd, col="white");
+             ##                segments(x[1], x[2], y[1], y[2], lty=2, lwd=lwd)},
+             arrows(x[1], x[2], y[1], y[2], code=3, angle=20, length = 0.1, lty = 5, lwd=lwd, col=ecol),
+             double.edges(x[1], x[2], y[1], y[2], lwd=lwd, ecol)
+             )
+    }
+  }
     def.coor <- function(ce, k, h, w) {
       ## Default coords of the dots for an UG.
       if (k == 1) 
@@ -454,97 +497,97 @@ function(amat, coor=NULL, adjust=TRUE, alpha = 1.2, beta = 3, lwd=1, ecol = "blu
       }
       cbind(r1, r2)
     }
-    def.coor.dag <- function(amat, w, h, left){
-      nod <- rownames(amat)
-      o <- topOrder(amat)
-      if(left)
-        o <- rev(o)
-      k <- length(nod)
-      x <- seq(0, 100, len=k)
-      y <- rep(c(20, 40, 60, 80),ceiling(k/4))[1:k] 
-      xy <- cbind(x, y)
-      rownames(xy) <- nod[o]
-      xy[nod,]
-    }    
-    
-    ## Basic definitions
-    
-    v <- rownames(amat)
-    n <- length(v)
-
-    ## The dot type is fixed to 1.
-    
-    dottype <- rep(1,n)
-
-    ## Initialize plot
-    old <- par(mar=c(0,0,0,0))
-    on.exit(par(old))
-    
-    plot(c(0, 100), c(0, 100), type = "n", axes = FALSE, xlab = "", 
-         ylab = "")
-
-    center <- matrix(c(50, 50), ncol = 2)
-    
-    ## Default coordinates of the dots    
-    if (is.null(coor)) {
-      isdag <- isAcyclic(amat)
-      if(isdag)
-        coor <- def.coor.dag(amat, 100, 100, left=left)
-      else
-        coor <- def.coor(center, n, 100, 100)
-    }
-    ## Find the undirected edges
-    g0 <- amat * ((amat == 1) & (t(amat) == 1))
-    g0[lower.tri(g0)] <- 0
-
-    ## Find the directed edges                                    
-    g1 <- amat * ((amat == 1)  & !((amat > 0) & (t(amat) > 0)))
-    
-    ## Find the bidirected edges (for ancestral graphs)
-    g2 <- amat * ((amat == 2) & (t(amat) == 2))
-    g2[lower.tri(g2)] <- 0    
-
-    ## Find the double edges (for summary graphs)    
-    g3 <-  amat *( ((amat == 2)  & (t(amat) == 3)))
-    
-    i <- expand.grid(1:n, 1:n)
-    u0 <- i[g0 > 0, ]
-    u1 <- i[g1 > 0, ]
-    u2 <- i[g2 > 0, ]
-    u3 <- i[g3 > 0, ]
-    
-    ## Plot the dots and the edges
-    if(nrow(coor) !=  length(v))
-      stop("Wrong coordinates of the vertices.")  
-    plot.dots(coor, v, dottype, n, beta)  
-    draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol) 
-    draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
-    draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
-    draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
-
-    ## Adjust the plot
-    if(adjust){
-      repeat {
-        xnew <- unlist(locator(1))
-        if (length(xnew) == 0) {
-          break
-        }
-        d2 <- (xnew[1] - coor[, 1])^2 + (xnew[2] - coor[, 2])^2
-        i <- (1:n)[d2 == min(d2)]
-        coor[i, 1] <- xnew[1]
-        coor[i, 2] <- xnew[2]
-        plot(c(0, 100), c(0, 100), type = "n", axes = FALSE,
-             xlab = "", ylab = "")
-        plot.dots(coor, v, dottype, n, beta)
-        draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol)
-        draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
-        draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
-        draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
-      }
-    }
-    colnames(coor) <- c("x", "y")
-    return(invisible(coor))
+  def.coor.dag <- function(amat, w, h, left){
+    nod <- rownames(amat)
+    o <- topOrder(amat)
+    if(left)
+      o <- rev(o)
+    k <- length(nod)
+    x <- seq(0, 100, len=k)
+    y <- rep(c(20, 40, 60, 80),ceiling(k/4))[1:k] 
+    xy <- cbind(x, y)
+    rownames(xy) <- nod[o]
+    xy[nod,]
+  }    
+  
+  ## Basic definitions
+  
+  v <- rownames(amat)
+  n <- length(v)
+  
+  ## The dot type is fixed to 1.
+  
+  dottype <- rep(1,n)
+  
+  ## Initialize plot
+  old <- par(mar=c(0,0,0,0))
+  on.exit(par(old))
+  
+  plot(c(0, 100), c(0, 100), type = "n", axes = FALSE, xlab = "", 
+       ylab = "")
+  
+  center <- matrix(c(50, 50), ncol = 2)
+  
+  ## Default coordinates of the dots    
+  if (is.null(coor)) {
+    isdag <- isAcyclic(amat)
+    if(isdag)
+      coor <- def.coor.dag(amat, 100, 100, left=left)
+    else
+      coor <- def.coor(center, n, 100, 100)
   }
+  ## Find the undirected edges
+  g0 <- amat * ((amat == 1) & (t(amat) == 1))
+  g0[lower.tri(g0)] <- 0
+  
+  ## Find the directed edges                                    
+  g1 <- amat * ((amat == 1)  & !((amat > 0) & (t(amat) > 0)))
+  
+  ## Find the bidirected edges (for ancestral graphs)
+  g2 <- amat * ((amat == 2) & (t(amat) == 2))
+  g2[lower.tri(g2)] <- 0    
+  
+  ## Find the double edges (for summary graphs)    
+  g3 <-  amat *( ((amat == 2)  & (t(amat) == 3)))
+  
+  i <- expand.grid(1:n, 1:n)
+  u0 <- i[g0 > 0, ]
+  u1 <- i[g1 > 0, ]
+  u2 <- i[g2 > 0, ]
+  u3 <- i[g3 > 0, ]
+  
+  ## Plot the dots and the edges
+  if(nrow(coor) !=  length(v))
+    stop("Wrong coordinates of the vertices.")  
+  plot.dots(coor, v, dottype, n, beta)  
+  draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol) 
+  draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
+  draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
+  draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
+  
+  ## Adjust the plot
+  if(adjust){
+    repeat {
+      xnew <- unlist(locator(1))
+      if (length(xnew) == 0) {
+        break
+      }
+      d2 <- (xnew[1] - coor[, 1])^2 + (xnew[2] - coor[, 2])^2
+      i <- (1:n)[d2 == min(d2)]
+      coor[i, 1] <- xnew[1]
+      coor[i, 2] <- xnew[2]
+      plot(c(0, 100), c(0, 100), type = "n", axes = FALSE,
+           xlab = "", ylab = "")
+      plot.dots(coor, v, dottype, n, beta)
+      draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol)
+      draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
+      draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
+      draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
+    }
+  }
+  colnames(coor) <- c("x", "y")
+  return(invisible(coor))
+}
 
 "dSep" <-
 function(amat, first, second, cond) {
@@ -557,6 +600,7 @@ function(amat, first, second, cond) {
 function (E, inv=FALSE) 
 {
 ### From the adjacency matrix to the edge matrix
+  E <- sign(E)
   if(inv){
     ord <- topOrder(E)
     ord <- rev(ord) # Inverse topological order: Nanny ordering.
@@ -1423,7 +1467,7 @@ function(amat, sel=vertices(amat), cond=NULL){
     cl <- trclos(DLr)
     out <- In(AL %*% cl %*% t(AL))
     out <- out[g,g, drop=FALSE]
-    adjMatrix(out)
+    adjMatrix(out)*2
   }
 
 "inducedDAG" <-

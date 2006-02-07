@@ -16,7 +16,7 @@ checkIdent(amat, latent)
     nodes, or the name of the node.}
 }
 \details{
-  Stanghellini and Wermuth (2003) give some
+  Stanghellini and Wermuth (2005) give some
   sufficient conditions for checking if a Gaussian
   model that factorizes according to a DAG is identified
   when there is one hidden node over which we marginalize.
@@ -26,25 +26,24 @@ checkIdent(amat, latent)
 \value{
   a vector of length  four, indicating if the model is identified
   according to the conditions of theorems 1 and 2 in Stanghellini
-  \& Wermuth (2003). The answer is \code{TRUE} if the  condition holds
+  \& Wermuth (2005). The answer is \code{TRUE} if the  condition holds
   and thus the model is globally identified or \code{FALSE} if the
   condition fails, and thus we do not know if the model is identifiable.
 }
 \references{
-  Stanghellini, E. \& Wermuth, N. (2003). On the
+  Stanghellini, E. \& Wermuth, N. (2005). On the
   identification of path-analysis models with one
-  hidden variable. Submitted and available at
-  \url{http://psystat.sowi.uni-mainz.de}.
+  hidden variable. \emph{Biometrika}, 92(2), 337-350.}
 }
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{isGident}},  \code{\link{InducedGraphs}}}
 \examples{
-## See DAG in Figure 4 (a) in Stanghellini & Wermuth (2003)
+## See DAG in Figure 4 (a) in Stanghellini & Wermuth (2005)
 d <- DAG(y1 ~ y3, y2 ~ y3 + y5, y3 ~ y4 + y5, y4 ~ y6)
 checkIdent(d, "y3")  # Identifiable
 checkIdent(d, "y4")  # Not identifiable?
 
-## See DAG in Figure 5 (a) in Stanghellini & Wermuth (2003)
+## See DAG in Figure 5 (a) in Stanghellini & Wermuth (2005)
 d <- DAG(y1 ~ y5+y4, y2 ~ y5+y4, y3 ~ y5+y4)
 checkIdent(d, "y4")  # Identifiable
 checkIdent(d, "y5")  # Identifiable

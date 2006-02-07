@@ -14,17 +14,17 @@ isGident(amat)
 \details{
   An undirected graph is said G-identifiable if every connected component of
   the complementary graph contains an odd cycle (Stanghellini and
-  Wermuth, 2003). See also Tarantola and Vicard (2002).
+  Wermuth, 2005). See also Tarantola and Vicard (2002).
 }
 \value{
   a logical value, \code{TRUE} if the graph is G-identifiable and
   \code{FALSE} if it is not.
 }
-\references{Stanghellini, E. \& Wermuth, N. (2003). On the
+\references{
+  Stanghellini, E. \& Wermuth, N. (2005). On the
   identification of path-analysis models with one
-  hidden variable. Submitted and available at
-  \url{http://psystat.sowi.uni-mainz.de}.
-  
+  hidden variable. \emph{Biometrika}, 92(2), 337-350.
+
   Stanghellini, E. (1997). Identification of a single-factor
   model using graphical Gaussian rules. \emph{Biometrika}, 84, 241--244.
 
