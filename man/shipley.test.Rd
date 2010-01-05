@@ -15,7 +15,6 @@ shipley.test(amat, S, n)
   \item{S}{a symmetric positive definite matrix, the sample covariance matrix.}
   \item{n}{a positive integer, the sample size.}
 }
-}
 \details{
   The test statistic is \eqn{C = -2 \sum \ln p_j} where \eqn{p_j} are the
   p-values of tests of conditional independence in the basis set

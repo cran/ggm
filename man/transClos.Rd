@@ -22,8 +22,6 @@ path to directed path).
 \value{
   \item{A}{The adjacency matrix of the transitive closure.}
 }
-\references{
-}
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{DAG}}, \code{\link{UG}}}
 \examples{

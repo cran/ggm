@@ -17,7 +17,7 @@ rsphere(n, d)
    of a sample from a multivariate normal \eqn{N(0, I)}.
 }
 \value{a matrix of \code{n} rows and \code{d} columns.
-}}
+}
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{rnorm}}, \code{\link{rcorr}}}
 \examples{

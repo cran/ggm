@@ -23,7 +23,7 @@ triDec(Sigma)
   (with the sign changed) of a system of linear recursive regression
   equations  with independent residuals. In the equations each variable 
   \eqn{i} is regressed on the variables \eqn{i+1, \dots, d}.
-  The elements on the diagonal of \eqn{\Delta} are the partial variances.}
+  The elements on the diagonal of \eqn{\Delta} are the partial variances.
 }
 \value{
   \item{A}{a square upper triangular matrix of the same order as

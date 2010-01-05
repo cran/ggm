@@ -33,7 +33,7 @@ checkIdent(amat, latent)
 \references{
   Stanghellini, E. \& Wermuth, N. (2005). On the
   identification of path-analysis models with one
-  hidden variable. \emph{Biometrika}, 92(2), 337-350.}
+  hidden variable. \emph{Biometrika}, 92(2), 337-350.
 }
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{isGident}},  \code{\link{InducedGraphs}}}

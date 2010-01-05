@@ -35,7 +35,6 @@ UG(f)
 \references{Lauritzen, S. (1996). \emph{Graphical models}. Oxford:
 Clarendon Press.}
 \author{Giovanni M. Marchetti}
-\note{} 
 \seealso{\code{\link{fitConGraph}}, \code{\link{fitCovGraph}}, \code{\link{DAG}}}
 \examples{
 ## X independent of Y given Z

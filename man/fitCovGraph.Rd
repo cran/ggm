@@ -45,7 +45,7 @@ fitCovGraph(amat, S, n, alg = "icf", dual.alg = 2, start.icf = NULL, tol = 1e-06
   By default, this function gives the ML estimates in the covariance 
   graph model, by a new iterative method (Drton \&
   Richardson, 2003).  If desired then estimates from a ``dual
-  likelihood'' heuristic (Kauermann, 1996; Edwards, 2000, \S 7.4).
+  likelihood'' heuristic (Kauermann, 1996; Edwards, 2000, section 7.4).
 }
 \value{
 \item{Shat}{the fitted covariance matrix.}
