@@ -19,9 +19,9 @@ Data on glucose control of diabetes patients.
     \item{V}{a numeric vector, a score for internality (the patient is
     him or herself responsible).}
     \item{W}{a numeric vector, duration of the illness in years.}
-    \item{A}{a factor, level of education, with levels \code{1}: at least
-      13 years of formal schooling, \code{2}: less then 13 years.}
-    \item{B}{a factor, gender with levels \code{1}: females, \code{2}: males.}
+    \item{A}{a numeric vector, level of education, with levels \code{-1}: at least
+      13 years of formal schooling, \code{1}: less then 13 years.}
+    \item{B}{a numeric vector, gender with levels \code{-1}: females, \code{1}: males.}
   }
 }
 \details{
@@ -38,7 +38,8 @@ Data on glucose control of diabetes patients.
   externality, social externality and internality. These are intermediate
   variables. Background   variables are \code{W}, the duration of the
   illness, \code{A} the duration of formal schooling and \code{B},
-  gender. These are intrinsic variables.
+  gender. The background variables \code{A} and \code{B} are binary
+  variables with coding \code{-1}, \code{1}. 
 }
 \source{
 Cox & Wermuth (1996), p. 229.
