@@ -418,7 +418,7 @@ function (...,order=FALSE)
         text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
     }
     angle <- function(v, alpha = pi/2) {
-        theta <- Arg(complex(real = v[1], imag = v[2]))
+        theta <- Arg(complex(real = v[1], imaginary = v[2]))
         z <- complex(argument = theta + alpha)
         c(Re(z), Im(z))
     }
@@ -436,8 +436,8 @@ function (...,order=FALSE)
             cen <- m + d * angle(y - x)
             xm <- x - cen
             ym <- y - cen
-            thetax <- Arg(complex(real = xm[1], imag = xm[2]))
-            thetay <- Arg(complex(real = ym[1], imag = ym[2]))
+            thetax <- Arg(complex(real = xm[1], imaginary = xm[2]))
+            thetay <- Arg(complex(real = ym[1], imaginary = ym[2]))
             theta <- seq(thetax, thetay, len = n)
             l <- crossprod(y - m)
             delta <- sqrt(d^2 + l)
@@ -2048,3 +2048,502 @@ function(amat) rownames(amat)
         stop("'object' is not in a valid format")
     }
 }
+
+## Fit multivariate logistic model with individual covariates
+#############################################################
+ 
+
+
+`binve`  <- function(eta, C, M, G, maxit=500, print=FALSE, tol = 1e-10){
+# Inverts a marginal loglinear parameterization.
+# eta  has dimension t-1, 
+# G is the model matrix of the loglinear parameterization with no intercept.
+# C and M are the matrices of the link. 
+# From a Matlab function by A. Forcina, University of Perugia, Italy.
+    
+                                                           
+    ## starting values
+
+    k <- nrow(C)
+    pmin <- 1e-100
+    kG  <-  ncol(G)
+    err <- 0
+    th0  <-  matrix(1, k, 1) / 100
+
+    ## prepare to iterate
+    it <- 0
+    mit <- 500          
+    p <- exp(G %*% th0)
+    p <-  p/sum(p)
+    t <- M %*% p        
+    d <- eta - C %*% log(t)
+    div0 <- crossprod(d)
+    hh <- 0
+    s <- c(.1, .6, 1.2)
+    div <- div0 + 1            
+    while((it < maxit) & (div > tol)){
+        R0 <- C %*% diagv(1/t, M) %*% diagv(p,G)
+        rco <- rcond(R0) > tol
+        ub <- 0
+        while(rco==FALSE){
+            cat("Rank: ", qr(R0)$rank, "\n")  
+            R0 <- R0 + diag(k)
+            rco <- rcond(R0) > tol
+        }
+        de  <-  solve(R0) %*% d
+        dem  <-  max(abs(de))
+        de  <-  (dem <= 4)*de + (dem>4)*4*de/dem
+        th <- th0 + de
+        p <- exp(G %*% th)
+        p <- p/sum(p)
+        p <- p+pmin*(p<pmin)
+        p <- p/sum(p)
+        t <- M %*% p
+        d <- eta-C %*% log(t)
+        div <- crossprod(d)
+        rid <- (.01+div0)/(.01+div)
+        iw <- 0
+        while( (rid <0.96) & (iw<10)){
+            th  <- th0 + de  %*% (rid^(iw+1))
+            p <- exp(G %*% th)
+            p <- p/sum(p)
+            p <- p + pmin*(p<pmin)
+            p <- p/sum(p)
+            t <- M %*% p
+            d <- (eta-C %*% log(M %*% p))
+            div <- crossprod(d)
+            rid <- (.01 + div)/(.01 + div0)
+            iw <- iw+1;  it <- it+1
+        }
+        if( rid < 0.96){
+            it <- mit
+        }
+        else{
+            it <- it+1
+            th0 <- th
+        }
+    }
+   if (div > tol) {
+        warning("div > tolerance.", call. =FALSE)
+    }
+    if (any(is.nan(p))){
+        warning("Some NaN in the vector of probabilities.", call. =FALSE)
+    }
+    if (it > maxit){
+        warning("Maximum number of iteration reached.", call. = FALSE)
+    }
+    if(print){
+       cat("Iterations: ", it, ", Div = ", div, ".\n")
+    }
+    as.vector(p)
+}       
+
+             
+
+# The following function has been generalized and called mlogit.param
+
+`mat.mlogit` <- function(d, P = powerset(1:d)) {
+## Find matrices C and M of binary mlogit parameterization  for a table 2^d. 
+## The output will be in the ordering of P.
+## Here for 3 variables is: 1 2 3 12 13 23 123.  
+
+`margmat` <- function(bi, mar){
+### Defines the marginalization matrix
+    if(mar ==  FALSE){
+      matrix(1, 1, bi)
+    }
+    else {
+      diag(bi)
+    }
+  }
+
+`contrmat` <- function(bi, i){
+### Contrast matrix
+    if(i == FALSE){
+      1
+    }
+    else{
+      cbind(-1, diag(bi-1))
+    }
+  }
+  V <- 1:d
+
+  C <- matrix(0,0,0)
+  L <- c()
+
+  for(mar in P){
+    K <- 1
+    H <- 1
+    for(i in V){
+      w <- is.element(i, mar)
+      K <- contrmat(2, w) %x% K
+      H <- margmat(2, w)  %x% H
+    }
+    C <- blkdiag(C, K)
+    L <- rbind(L, H)
+  }
+  list(C=C, L=L)
+}   
+
+`powerset` <- function(set, sort = TRUE, nonempty=TRUE){
+## Power set P(set). If nonempty = TRUE, the empty set is excluded.
+    d <- length(set)
+    if(d == 0){
+        if(nonempty){
+            stop("The set is empty.")
+        }
+        return(list(c()))
+    }
+
+    out <- expand.grid(rep(list(c(FALSE, TRUE)),d))
+    out <- as.matrix(out)
+    out <- apply(out, 1, function(x) set[x])
+    if(nonempty){
+        out <- out[-1]
+    }
+    if(sort){
+        i <- order(unlist(lapply(out, length)))
+    }
+    else{
+    	i <- 1:length(out)
+    	}
+    names(out) <- NULL
+    out[i]
+}        
+
+`null` <- function (M) 
+{
+    tmp <- qr(M)
+    set <- if (tmp$rank == 0L) 
+        1L:ncol(M)
+    else -(1L:tmp$rank)
+    qr.Q(tmp, complete = TRUE)[, set, drop = FALSE]
+}
+
+     
+`diagv` <-     function(v,M){
+# Computes N = diag(v) %*% M avoiding the diag operator.
+    as.vector(v) * M
+}
+         
+`blodiag` = function(x, blo){
+# Split a vector x into a block diagonal matrix bith components blo.
+# Used by fitmlogit.
+k = length(blo) 
+ B = matrix(0, k, sum(blo))
+ u = cumsum(c(1, blo))
+ for(i in 1:k){       
+	  sub = u[i]:(u[i+1]-1)
+      B[i,sub] = x[sub]	
+ }   
+B
+}
+
+
+##### The main function fitmlogit  ##########
+
+`fitmlogit` <- function(..., C = c(), D = c(), data, mit = 100, ep = 1e-80, acc = 1e-4) {
+# Fits a logistic regression model to multivariate binary responseses.
+
+# Preliminaries
+
+loglin2 <- function(d){
+# Finds the matrix G for a set o d binary variables in inv lex order.
+
+    G <- 1
+    K <- matrix(c(1,1,0,1), 2, 2)
+        
+    for(i in 1:d){
+      G <- G %x% K
+    }
+    G[,-1]    
+}    
+
+
+mods = list(...)
+# mods should have 2^q - 1 components  
+nm = length(mods)  
+
+be = c()
+# Starting values 
+resp = c()        
+Xbig = c()    
+blo = c()
+for (k in 1:nm){   
+	mf = model.frame(mods[[k]], data = data)  
+	res = model.response(mf)  
+	Xsmall = model.matrix(mods[[k]], data = data)  
+	Xbig = cbind(Xbig, Xsmall)      
+	blo = c(blo, ncol(Xsmall))
+	nr = 1   
+    if(is.vector(res)){
+		b = glm(mods[[k]], family = binomial, data = data)
+	    be = c(be, coef(b))    
+	}
+	 else { 
+	 	    be2 = rep(0.1, ncol(Xsmall))
+			be = c(be, be2)
+			nc = ncol(res)
+			
+			if(nc > nr){ 	  
+			nr = nc
+			Y = res  
+	        }
+	 }
+} 
+
+q  = nr        # number of responses   
+
+b = rep(2, q)       # Assuming all binary variables
+             
+
+# Transforms the binary observation into a cell number 
+   y = 1 + (Y %*% 2^(0:(q-1))) 
+
+# Finds the matrices C, M and G
+
+	mml = mat.mlogit(q)
+	Co = mml$C; Ma = mml$L; Co = as.matrix(Co)
+	G = loglin2(q)
+
+
+b0 = be
+n = length(y) # le righe di y sono le unita'
+t = max(y)  #  Questo e' semplicemente 2^q 
+
+
+k = length(be)   # number of parameters
+rc = nrow(C); cc = ncol(C)
+rd = nrow(D); cd = ncol(D)
+
+# if (k != cc){ 
+#     warning('check col C') 
+# }
+# if( k != cd){ 
+#     warning('check col D') 
+# }
+ 
+if (! is.null(C)){ # se C non ha zero righe trova il null space di C
+     U = null(C) 
+ }
+ 
+ seta = nrow(Co)  # e' la dimensione di eta
+ mg = t(G) %*% matrix(1/t, t, t)    # NB troppi t!
+  
+ H = solve(crossprod(G) - mg %*% G) %*% (t(G)-mg)
+
+# initialize
+            
+
+
+ P = matrix(0,t,n) 
+ cat('Initial probabilities\n')
+ 
+ for (iu in 1:n){ #  initialize P iu = index of a unit
+#   X = .bdiag(lapply(mods, function(x) model.matrix(x, data = data[iu,])))    ### Change this   
+#   X = as.matrix(X)
+   X = blodiag(Xbig[iu,], blo)
+   eta = X %*% be     
+   eta = as.matrix(eta)
+   p = binve(eta, Co,Ma,G)
+   p = pmax(p,ep); p=p/sum(p)  
+   P[,iu] = p           
+ }
+      
+ # Iterate
+
+ it=0; test=0;
+ diss=1;  LL0=0; dis=1; dm=1;
+ while (it < mit &&  (dis + diss) > acc){
+   LL = 0; s = matrix(0, k,1); S = matrix(0, k, k); dis = 0
+   for (iu in 1:n) {  
+     # X = .bdiag(lapply(mods, function(x) model.matrix(x, data = data[iu,])))   
+     # X = as.matrix(X)
+     X = blodiag(Xbig[iu,], blo)      
+     p = P[,iu]     
+  
+     if (it > 0){
+       Op = diag(p) - p %*% t(p)  
+
+       R = Co %*% diagv(1/(Ma %*% p),Ma) %*% Op %*% G # This is the inverse Jacobian 
+                    
+       while (rcond(R) < 1e-12){
+           R = R + diag(seta)       
+       }  
+    
+      R = solve(R) 
+      delta = X %*% be - Co %*% log(Ma %*% p)
+      th = H %*% log(p) + R %*% delta
+      dm = max(th) - min(th)
+      p = exp(G %*% th);  p=p/sum(p) 
+      p = pmax(p,ep);     p=p/sum(p)  
+      P[,iu] = p     
+     }              
+
+      LL = LL + log(p[y[iu]])
+     
+      Op = diag(as.vector(p)) - p %*% t(p)   
+
+      R = Co %*% diagv(1/(Ma %*% p),Ma) %*% Op %*% G     # Check 
+
+      while (rcond(R)<1e-12){
+         R = R + diag(seta)
+      }
+      R = solve(R) 
+      eta = Co %*% log(Ma %*% p)
+      delta = X %*% be - eta
+      dis = dis + sum(abs(delta))
+      A = G %*% R %*% X  
+      B = t(R) %*% t(G) %*% Op %*% A 
+      S = S + t(B) %*% X     
+  
+      #    attivare una delle due 
+
+      s = s + (t(A[y[iu],, drop = FALSE]) - t(A) %*% p) + t(B) %*% eta   # versione 1
+#     s = s +( t(A[y[iu],]) - t(A)%*% p)             # versione 2
+
+   }
+
+   while(rcond(S) < 1e-10){
+     S = S + mean(abs(diag(S))) * diag(k)
+   }
+  #  attivare 1 delle due     
+ 
+    b0 = be;  v = solve(S, s) #  versione 1
+#    b0=be; v = b0 + solve(S) %*% s # versione 2
+      
+    if(is.null(rc)  & is.null(rd)){
+         de = v - b0
+     }
+    else if(is.null(rc)) { # only inequalities
+     	Si = solve(S) 
+     	Li = t(chol(Si)) 
+     	Di = D %*% Li
+     	de = NULL
+     	# de = v - b0 + Li %*% ldp(Di,-D %*% v) # Needs ldp
+    } 
+    else if (is.null(rd)){  # only equalities
+     	Ai = solve(t(U) %*% S %*% U)
+     	de = U %*% Ai %*% t(U) %*% S %*% v - b0
+    }
+   else {             # both  equalities and inequalities
+     	Ai = solve(t(U) %*% S %*% U)
+     	Li = t(chol(Ai)) 
+     	Dz = D %*% U 
+     	ta = Ai %*% t(U) %*% S %*% v
+     	#de = U %*% (ta + Li %*% ldp(Dz %*% Li, -Dz %*% ta)) - b0 # Needs ldp
+     	de = NULL
+   }
+   
+   dm0 =dm; dm = max(de) - min(de);   # shorten step  
+
+   dd = (dm > 1.5); de = de/(1 + dd*(dm^(.85)))
+   be = b0 + de   
+   diss = sum(abs(de))
+   LL0 = LL  
+   it = it+1     
+   cat(c(it, LL/100, dis/n, diss), "\n")
+#   cat(t(be), "\n")
+
+}   
+
+list(LL=LL, beta=be, S=S, P=P)
+}               
+
+`marg.param` = function(lev,type) 
+# Creates matrices C and M for the marginal parametrization
+# of the probability vector for a vector of categorical variables.
+# INPUT:
+# lev:  vector containing the number of levels of each variable
+# type: vector with elements 'l', 'g', 'c', 'r' indicating the type of logit
+#       'g' for global, 
+#       'c' for continuation,
+#       'r' for reverse continuation, 
+#       'l' for local.
+# OUTPUT:
+# C:    matrix of constrats (the first sum(lev)-length(r) elements are
+#       referred to univariate logits)
+# M:    marginalization matrix with elements 0 and 1
+# G:    corresponding design matrix for the corresponding log-linear model   
+# Translated from a Matlab function by Bartolucci and Forcina.
+# NOTE: assumes that the vector of probabilities is in inv lex order. 
+#       The interactions are returned in order of dimension, like e.g.,  1 2 3 12 13 23 123. 
+{
+# preliminaries
+
+`powset` <- function(d)
+# Power set P(d).
+{      
+	P = expand.grid(rep(list(1:2), d))
+	P[order(apply(P, 1, sum)),]-1
+}
+
+  r = length(lev)
+# create sets of parameters
+ S = powset(r)
+ S = S[-1,]  # drop the empty set
+  C = c(); M = c(); G = c()
+  for (i in 1:nrow(S)){
+    si = S[i,] 
+    Ci = 1  # to update matrix C
+    for (h in 1:r){
+      if(si[h]==1){
+        I = diag(lev[h] - 1)
+        Ci = cbind(-I, I) %x% Ci 
+      }
+    }
+    C = blkdiag(C, Ci)
+    Mi = 1  # to update matrix M
+    for (h in 1:r) { 
+	  lh = lev[h]-1 
+      if(si[h]==1) {
+        I = diag(lh)   
+        T = 0 + lower.tri(matrix(1, lh,lh), diag=TRUE)
+        ze = matrix(0, lh, 1)
+        Mi = switch(type[h], 
+          l = rbind(cbind(I, ze), cbind(ze, I)) %x%  Mi,
+          g = rbind(cbind(T, ze), cbind(ze, t(T))) %x%  Mi,
+          c = rbind(cbind(I, ze), cbind(ze, t(T))) %x%  Mi,
+          r = rbind(cbind(T, ze), cbind(ze, I)) %x%  Mi)
+      }        
+      else {
+        Mi = matrix(1, 1,lev[h])  %x%  Mi
+      } 
+    }    
+    M = rbind(M, Mi)  
+    
+    Gi = 1  # for the design matrix
+    for (h in 1:r) { 
+	  lh = lev[h] 
+      if(si[h]==1) {                          
+	     T = 0 + lower.tri(matrix(1, lh,lh), diag=TRUE); T = T[,-1]  
+        Gi = T %x% Gi   
+      }
+      else{
+        Gi =  matrix(1, lh, 1) %x% Gi
+      }
+    }
+    G = cbind(G, Gi)
+  }   
+list(C = C, M = M, G = G)
+}
+
+ `blkdiag` <- function(...){
+### Block diagonal concatenation of input arguments.
+    a <- list(...)
+    Y <- matrix(0,0,0);
+    for(M in a){
+        if(is.null(M))
+            M <- matrix(0,0,0)
+        M <- as.matrix(M)
+        dY <- dim(Y); dM <- dim(M)
+        zeros1 <- matrix(0, dY[1], dM[2])
+        zeros2 <- matrix(0, dM[1], dY[2])
+        Y <- rbind(cbind(Y, zeros1), cbind(zeros2, M))
+    }
+    Y
+}
+
+# source("~/Documents/R/graphical_models/fitmlogit.R")   
+# fitmlogit(A ~X, B ~ Z, cbind(A, B) ~ 1, data = datisim)    
+# source("~/Documents/R/graphical_models/ilaria/sim-blogit.R") 

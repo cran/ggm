@@ -9,27 +9,30 @@ Anger data
 }
 \usage{data(anger)}
 \format{
-A \eqn{4 \times 4} covariance matrix for the following variables.  
+A covariance matrix for 4 variables measured on 684 female students. 
   \describe{
-\item{Y}{}
-\item{X}{}
-\item{V}{}
-\item{U}{}
+\item{X}{anxiety state}
+\item{Y}{anger state}
+\item{Z}{anxiety trait}
+\item{U}{anger trait}
   }   
 }
-\details{
+\details{ Trait variables are viewed as stable personality characteristics, and
+state variables denote behaviour in specific situations. 
 See Cox and Wermuth (1996).
 }
-\source{
-Nanny
-}
 \references{
-  Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-  dependencies}. London: Chapman \& Hall.}
+  Cox, D. R. and Wermuth, N. (1996). \emph{Multivariate
+  dependencies}. London: Chapman and Hall.
+  
+  Cox, D.R. and Wermuth, N. (1990). \emph{An approximation to maximum likelihood
+estimates in reduced models}. 77(4), 747-761. 
+}
 
-\examples{
+\examples{ 
+# Fit a chordless 4-cycle model 
 data(anger) 
-G = UG(~ Y*X + X*V + V*U + U*Y)
-fitConGraph(G,anger, 100) 
+G = UG(~ Y*X + X*Z + Z*U + U*Y)
+fitConGraph(G,anger, 684) 
 }
 \keyword{datasets}

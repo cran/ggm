@@ -12,5 +12,7 @@ export(basiSet, bd, edgematrix, swp, adjMatrix,
         fitAncestralGraph, unmakeMG, vertices, essentialGraph, 
         AG, grMAT, MAG, MarkEqRcg, MarkEqMag, 
         Max, MRG, msep, MSG, RepMarBG, RepMarDAG, 
-        RepMarUG, RG, RR, SG, SPl, rem, isAG, isADMG, plotGraph, DG )
+        RepMarUG, RG, RR, SG, SPl, rem, isAG, isADMG, plotGraph, DG,
+        binve, blkdiag, blodiag, diagv, fitmlogit,    
+        mat.mlogit, marg.param, null, powerset)
 

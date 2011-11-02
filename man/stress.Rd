@@ -20,9 +20,6 @@ A \eqn{4 \times 4} covariance matrix for the following variables.
 \details{
 See Cox and Wermuth (1996).  
 }
-\source{
-Nanny Wermuth
-}
 \references{
 Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
 dependencies}. London: Chapman \& Hall.
