@@ -25,10 +25,10 @@ element iff the corresponding element of \code{A} is (exactly) zero.
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{DAG}}, \code{\link{inducedCovGraph}}, \code{\link{inducedConGraph}}}
 \examples{
-## A simple way to find the overall induced coincentration graph
+## A simple way to find the overall induced concentration graph
 ## The DAG on p. 198 of Cox & Wermuth (1996)
 amat <- DAG(y1 ~ y2 + y3, y3 ~ y5, y4 ~ y5)
-A <- edgeMatrix(amat)
+A <- edgematrix(amat)
 In(crossprod(A))
 }
 \keyword{array}

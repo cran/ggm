@@ -30,6 +30,6 @@ findPath(amat, st, en, path = c())
 \seealso{\code{\link{fundCycles}}}
 \examples{
 ## A (single) path on a spanning tree
-findPath(bfs(UG(~ a*b*c + b*d + d*e+ e*c))$tree, st=1, en=5)
+findPath(bfsearch(UG(~ a*b*c + b*d + d*e+ e*c))$tree, st=1, en=5)
 }
 \keyword{graphs}

@@ -1,0 +1,535 @@
+% \VignetteIndexEntry{Graphical Markov Models with Mixed Graphs in R} 
+% \VignetteDepends{ggm, gRbase, igraph} 
+% \VignetteKeyword{graphs} 
+% \VignetteKeyword{graphical models}
+\documentclass[11pt]{article} 
+
+\usepackage[a4paper, margin=3cm]{geometry}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[round]{natbib}
+\bibliographystyle{abbrvnat}
+
+\newcommand{\pkg}[1]{\textbf{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+% space corresponding to size two n
+\newcommand{\nn}[0]{\hspace*{.7em}}
+
+% full line
+\newcommand{\ful}{\mbox{$\, \frac{ \nn \nn \;}{ \nn \nn
+}$}}
+
+% full left arrow
+\newcommand{\fla}{\mbox{$\hspace{.05em} \prec
+\!\!\!\!\!\frac{\nn \nn}{\nn}$}}
+
+% full right arrow
+\newcommand{\fra}{\mbox{$\hspace{.05em} \frac{\nn
+\nn}{\nn
+}\!\!\!\!\! \succ \! \hspace{.25ex}$}}
+
+%arc
+\newcommand{\arc}{\mbox{$\hspace{.06em} \prec
+\!\!\!\!\!\frac{\nn \nn}{\nn}%\frac{\nn \nn}{\nn }
+\!\!\!\!\!
+\succ\! \hspace{.25ex}$}}
+
+\newcommand{\cip}{\mbox{\protect{ $ \perp \hspace{-2.3ex}\perp$ }}}
+
+\newcommand{\cd}{\,|\,}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\title{Graphical Markov Models with Mixed Graphs in R}
+\author{Keyvan Sadeghi\\
+Department of Statistics,   University of Oxford, \\
+1 South Parks Road, OX1 3TG, Oxford, UK, \texttt{sadeghi@stats.ox.ac.uk}\\
+  \and
+ Giovanni M. Marchetti, \\
+ Department of Statistics, ``G. Parenti'', University of Florence\\
+ viale Morgagni, 59, 50134 Firenze, Italy,  \texttt{giovanni.marchetti@ds.unifi.it}
+}
+\date{\today}
+\begin{document}
+\maketitle
+\begin{abstract}
+In this paper we provide a short tutorial illustrating some new functions in the package \pkg{ggm} to deal with 
+some problems related to graphical models that use mixed graphs. Some of these functions provide methods and implement new graph-theoretical algorithms that generate ribbonless, summary, and ancestral graphs, which are mixed graphs that induce the modified independence structure after marginalization over and conditioning on nodes of directed acyclic graphs. We also provide functions to test  $m$-separation on these graphs, and to generate maximal graphs inducing the same independence structure of non-maximal graphs. Finally, we provide functions that deal with different problems related to Markov equivalences of several classes  of graphical models. 
+\end{abstract}
+
+%% do not edit, for illustration only
+
+
+\SweaveOpts{keep.source = TRUE}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setkeys{Gin}{width=0.4\textwidth}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+\section{Introduction and background}
+\emph{Graphical Markov models} have become a part of the mainstream of statistical theory and application in recent years. These models use graphs to represent conditional independencies among sets of random variables. Nodes of the graph correspond to random variables and missing edges between nodes $i$ and $j$ typically indicate independencies in the form of $i\cip j\cd C(i,j)$ with a specific definition for $C(i,j)$ depending on the model.
+
+\paragraph{Mixed graphs and separation criteria.}
+General criteria, determining whether two disjoint subsets of variables $A$ and $B$ in a graphical model are independent given a third subset $C$ are typically path-based and called separation criteria, verifying whether there is a path of a specific type, determined by $C$, between $A$ and $B$. For more details see, for instance, \citet{lau96}.
+
+The more general class of graphs that have been used in the literature of graphical models is the class of so-called \emph{mixed graphs}. These graphs contain three types of edge, denoted by lines, $\ful$, arrows, $\fra$, and arcs (bi-directed arrows), $\arc$. The class of mixed graphs contains subclasses of graphs with fewer types of edge, such as undirected and 
+directed acyclic graphs. The same separation criterion, known as \emph{$m$-separation}, applies to all mixed graphs \citep{sad11} and can be used to determine the conditional independence of the random variables when the joint probability is faithful to the graph; see \citet{pea88,ric02}.
+
+While for many subclasses of graphs a missing edge corresponds to some independence statement, for the more complex classes of mixed graphs this is not necessarily true. A graph where each of its missing edges is related to an independence statement is called a \emph{maximal graph}. For a more detailed discussion on maximality of graphs and graph-theoretical conditions for maximal graphs, see \citet{ric02} and \citet{sad11}.
+
+\paragraph{Marginalization, conditioning and graph stability.}
+An essential motivation for defining classes of graphs with three types of edge is that they are \emph{stable under marginalization and conditioning}. This means that in the related models when some variables are ignored (marginalized over) or when other variables are fixed by selecting and fixing their value (conditioned on), there exists a graph of the same class that captures the modified independence statements. The resulting graph, with a reduced node set 
+obtained by removing nodes involved in the marginalization and conditioning, conforms to the modified 
+independence statements coming from marginalization and conditioning for the corresponding random variables.
+ 
+The graphs generated after marginalization and conditioning are of particular interest when there are unobserved or selection variables in directed acyclic graph (DAG) models. DAG models are  useful since they suggest 
+a recursive data generating process, but unfortunately DAGs are not stable under marginalization and conditioning. 
+We consider three known classes of \emph{stable mixed graphs} 
+that contain directed acyclic graphs, which are the ribbonless graphs (RGs),
+ \citep{sad112} (defined as a modification of MC-graphs \citep{kos02}), the summary graphs (SGs) \citep{wer11}, and the 
+ ancestral graphs (AGs) \citep{ric02}.
+
+\citet{sad112} defines the algorithms generating stable mixed graphs of a specific type for a given DAG or for a
+stable mixed graphs of the same type. 
+\paragraph{Markov equivalence.}
+Two graphs of different types, or even two graphs of the same type, may induce the same independencies under $m$-separation. Such graphs are said to be Markov equivalent. In the literature several problems related to Markov equivalences have been discussed. These include (a) verifying the Markov equivalence of given graphs, (b) presenting conditions under which a graph of a specific type can be Markov equivalent to a graph of another type, and (c) providing algorithms for generating Markov equivalent graphs of certain type from a given graph.
+
+Conditions for Markov equivalence for maximal ancestral graphs (MAGs) have been given in \citet{ali04}, whereas simpler conditions for Markov equivalence for regression chain graphs (RCGs), which are subclass of MAGs, have been presented in \citet{wers11}. A summary of conditions and algorithms for the above mentioned problems have been provided in \citet{sad113} for MAGs, RCGs, and other subclasses of graphs including undirected graphs (used in concentration models), bidirected (used in covariance models), and DAGs.
+\paragraph{Outline.}
+In this paper we provide a tutorial explaining how the algorithms related to stable mixed graphs, m-separation, Markov equivalences, and maximality can be implemented in R.
+
+We first introduce the different ways of defining mixed graphs in \pkg{ggm}. We then introduce functions that generate different types of stable mixed graphs from DAGs or from graphs of the same class. We discuss how to generate a maximal graph that induces the same independence structure from a non-maximal graph. We then illustrate how to verify the validity of given independence statements over the defined or generated graphs by using the $m$-separation criterion. Finally, we  illustrate functions to deal with different problems related to Markov equivalence.
+
+The functions and codes outlined in this paper have been merged as a new set of functions into the R package \pkg{ggm}. For some previous contributions of \pkg{ggm}, see \citet{mar06}. The package \pkg{ggm} has been improved and it is
+now more integrated with other contributed packages related to graphs, such as \pkg{graph}, \pkg{igraph} \citep{csa09}, and \pkg{gRbase} \citep{DetHo05}, which are now required for representing and plotting graphs.   
+In particular, in addition to adjacency matrices, all the functions in the package now accept \code{graphNEL} and \code{igraph} objects as input, as well as a new character string representation, which will be discussed later in this paper. Notice however that 
+all the algorithms internally use the adjacency matrix representation. 
+
+A list of available packages in graphical models with some descriptions can be found at CRAN Task View gRaphical Models in R at 
+  \texttt{http://cran.r-project.org/web/views/gR.html}. 
+  
+\section{Defining directed acyclic graphs}
+We start by illustrating some ways of defining directed acyclic graphs in R. 
+We shall use four graph representations, that is 
+(a) by \code{graphNEL} objects, (b) by \code{igraph} objects, (c)  by adjacency matrices, (d) by character
+vectors. These same representations will be extended to general mixed graphs in the next section.
+\paragraph{Defining DAGs as graphNEL objects.} The \pkg{graph} package provides the \code{graphNEL} class for 
+graphs that are represented in terms of nodes and an edge list.
+These graphs can be either directed or undirected, with no multiple edges or self-loops. The \pkg{gRbase} package provides the function  \code{dag} for easily defining DAGs as
+\code{graphNEL} objects. One way in which the graph can be specified is by a list
+of formulas. For example, one can define a DAG by the following formula, where, for example, \code{~h*p*r} implies that $h$ has parents $p$ and $r$. For reference, we plot the DAG after the explanations related to the formula, by using the 
+\pkg{ggm} function \code{plotGraph}. 
+
+<<echo=false>>= % 1
+library(ggm)
+options(width = 50)
+options(continue = "  ")
+@
+
+<<>>=% 2
+exdag <- dag(~r, ~q*r, ~p, ~h*p*r, ~l, 
+             ~k*l, ~j*k, ~i*h*l*j)
+exdag
+@
+Notice that one cannot use integers as node labels in \code{graphNEL} objects. 
+In addition, instead of ``*'' a ``:'' can be used in the specification. To retrieve the nodes and edges of the DAG the functions \code{nodes} and \code{edges} are used. Thus for instance,
+<<>>=% 3
+nodes(exdag)
+@
+To plot a DAG as a \code{graphNEL} object one can use the function \code{plot} in the \pkg{Rgraphviz} package or 
+various plotting options within the \pkg{igraph} package (see below). 
+Our recommended way is to use  a defined function \code{plotGraph} as follows:
+<<eval=false>>=
+plotGraph(exdag)
+@
+\begin{center}
+\includegraphics[scale = 0.45]{fig1}
+\end{center}
+\paragraph{Defining DAGs as igraph objects.} In package \pkg{igraph} there are many 
+ways of defining DAGs as \code{igraph} objects; for the full list  see \citet{csa09}. 
+Probably the most handy way of generating small graphs is to use \code{graph.formula}. In this function we use ``-'' as edges and ``+'' as arrowheads. For example, for the same DAG as before, we use 
+<<>>= % 4
+exdag <- graph.formula(q+-r-+h+-p, 
+         h-+i+-l-+k,   i+-j+-k)
+exdag
+@
+It is always possible to convert \code{igraph} graphs to \code{graphNEL} objects or back using the \code{igraph.to.graphNEL} and \code{igraph.from.graphNel} functions. 
+
+Also, the package \pkg{igraph} contains several options for plotting graphs such as the function 
+ \code{tkplot}. This is a quite flexible function providing an interactive graph drawing facility based on Tcl-Tk. 
+Our \code{plotGraph} function is just a convenient wrapper of this function.  
+\paragraph{Defining DAGs with adjacency matrices.} Any graph can be defined by an \emph{adjacency matrix}. 
+ The adjacency matrix of a loopless directed graph $G$ with node set $V$ and edge set $E$  is the matrix $A=(a_{ij})$ of size $|V|\times |V|$ with zeros on the diagonal and 
+$$
+a_{ij}=\begin{cases}
+       1, & \text{ if } i\fra j; \\
+       0  & \text{otherwise.}\\
+   \end{cases}
+$$
+An adjacency matrix can be defined directly without defining a \code{graphNEL} or  \code{igraph} object. 
+For instance the adjacency matrix of the previous DAG can be created via:
+
+<<>>= % 5 
+A <- matrix(0,8,8)
+A[8,7] <- A[8,5] <- A[6,5] <- A[5,1] <- 
+A[4,1] <- A[4,3] <- A[2,1] <- A[3,2] <- 1
+A
+@
+All functions in package \pkg{ggm} accept adjacency matrices as defining graphs. If the node names are 
+not provided, the functions would specify by default as labels the  integers $\langle 1,\dots,n\rangle$, 
+where $n$ is the number nodes. Thus the defined adjacency matrix \code{A} defines the following graph: 
+<<eval=FALSE>>= % 6 
+plotGraph(A)
+@
+\begin{center}
+\includegraphics[scale = 0.45]{fig51n}
+\end{center}
+The node labels are obtained by including appropriate  \code{dimnames} to the matrix:
+<<>>=
+V <- c("i","j","k","l","h","p","q","r")
+dimnames(A) = list(V, V)
+@
+An adjacency matrix for the DAG can be also obtained using the function \code{DAG} in \pkg{ggm}. 
+This function accepts as input a model formula an returns the adjacency matrix with the appropriate labels. 
+For the same DAG, which we call \code{exdag}, we can write
+<<>>=
+exdag <- DAG(i ~ j+l+h, k~l, h~r+p, q ~ r)
+@  
+The function also verifies whether the resulting graph is acyclic. 
+\section{Defining mixed graphs}
+A mixed graph is a graph with at most three types of edge: directed, undirected and bi-directed, with possibly 
+multiple edges of different types connecting two nodes.  For instance the following graph is a mixed graph:
+<<echo = false>>=
+mg <- c("b","X","Y","a","X","Y","l","X","Q",
+        "b","Q","X","a","Y","Q","b","Y","Z",
+        "a","Z","W","a","W","Z","b","W","Q")
+@
+<<eval = false, echo = false>>=
+plotGraph(mg)
+@
+\begin{center}
+\setkeys{Gin}{width=0.3\textwidth}
+\includegraphics[scale = 0.4]{fig51}
+\end{center}
+In \pkg{ggm} we provide some tools for mixed graphs that are not present in other packages. Here we briefly illustrate
+some methods to define mixed graphs and use the same function, \code{plotGraph}, to plot them. 
+
+The first method is based on a generalization of the adjacency matrix described in the previous section. The second
+uses a descriptive vector and is easy to use for small graphs. The third uses a special function \code{makeMG}
+that allows to combine the directed, undirected and bi-directed components of a mixed graph. 
+
+\paragraph{Adjacency matrices for mixed graphs.} In the adjacency matrix of a mixed graph we code the three different edges with a binary indicator: 1 for directed, 10 for undirected and 100 for bi-directed edges. When there are multiple
+edges the codes are added. 
+
+Thus the \emph{adjacency matrix of a mixed graph}  $H$ with node set $N$ and edge set
+$F$ is an $|N|\times|N|$ matrix obtained as $A=B+S+W$ by adding three matrices $B = (b_{ij})$, $S = (s_{ij})$ and
+$W = (w_{ij})$ defined by 
+\begin{eqnarray*}
+b_{ij} &=&
+  \begin{cases}
+    1, & \text{ if and only if } i\fra j \text{ in } H; \\
+    0, & \text{otherwise.}\\
+  \end{cases}\\
+s_{ij}=s_{ji}&=&
+  \begin{cases}
+    10, & \text{if and only if } i\ful j \text{ in } H; \\
+    0, & \text{otherwise.}
+  \end{cases}\\
+w_{ij}=w_{ji}&=&
+  \begin{cases}
+    100, & \text{if and only if } i\arc j \text{ in } H; \\
+    0, & \text{otherwise.}
+  \end{cases}
+\end{eqnarray*}
+Notice that because of the symmetric nature of lines and arcs $S$ and $W$ are symmetric, whereas $B$ is not necessarily symmetric. Therefore, the mixed graph shown before can be defined by the commands
+<<>>=
+mg <- matrix(c( 0, 101,   0,   0, 110,
+              100,   0, 100,   0,   1,
+                0, 110,   0,   1,   0,
+                0,   0,   1,   0, 100,
+              110,   0,   0, 100,   0), 
+      5,5, byrow = TRUE)
+N <- c("X","Y","Z","W","Q")
+dimnames(mg) <- list(N, N)
+mg
+@
+and can be plotted with \code{plotGraph(mg)}.
+\paragraph{Defining mixed graphs by using vectors.} A more convenient way of defining small mixed graphs is based on a simple  vector coding as follows. The graph is defined by a character vector of length $3f$, where 
+$f = |F|$ is the number of edges, and the vector contains a sequence of triples $\langle$\code{type, label1, label2}$\rangle$, 
+where the \code{type} is the edge type and \code{label1} and \code{label2} are the labels of the two nodes. 
+The edge type accepts \code{"a"} for an directed arrow ,  \code{"b"} for an arcs and \code{"l"} for a line. 
+Notice that isolated nodes may not be created by this method. For example, the vector representation of the previous mixed graph is
+<<>>=
+mgv <- c("b","X","Y","a","X","Y","l","X","Q",
+         "b","Q","X","a","Y","Q","b","Y","Z",
+         "a","Z","W","a","W","Z","b","W","Q")
+@
+Once again as in the DAG case we can use \code{plotGraph(mgv)} 
+to plot the defined graph.
+\paragraph{Mixed graph using the function \code{makeMG}.} Finally  the 
+adjacency matrix of a mixed graph may be built up with the function \code{makeAG}. This function requires
+three arguments \code{dg}, \code{ug} and \code{bg}, corresponding respectively 
+to the three adjacency matrices $B$, $S$ and $W$
+composing the mixed graph. These may also be obtained by the constructor functions
+\code{DG} and \code{UG} of \pkg{ggm} for directed and undirected graphs respectively. Thus for the 
+previous mixed graph we can issue the command
+<<>>= 
+mg <- makeMG(dg = DG(Y~X, Z~W, W~Z, Q~X), 
+            ug = UG(~ X*Q), 
+            bg = UG(~ Y*X + X*Q + Q*W +Y*Z))
+@   
+obtaining the same adjacency matrix (up to a permutation). 
+\section{Generating stable mixed graphs}
+By ``generating graphs'' we mean applying the defined algorithms, e.g.\ those for generating stable mixed to graphs, in order to generate new graphs.
+\paragraph{Three main functions to generate stable mixed graphs.}
+Three main functions \code{RG}, \code{SG}, and \code{AG} are available to generate and plot ribbonless, summary, and ancestral graphs from DAGs,  using the algorithms in \citet{sad112}. These algorithms look for the paths with three nodes and 
+two edges in the graph whose inner nodes are being marginalized over or condition on, and generate appropriate edges between the endpoints. These have two important properties: (a) they are well-defined in the sense that 
+the process can be performed in any order and produces always the same final graph; (b) the generated graphs 
+induce the modified independence structure after marginalization and conditioning; see \citet{sad112} for more details.
+
+The functions  \code{RG}, \code{SG}, and \code{AG} all have three arguments: \code{a} the given input graph,
+\code{M}, the marginalization set and \code{C}, the conditioning set. The graph may be of class \code{"graphNEL"} or  of class \code{"igraph"} or may be represented by a character vector, or by an adjacency matrix, as explained in the previous sections. The sets \code{M} and \code {C} (default \code{c()}) must be disjoint vectors of node labels, and 
+they may possibly be empty sets. 
+The output is always the adjacency matrix of the generated graph. There are two additional 
+logical arguments \code{showmat} and \code{plot} to specify whether the adjacency matrix must be explicitly printed
+(default \code{TRUE}) and  the graph must be plotted (default \code{FALSE}).
+
+\paragraph{Some examples.} We start from a DAG defined in two ways, as an adjacency matrix and as a 
+character vector: 
+<<>>= % 9 
+ex <- matrix(c(0,1,0,0,0,0,0,0,
+               0,0,1,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,
+               0,0,1,0,1,0,1,0,
+               0,0,0,0,0,1,0,0,
+               0,0,0,0,0,0,0,0,
+               0,0,0,0,0,1,0,0,
+               0,0,0,0,0,1,1,0),8,8,byrow=TRUE)
+exvec <- c("a",1,2,"a",2,3,"a",4,3,
+           "a",4,5,"a",4,7,"a",5,6,
+           "a",7,6,"a",8,6,"a",8,7)
+@
+<<eval=FALSE>>= % 10 
+plotGraph(ex)
+@
+\begin{center}
+\includegraphics[scale = 0.45]{fig2}
+\end{center}
+Then we define two disjoint sets $M$ and $C$ to marginalize over and condition on
+<<>>=
+M <- c(5,8)
+C <- 3
+@
+and we generate the ribbonless, summary and ancestral graphs from the DAG with the associated plot.
+<<eval = false>>= % 11
+RG(ex, M, C, plot = TRUE)
+@
+<<echo = false>>=
+RG(ex, M, C)
+@
+\begin{center}
+\includegraphics[scale = 0.45]{fig3}
+\end{center}
+The summary graph is plotted with dashed undirected edges instead of bi-directed edges:
+<<eval = false>>=  % 12
+plotGraph(SG(ex,M,C), dashed = TRUE)
+@
+<<echo = false>>=
+SG(ex, M, C)
+@
+\begin{center}
+\includegraphics[scale = 0.45]{sg}
+\end{center}
+The induced ancestral graph is obtained from the DAG defined as a vector. 
+<<eval = false>>= % 13
+AG(exvec,M,C,showmat=FALSE, plot=TRUE)
+@
+\begin{center}
+\includegraphics[scale = 0.45]{fig4}
+\end{center}
+\section{Maximality, m-separation, and Markov equivalences}
+\paragraph{Function for generating maximal graphs.} Given a non-maximal graph, we can obtain the adjacency matrix of a
+maximal graph that induces the same independence statements with the  function \code{Max}.
+This function uses the algorithm by  \citet{sad113}, which is an extension of the implicit algorithm 
+presented in \citet{ric02}. This algorithm searches for all non-adjacent pairs of nodes that are connected by a so-called \emph{primitive inducing path} and generate an appropriate edge between the pairs. The related functions
+\code{MAG}, \code{MSG}, and \code{MRG}, are just handy wrappers to obtain maximal AGs, SGs and AGs, respectively. 
+For example,
+<<>>= % 14
+H <- matrix(c(0  ,100,  1,  0,
+              100,0  ,100,  0,
+              0  ,100,  0,100,
+              0,  1  ,100,  0),4,4)
+@
+<<eval=FALSE>>= %15
+plotGraph(H)
+@
+\begin{center}
+\setkeys{Gin}{width=0.25\textwidth}
+\includegraphics[scale = 0.45]{fig55}
+\end{center}
+is a mixed non-maximal graph, with the missing edge between nodes 1 and 4 that  
+is not associated with any independence statement (because $\langle 1,2,3,4\rangle$ is a primitive inducing path). 
+Its associated maximal graph is obtained by 
+<<>>= %16
+Max(H)
+@
+<<eval=FALSE>>= %17
+plotGraph(Max(H))
+@
+\begin{center}
+\setkeys{Gin}{width=0.25\textwidth}
+\includegraphics[scale = 0.45]{fig56}
+\end{center}
+As the graph \code{H} is an ancestral graph (as may be verified by the function 
+\code{isAG}), we obtain the same result with  
+<<>>= %18
+MAG(H)
+@
+\paragraph{Function to verify  $m$-separation.} The fundamental way to verify 
+if a graphical model implies an independence $A \cip B |C$ is to test whether 
+the disjoint subsets $A$ and $B$ of the node set are $m$-separated given a third set $C$, and 
+this may be done with the function \code{msep}. 
+The function has 4 arguments, where the first is the graph \code{a},
+in one of the forms discussed before, and the other three are the disjoint sets 
+\code{A}, \code{B} and \code {C}. For example, for the following graph,
+<<>>= % 19 
+a <- DAG(W ~ Z, Z ~ Y + X) 
+@
+<<eval = false>>= % 20 
+plotGraph(a)
+@
+\begin{center}
+\setkeys{Gin}{width=0.3\textwidth}
+\includegraphics[scale = 0.45]{fig5}
+\end{center}
+the two following statements verify whether \code{X} is $m$-separated from \code{Y} 
+given \code{X}, and whether \code{X} is $m$-separated from \code{Y} (given the empty set):
+<<>>= %21
+msep(a,"X","Y","Z")
+msep(a,"X","Y")
+@
+In this example $m$-separation is equivalent to its special case, the $d$-separation criterion
+for DAGs. (Note that there is another function \code{dSep} in \pkg{ggm}
+for $d$-separation.)   
+\paragraph{Functions for testing Markov equivalences.} The function 
+\code{MarkEqRcg} tests whether two regression chain graphs
+are Markov equivalent. This function simply 
+finds the skeleton and all unshielded collider V-configurations in both graphs 
+and tests whether they are identical, see \citet{wers11}. The arguments of this function are the two 
+graphs \code{a} and \code{b} in one of the allowed forms. For example,
+
+<<>>=
+H1 <- matrix(c(  0,100,  0,  0,  0,
+               100,  0,100,  0,  0,
+                 0,100,  0,  0,  0,
+                 1,  0,  0,  0,100,
+                 0,  0,  1,100,  0),5,5)
+H2 <- matrix(c(0,0,0,  0,  0,
+               1,0,1,  0,  0,
+               0,0,0,  0,  0,
+               1,0,0,  0,100,
+               0,0,1,100,  0),5,5)
+H3 <- matrix(c(0,0,0,0,0,
+               1,0,1,0,0,
+               0,0,0,0,0,
+               1,0,0,0,0,
+               0,0,1,1,0),5,5)
+@
+<<eval = false>>=
+plotGraph(H1); plotGraph(H2); plotGraph(H3)
+@
+\begin{center}
+\setkeys{Gin}{width=0.2\textwidth}
+\includegraphics[scale = 0.45]{rcg1}
+\includegraphics[scale = 0.45]{rcg2}
+\includegraphics[scale = 0.45]{rcg3}
+\end{center}
+We can now verify Markov equivalence as follows
+<<>>=
+MarkEqRcg(H1,H2)
+MarkEqRcg(H1,H3)
+MarkEqRcg(H2,H3)
+@
+To test Markov equivalence for maximal ancestral graphs the algorithm is computationally much more demanding (see \citet{ali04}) and, for this purpose, the 
+function \code{MarkEqMag} has been provided. Of course, one can use this function for Markov equivalence of regression chain graphs (which are a subclass of MAGs).  For example,
+<<>>=
+A1<-matrix(c(  0,100,  0,  0,
+             100,  0,100,  0,
+               0,100,  0,100,
+               0,  1,100,  0),4,4)
+A2<-matrix(c(0,  0,  0,  0,
+             1,  0,100,  0,
+             0,100,  0,100,
+             0,  1,100,  0),4,4)
+A3<-matrix(c(0,0,  0,  0,
+             1,0,  0,  0,
+             0,1,  0,100,
+             0,1,100,  0),4,4)
+@
+<<eval = false>>=
+plotGraph(A1); plotGraph(A2); plotGraph(A3)
+@
+\begin{center}
+\setkeys{Gin}{width=0.2\textwidth}
+\includegraphics[scale = 0.45]{ag1}\quad
+\includegraphics[scale = 0.45]{ag2}\quad
+\includegraphics[scale = 0.45]{ag3}
+\end{center}
+<<>>=
+MarkEqMag(H1,H2)
+MarkEqMag(H1,H3)
+MarkEqMag(H2,H3)
+@
+\paragraph{Functions for generating Markov equivalent graphs of a specific type.} 
+Sometimes is important to verify if a given graph is capable of being Markov equivalent to a graph of a specific class of graphs (such as DAGs, undirected 
+graphs, or bidirected graphs), and if so, to obtain as a result such a graph. 
+The functions \code{RepMarDAG}, \code{RepMarUG}, and \code{RepMarBG} do this for DAGs, undirected graphs, or bidirected graphs, respectively. For associated conditions and algorithms, see \citet{sad113}. For example, given the following graph
+<<>>=
+H <- matrix(c( 0,10,  0,  0,
+              10, 0,  0,  0,
+               0, 1,  0,100,
+               0, 0,100,  0),4,4)
+@
+<<eval=FALSE>>=
+plotGraph(H)
+@
+\begin{center}
+\setkeys{Gin}{width=0.5\textwidth}
+\includegraphics[scale = 0.45]{fig57}
+\end{center}
+we can see that it is Markov equivalent to a DAG, by 
+<<>>=
+RepMarDAG(H)
+@
+<<eval=FALSE>>=
+plotGraph(RepMarDAG(H))
+@
+\begin{center}
+\setkeys{Gin}{width=0.5\textwidth}
+\includegraphics[scale = 0.45]{fig58}
+\end{center}
+@
+On the other hand it is not Markov equivalent to an undirected graph
+or to a bidirected graph. 
+<<>>=
+RepMarUG(H)
+RepMarBG(H)
+@
+This has consequence on the possibility of using
+standard fitting algorithms for DAG models to estimate
+the parameters of a model for the first graph.  
+\section{Acknowledgments}
+The authors are grateful to Steffen Lauritzen for helpful suggestions on codes and comments on an earlier version of the paper.
+\bibliography{bib}
+\end{document}

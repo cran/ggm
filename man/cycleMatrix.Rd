@@ -31,7 +31,7 @@ cycleMatrix(amat)
 \note{This function is used by \code{isGident}. The row sum of the
   matrix gives the length of the cycles.}
 \seealso{\code{\link{UG}}, \code{\link{findPath}},
-  \code{\link{fundCycles}}, \code{\link{isGident}}, \code{\link{bfs}}}
+  \code{\link{fundCycles}}, \code{\link{isGident}}, \code{\link{bfsearch}}}
   \examples{
 ## Three cycles
 cycleMatrix(UG(~a*b*d+d*e+e*a*f))

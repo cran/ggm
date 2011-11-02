@@ -43,7 +43,7 @@ DAG(..., order = FALSE)
 \author{G. M. Marchetti}
 \note{The model formulae may contain interactions, but they are
   ignored in the graph.} 
-\seealso{\code{\link{UG}}, \code{\link{topSort}}, \code{\link{edgeMatrix}}, \code{\link{fitDag}}}
+\seealso{\code{\link{UG}}, \code{\link{topSort}}, \code{\link{edgematrix}}, \code{\link{fitDag}}}
 \examples{
 ## A Markov chain
 DAG(y ~ x, x ~ z, z ~ u)

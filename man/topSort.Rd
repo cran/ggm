@@ -23,7 +23,7 @@ topOrder(amat)
   \pkg{BNT} written by Kevin P. Murphy. 
 }
 \value{
-  \code{topSort(amat)} returns a vector of integers representing
+  \code{topOrder(amat)} returns a vector of integers representing
   the permutation of the nodes. \code{topSort(amat)} returns
   the adjacency matrix with rows and columns permutated.
 }

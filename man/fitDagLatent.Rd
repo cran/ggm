@@ -6,7 +6,7 @@ Fits by maximum likelihood a Gaussian DAG model where one of the nodes
 of the graph is latent and it is marginalised over.
 }
 \usage{
-fitDagLatent(amat, Syy, n, latent, norm = 1, seed = 144,
+fitDagLatent(amat, Syy, n, latent, norm = 1, seed,
              maxit = 9000, tol = 1e-06, pri = FALSE)
 }
 \arguments{
@@ -72,7 +72,7 @@ For the EM algorithm used see Kiivery (1987).
   analysis of covariance structures. \emph{Psychometrika}, 52, 4,
   539--554.
 
-  J\"oreskog, K.G. \& Goldberger, A.S. (1975). Estimation of a model
+  Joreskog, K.G. and Goldberger, A.S. (1975). Estimation of a model
   with multiple indicators and multiple causes of a single latent
   variable.
   \emph{Journal of the American Statistical Association}, 10, 631--639.

@@ -1,0 +1,87 @@
+\name{AG}
+\alias{AG}
+\title{
+Ancestral graph
+}
+\description{
+\code{AG} generates and plots ancestral graphs after marginalization
+ and conditioning.
+}
+\usage{
+AG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE) 
+}
+\arguments{
+\item{amat}{
+An adjacency matrix, or a graph that can be of class \code{graphNEL-class} 
+or an \code{\link{igraph}} object, or a vector of length \eqn{3e}, where \eqn{e} 
+is the number of edges of the graph, 
+that is a sequence of triples (type, node1label, node2label). The type 
+of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and                                
+\code{"l"} (lines).}
+  \item{M}{
+A subset of the node set of \code{a} that is going to be marginalized over}
+  \item{C}{
+Another disjoint subset of the node set of \code{a} that is going to be
+conditioned on.
+}
+
+\item{showmat}{
+A logical value. \code{TRUE} (by default) to print the generated matrix.
+}
+\item{plot}{
+A logical value, \code{FALSE} (by default). \code{TRUE} to plot 
+the generated graph. 
+}
+}
+
+\value{
+A matrix that is the adjacency matrix of the generated graph.
+It consists of 4 different integers as an \eqn{ij}-element: 0 for a missing 
+edge between \eqn{i} and \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between 
+\eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are 
+added to be associated with multiple edges of different types. The matrix is 
+symmetric w.r.t full lines and bi-directed arrows.
+}
+\references{
+Richardson, T.S. and Spirtes, P. (2002).  Ancestral graph Markov models. \emph{Annals 
+of Statistics}, 30(4), 962-1030.
+
+Sadeghi, K. (2011).  Stable classes of graphs containing directed acyclic graphs. 
+\emph{Submitted}.
+}
+\author{
+Kayvan Sadeghi
+}
+%\note{
+%%  ~~further notes~~
+%}
+
+\seealso{
+\code{\link{MAG}}, \code{\link{RG}}, \code{\link{SG}}
+}
+\examples{                
+##The adjacency matrix of a DAG    
+ex<-matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, 
+             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+             0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+             0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+             1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+             1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+             0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0),16,16,byrow=TRUE)
+M <- c(3,5,6,15,16)
+C <- c(4,7)
+AG(ex, M, C, plot = TRUE)
+}
+\keyword{graphs}
+\keyword{ancestral graph}
+\keyword{directed acyclic graph}
+\keyword{marginalization and conditioning}

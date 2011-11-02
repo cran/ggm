@@ -21,7 +21,7 @@ Examination marks of 88 students in five subjects.
   and Statistics were open book examinations.
 }
 \source{
-  Mardia, K.V., Kent, J.T. \& Bibby, (1979). \emph{Multivariate
+  Mardia, K.V., Kent, J.T. and Bibby, (1979). \emph{Multivariate
   analysis}. London: Academic Press.
 }
 \references{

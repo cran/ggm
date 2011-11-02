@@ -30,7 +30,7 @@ fundCycles(amat)
 \author{Giovanni M. Marchetti}
 \note{This function is used by \code{cycleMatrix} and \code{isGident}.}
 \seealso{\code{\link{UG}},\code{\link{findPath}},
-  \code{\link{cycleMatrix}}, \code{\link{isGident}},\code{\link{bfs}}}
+  \code{\link{cycleMatrix}}, \code{\link{isGident}},\code{\link{bfsearch}}}
   \examples{
 ## Three fundamental cycles
 fundCycles(UG(~a*b*d + d*e + e*a*f))

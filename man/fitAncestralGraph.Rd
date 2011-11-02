@@ -9,32 +9,29 @@ fitAncestralGraph(amat, S, n, tol = 1e-06)
 }
 \arguments{
   \item{amat}{a square matrix, representing the adjacency matrix of
-    an ancestral graph. }
-  \item{S}{a symmetric positive definite matrix with dimnames, the
+    an ancestral graph.}
+  \item{S}{a symmetric positive definite matrix with row and col names, the
     sample covariance matrix.}
   \item{n}{the sample size, a positive integer.}
   \item{tol}{a small positive number indicating the tolerance
     used in convergence checks.}
 }
 \details{
-  Ancestral graph models were introduced by Richardson \&
-  Spirtes (2002) as a class of graphical models
-  whose global Markov property is closed under conditioning and
-  marginalization. In the Gaussian case, the models can be parameterized
+ In the Gaussian case, the models can be parameterized
   using precision parameters, regression coefficients, and error
-  covariances (compare Richardson \& Spirtes, 2002, Section 8). This
-  function finds the MLE \eqn{\hat \Lambda}{\code{Lhat}} of the precision 
+  covariances (compare Richardson and Spirtes, 2002, Section 8). This
+  function finds the MLE \eqn{\hat \Lambda}{L} of the precision 
   parameters by fitting a concentration  
-  graph model. The MLE \eqn{\hat B}{\code{Bhat}} of the regression coefficients and
-  the MLE \eqn{\hat\Omega}{\code{Ohat}} of the error covariances are obtained by
-  iterative conditional fitting (Drton \& Richardson, 2003, 2004). The
+  graph model. The MLE \eqn{\hat B}{B} of the regression coefficients and
+  the MLE \eqn{\hat\Omega}{O} of the error covariances are obtained by
+  iterative conditional fitting (Drton and Richardson, 2003, 2004). The
   three sets of parameters are 
-  combined to the MLE \eqn{\hat\Sigma}{\code{Shat}} of the covariance matrix by
+  combined to the MLE \eqn{\hat\Sigma}{S} of the covariance matrix by
   matrix multiplication: 
   \deqn{\hat\Sigma = \hat B^{-1}(\hat \Lambda+\hat\Omega)\hat
-    B^{-T}.}{\code{Shat = solve(Bhat) \%*\% (Lhat+Ohat) \%*\% t(solve(Bhat))}.}
-  Note that in Richardson \& Spirtes (2002), the matrices \eqn{\Lambda}{Lhat}
-  and \eqn{\Omega}{Ohat} are defined as submatrices.
+    B^{-T}.}{S = B^(-1) (L+O) B^(-t).}
+  Note that in Richardson and Spirtes (2002), the matrices \eqn{\Lambda}{L}
+  and \eqn{\Omega}{O} are defined as submatrices. 
 }
 \value{
   \item{Shat}{the fitted covariance matrix.}
@@ -49,30 +46,30 @@ fitAncestralGraph(amat, S, n, tol = 1e-06)
     in \code{Bhat} corresponds to a directed edge \eqn{j \to i}{j -> i},
     and thus to a one as \eqn{(j,i)}{(j,i)} entry in the adjacency matrix.}
   \item{Ohat}{matrix of the error covariances and variances of the residuals 
-    between regression equations associated with bidirected edges and
+    between regression equations associated with bi-directed edges and
     vertices with an arrowhead pointing at them.}
   \item{dev}{the `deviance' of the model.}
   \item{df}{the degrees of freedom.}
   \item{it}{the iterations.}
 }
 \references{ 
-  Drton, M. \& Richardson, T. S. (2003). A new algorithm for
+  Drton, M. and Richardson, T. S. (2003). A new algorithm for
   maximum likelihood estimation in Gaussian graphical models for
   marginal independence. \emph{Proceedings
     of the Nineteenth Conference on Uncertainty in Artificial
-    Intelligence}, 184--191.
+    Intelligence}, 184-191.
 
-  Drton, M. \& Richardson, T. S. (2004). Iterative Conditional Fitting
+  Drton, M. and Richardson, T. S. (2004). Iterative Conditional Fitting
   for Gaussian Ancestral Graph Models.  Proceedings
   of the 20th Conference on Uncertainty in Artificial Intelligence,
-  Department of Statistics, 130--137.
+  Department of Statistics, 130-137.
   
-  Richardson, T. Spirtes, P. (2002). Ancestral Graph Markov
-  Models. \emph{Annals of Statistics}. 30, 4, 962--1030.
+  Richardson, T. S. and Spirtes, P. (2002). Ancestral Graph Markov
+  Models. \emph{Annals of Statistics}. 30(4), 962-1030.
 }
 \author{Mathias Drton}
 \seealso{\code{\link{fitCovGraph}}, \code{\link{icf}},
-  \code{\link{makeAG}}, \code{\link{fitDag}}
+  \code{\link{makeMG}}, \code{\link{fitDag}}
   }
 \examples{
 ## A covariance matrix
@@ -83,10 +80,10 @@ fitAncestralGraph(amat, S, n, tol = 1e-06)
                  .Dimnames = list(c("y", "x", "z", "u"), c("y", "x", "z", "u")))
 ## The following should give the same fit.   
 ## Fit an ancestral graph y -> x <-> z <- u
-fitAncestralGraph(ag1 <- makeAG(dag=DAG(x~y,z~u), bg = UG(~x*z)), S, n=100)
+fitAncestralGraph(ag1 <- makeMG(dg=DAG(x~y,z~u), bg = UG(~x*z)), S, n=100)
 
 ## Fit an ancestral graph y <-> x <-> z <-> u
-fitAncestralGraph(ag2 <- makeAG(bg= UG(~y*x+x*z+z*u)), S, n=100)
+fitAncestralGraph(ag2 <- makeMG(bg= UG(~y*x+x*z+z*u)), S, n=100)
 
 ## Fit the same graph with fitCovGraph
 fitCovGraph(ag2, S, n=100)    
@@ -95,15 +92,16 @@ fitCovGraph(ag2, S, n=100)
 
 data(marks)
 S <- var(marks)
-mag1 <- makeAG(bg=UG(~mechanics*vectors*algebra+algebra*analysis*statistics))
+mag1 <- makeMG(bg=UG(~mechanics*vectors*algebra+algebra*analysis*statistics))
 fitAncestralGraph(mag1, S, n=88)
 
-mag2 <- makeAG(ug=UG(~mechanics*vectors+analysis*statistics),
-               dag=DAG(algebra~mechanics+vectors+analysis+statistics))
+mag2 <- makeMG(ug=UG(~mechanics*vectors+analysis*statistics),
+               dg=DAG(algebra~mechanics+vectors+analysis+statistics))
 fitAncestralGraph(mag2, S, n=88) # Same fit as above
 }
 \keyword{graphs}
-\keyword{models}
+\keyword{models} 
+\keyword{ancestral graph}
 \keyword{multivariate}
 
 

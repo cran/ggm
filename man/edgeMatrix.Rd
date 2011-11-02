@@ -1,12 +1,12 @@
-\name{edgeMatrix}
-\alias{edgeMatrix}
+\name{edgematrix}
+\alias{edgematrix}
 \title{Edge matrix of a graph}
 \description{
   Transforms the adjacency matrix of a graph into
   an ``edge matrix''.
 }
 \usage{
-edgeMatrix(E, inv=FALSE)
+edgematrix(E, inv=FALSE)
 }
 \arguments{
   \item{E}{a square matrix, representing the adjacency matrix of a
@@ -19,7 +19,7 @@ edgeMatrix(E, inv=FALSE)
   if \eqn{E} is the adjacency matrix of the
   graph, the edge matrix is \eqn{A = sign(E+I)^T=[a_{ij}]}. 
   Thus, \eqn{A} has ones along the diagonal
-  and if the graph has no edge beteween nodes \eqn{i} and \eqn{j} the entries
+  and if the graph has no edge between nodes \eqn{i} and \eqn{j} the entries
   \eqn{a_{i,j}} and \eqn{a_{j,i}} are both zero.  
   If there is an arrow from \eqn{j} to \eqn{i} 
   \eqn{a_{i,j}=1} and  \eqn{a_{j,i} = 0}. If there is an undirected edge, both
@@ -39,8 +39,8 @@ edgeMatrix(E, inv=FALSE)
 \examples{
 amat <- DAG(y ~ x+z, z~u+v)
 amat
-edgeMatrix(amat)
-edgeMatrix(amat, inv=TRUE)
+edgematrix(amat)
+edgematrix(amat, inv=TRUE)
 }
 \keyword{array}
 \keyword{algebra}

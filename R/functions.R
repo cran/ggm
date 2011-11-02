@@ -1,3 +1,85 @@
+## Modified in version 1.99
+# Removed cliques, thanks to Castelo.         edgematrix
+# Modified fitConGraph wit new algorithm from Tibshirani Hastie Friedman.
+# Modified DAG
+# New function fitDAG     
+# modified icfmag (call to fitConGraph) 
+# removed makeAG and unmakeAG
+# new functions makeMG, unmakeMG, isAG and isADMG
+ 
+
+
+`fitDAG` <- function (..., data)
+{
+### Fits linear recursive regressions with independent residuals. 
+#   ...,  a list of models
+#   data, a data frame.
+ 
+  mo = list(...) 
+  p = length(mo)      
+  D = DAG(...)
+ 
+nam = rownames(D)          
+
+  data = data[, nam]  
+## Existing responses
+   
+   resp = c()
+for( i in 1:p) {
+	  te = as.character(mo[[i]])
+	  resp = c(resp, te[2])
+	  }  
+   newresp = setdiff(nam, resp) 
+	for(k in 1:length(newresp)){          
+	       newmo = formula(paste(newresp[k], "~ 1"))  
+	       mo = c(mo, newmo)  
+      }          
+   to = topOrder(D)
+   o = match(nam[to], c(resp, newresp))
+   mo = mo[o]
+   data = data[,to]
+  
+
+  beta = vector(p, mode = "list")
+  delta = rep(0,p)    
+  n = nrow(data) 
+  lik = 0 
+  df = 0     
+  nomi = colnames(data)
+  for(i in 1:length(mo)) {           
+	moi = mo[[i]]
+	te = as.character(moi)
+	if(te[2] == te[3]){ 
+	   lik = lik + n * log(2*pi * var(data[, te[2]])) + (n-1)  
+	
+	   df  = df + (n-1)
+	   next 
+	}   
+	else {
+	   m = lm(moi, data = data[1:i])	
+	   mq = summary(m)   
+	   beta[[i]] = mq$coefficients[,1]
+	   delta[[i]] = (mq$sigma)^2  
+  #     Yh[, te[2]] = fitted(m)             
+	   d = n - length(beta[i])
+	   lik  = lik + n * log(2*pi * delta[i]) + d
+       df = df + d     
+       nm = paste(nomi[1:i], collapse = ",")
+       cat(paste("\nModel:", te[2], te[1], te[3], " Margin: ",nm ,"\n"))
+       
+       print(mq$coefficients, digits = 4)
+  }
+}
+
+ # Shat <- cov(Yh)
+ # Khat <- solve(Shat)
+#  H <- S %*% Khat
+#  trace <- function(A) sum(diag(A))
+#  dev <- (trace(H) - log(det(H)) - p) * n
+#  df <- p*(p+1)/2 - sum(amat==1) - p
+  list( bhat = beta, dhat=delta, dev=lik, df=df, lik = 2*lik)
+}
+
 "adjMatrix" <-
 function (A) 
 {
@@ -69,7 +151,7 @@ function (nn, amat)
   setdiff(b, nn)
 }
 
-"bfs" <-
+"bfsearch" <-
 function(amat, v=1) {
 ### Breadth-first search of a connected UG with adjacency matrix amat.
     n <- nrow(amat)
@@ -82,7 +164,7 @@ function(amat, v=1) {
     E <- c()
     visited[v] <- 1
     Q <- c(v, Q)
-    while(!all(visited)){
+    while(!all(visited==1)){
       x <- Q[1]
       Q <- Q[-1]
      ## b <- bd(x, amat)
@@ -213,78 +295,6 @@ function(amat, latent) {
      T2.i = cond.iii, T2.ii = cond.iv)
  }
 
-"cliques" <-
-function(amat){
-### Finds the cliques of an UG. Mathias Drton, 2003.
-    is.subset <- function(x,y)
-      all(is.element(x,y))
-    find.clique <- function(al, i, j){
-      ## Local function
-      ali <- c(i, al[[i]])
-      if(length(ali)==1){
-        return(c(i))
-      }
-      else{
-        clique.lower <- c(i,j)
-        clique.upper <-
-          intersect(ali,c(j, al[[j]]))
-        nb.remain <- setdiff(clique.upper, clique.lower)
-        if(length(nb.remain)==0){
-          return(clique.lower)
-        }
-        else{
-          while(length(nb.remain)>=1){
-            new.clique.lower <- c(clique.lower, nb.remain[1])
-            new.clique.upper <-
-              intersect(clique.upper,
-                        c(nb.remain[1], al[[nb.remain[1]]]))
-            if(!is.subset(new.clique.lower, new.clique.upper)){
-              nb.remain <- setdiff(nb.remain, nb.remain[1])
-            }
-            else{
-              clique.lower <- new.clique.lower
-              clique.upper <- new.clique.upper
-              nb.remain <- setdiff(clique.upper, clique.lower)
-            }
-          }
-          return(sort(clique.lower))
-        }
-      }
-    }
-    ## Finds the adjacency list
-    alist <- split(amat, row(amat))
-    nod <- 1:nrow(amat) #  nod <- vertices(amat)
-    alist <- lapply(alist, function(x) nod[x==1])
-
-    ## Start
-    cli <- c()
-    index <- 1:length(alist)
-    al <- alist
-    while(length(index)>=1){
-      i <- index[1]
-      nbi <- al[[i]]
-      if(length(nbi)==0){
-        cli <- c(cli, c(i))
-        index <- index[-1]
-      }
-      else{
-        while(length(nbi)>=1){
-          new.clique <- find.clique(alist,i, nbi[1])
-          cli <- c(cli, list(new.clique))
-          for(j in setdiff(new.clique, i)){
-            al[[j]] <- setdiff(al[[j]], new.clique)
-            if(length(al[[j]])==0){
-              index <- setdiff(index, j)
-            }
-          }
-          nbi <- setdiff(nbi, new.clique)
-        }
-        index <- setdiff(index, i)
-      }
-    }
-    nod <- vertices(amat)
-    lapply(cli, function(x) nod[x])
-  }
 
 "cmpGraph" <-
 function(amat){
@@ -355,16 +365,19 @@ function (...,order=FALSE)
   nb <- length(f)  # nb is the number of model formulae (of blocks)
   nod <- c()       # Counts the number of nodes
   for (k in 1:nb) {
-    tt <- terms(f[[k]])
+    tt <- terms(f[[k]], specials="I")
     vars <- dimnames(attr(tt, "factors"))[[1]]
+    skip <-  attr(tt, "specials")$I 
+    if(!is.null(skip))
+         vars <- vars[-skip]
     nod <- c(nod, vars)
   }
   N <- unique(nod) # set of nodes
   dN <- length(N)  # number of nodes
   amat <- matrix(0,dN,dN)
   for (k in 1:nb) {
-    tt <- terms(f[[k]])
-    vars <- dimnames(attr(tt, "factors"))[[1]]
+    tt <- terms(f[[k]], specials = "I")      
+    vars <- dimnames(attr(tt, "factors"))[[1]]   
     if (attr(tt, "response") == 1) {
       j <- match(vars[1], N)
       i <- match(vars[-1], N)
@@ -382,211 +395,188 @@ function (...,order=FALSE)
   amat
 }
 
-"drawGraph" <-
-function(amat, coor=NULL, adjust=TRUE, alpha = 1.5, beta = 3, lwd=1, ecol = "blue", left=FALSE){
-### A small function to plot mixed graphs with adjancency matrix amat.
-
-  ## Some local functions
-  
-  plot.dots <- function(xy, v, dottype, n, beta) {
-    for (i in 1:n) {
-      if (dottype[i] == 1) {
-        points(xy[i, 1], xy[i, 2], pch = 1, cex = 1.2, lwd=lwd)
-      }
-      else if (dottype[i] == 2) {
-        points(xy[i, 1], xy[i, 2], pch = 16, cex = 1.2)
-      }
+`drawGraph` <- function (amat, coor = NULL, adjust = TRUE, alpha = 1.5, beta = 3, 
+    lwd = 1, ecol = "blue", left = FALSE) 
+{
+    if (is.null(dimnames(amat))) {
+        rownames(a) <- 1:ncol(amat)
+        colnames(a) <- 1:ncol(amat)
     }
-    text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
-  }
-  ##double.edges <- function(x1, x2, y1, y2, lwd, ecol){
-  ##  ## Double edges  for summary graphs
-  ##  arrows(x1, x2, y1, y2, lty=1, code=1, angle=20, length=.1, lwd=lwd, col=ecol)
-  ##  m1 <- (x1+y1)/2; m2 <- (x2+y2)/2
-  ##  a1 <- c(x1, m1+alpha, y1);  a2 <- c(x2, m2+alpha, y2)
-  ##  lines(a1, a2,  lwd=lwd, lty=2, col=ecol)
-  ## }
-  angle <- function(v,alpha=pi/2){
-    ## Finds a vector of IR^2 with an agle of alpha with vector v.
-    theta <- Arg(complex(real=v[1], imag=v[2]))
-    z <- complex(argument=theta+alpha)
-    c(Re(z), Im(z))
-  }
-  double.edges <- function(x1,x2, y1, y2, lwd, ecol){
-    ## Draw a double edge for summary graphs.
-    ## d is the apothema, n is the no. of points, dd the size of the arrow.
-      d <- 50; n <- 30; dd <- 2
-      k <- length(x1)
-      if(is.na(x1)) return()
-      for(i in 1:k){
-        x <- c(x1[i], x2[i])
-        y <- c(y1[i], y2[i])
-        m <- (x+y)/2
-        cen <- m + d * angle(y-x)
-        xm <- x - cen
-        ym <- y - cen
-        thetax <- Arg(complex(real=xm[1], imag=xm[2]))
-        thetay <- Arg(complex(real=ym[1], imag=ym[2]))
-        theta <- seq(thetax, thetay, len=n)
-        l <- crossprod(y-m)
-        delta <- sqrt(d^2 + l)
-        lx <- cen[1] + delta * cos(theta)
-        ly <- cen[2] + delta * sin(theta)
-        lines(lx,ly, lty=2, col=ecol, lwd=lwd)
-        ## draw the two  arrows
-        vy <- angle(y-cen)
-        vx <- angle(x-cen)
-        vx1 <- x + dd * angle(vx, alpha=pi/12)
-        vx2 <- x + dd * angle(vx, alpha=-pi/12)
-        vy1 <- y + dd * angle(vy, alpha=11*pi/12)
-        vy2 <- y + dd * angle(vy, alpha=-11*pi/12)
-        segments(x[1], x[2], vx1[1], vx1[2], col=ecol, lwd=lwd)
-        segments(x[1], x[2], vx2[1], vx2[2], col=ecol, lwd=lwd)
-        segments(y[1], y[2], vy1[1], vy1[2], col=ecol, lwd=lwd)
-        segments(y[1], y[2], vy2[1], vy2[2], col=ecol, lwd=lwd)
-        ex = x + 0.05 * (y-x)
-        ey = x + 0.95 * (y-x)
-        arrows(ex[1], ex[2], ey[1], ey[2], lty=1, code=1, angle=20, length=.1, lwd=lwd, col=ecol)
-      }
+    if (all(amat == t(amat)) & all(amat[amat != 0] == 1)) {
+        amat <- amat * 10
     }
-  draw.edges <-  function(coor, u, alpha, type, lwd, ecol) {
-    ## type = 0, 1, 2, 3 for undirected, directed, bidirected, double edges
-    for (k in 1:nrow(u)) {
-      a <- coor[u[k, 1], ]
-      b <- coor[u[k, 2], ]
-      ba <- b-a
-      ba <- ba/sqrt(sum(ba*ba))
-      x <- a + ba*alpha
-      y <- b - ba*alpha
-      switch(type+1, 
-             segments(x[1], x[2], y[1], y[2], lty = 1, lwd=lwd, col=ecol),
-             arrows(x[1], x[2], y[1], y[2], code=2, angle=20, length=.1, lty = 1, lwd=lwd, col=ecol),
-             ##               {arrows(x[1], x[2], y[1], y[2], code=3,length = 0.1, lty = 1, lwd=lwd);
-             ##                segments(x[1], x[2], y[1], y[2], lty=1, lwd=lwd, col="white");
-             ##                segments(x[1], x[2], y[1], y[2], lty=2, lwd=lwd)},
-             arrows(x[1], x[2], y[1], y[2], code=3, angle=20, length = 0.1, lty = 5, lwd=lwd, col=ecol),
-             double.edges(x[1], x[2], y[1], y[2], lwd=lwd, ecol)
-             )
+    plot.dots <- function(xy, v, dottype, n, beta) {
+        for (i in 1:n) {
+            if (dottype[i] == 1) {
+                points(xy[i, 1], xy[i, 2], pch = 1, cex = 1.2, 
+                  lwd = lwd)
+            }
+            else if (dottype[i] == 2) {
+                points(xy[i, 1], xy[i, 2], pch = 16, cex = 1.2)
+            }
+        }
+        text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
     }
-  }
+    angle <- function(v, alpha = pi/2) {
+        theta <- Arg(complex(real = v[1], imag = v[2]))
+        z <- complex(argument = theta + alpha)
+        c(Re(z), Im(z))
+    }
+    double.edges <- function(x1, x2, y1, y2, lwd, ecol) {
+        d <- 50
+        n <- 30
+        dd <- 2
+        k <- length(x1)
+        if (is.na(x1)) 
+            return()
+        for (i in 1:k) {
+            x <- c(x1[i], x2[i])
+            y <- c(y1[i], y2[i])
+            m <- (x + y)/2
+            cen <- m + d * angle(y - x)
+            xm <- x - cen
+            ym <- y - cen
+            thetax <- Arg(complex(real = xm[1], imag = xm[2]))
+            thetay <- Arg(complex(real = ym[1], imag = ym[2]))
+            theta <- seq(thetax, thetay, len = n)
+            l <- crossprod(y - m)
+            delta <- sqrt(d^2 + l)
+            lx <- cen[1] + delta * cos(theta)
+            ly <- cen[2] + delta * sin(theta)
+            lines(lx, ly, lty = 2, col = ecol, lwd = lwd)
+            vy <- angle(y - cen)
+            vx <- angle(x - cen)
+            vx1 <- x + dd * angle(vx, alpha = pi/12)
+            vx2 <- x + dd * angle(vx, alpha = -pi/12)
+            vy1 <- y + dd * angle(vy, alpha = 11 * pi/12)
+            vy2 <- y + dd * angle(vy, alpha = -11 * pi/12)
+            segments(x[1], x[2], vx1[1], vx1[2], col = ecol, 
+                lwd = lwd)
+            segments(x[1], x[2], vx2[1], vx2[2], col = ecol, 
+                lwd = lwd)
+            segments(y[1], y[2], vy1[1], vy1[2], col = ecol, 
+                lwd = lwd)
+            segments(y[1], y[2], vy2[1], vy2[2], col = ecol, 
+                lwd = lwd)
+            ex = x + 0.05 * (y - x)
+            ey = x + 0.95 * (y - x)
+            arrows(ex[1], ex[2], ey[1], ey[2], lty = 1, code = 1, 
+                angle = 20, length = 0.1, lwd = lwd, col = ecol)
+        }
+    }
+    draw.edges <- function(coor, u, alpha, type, lwd, ecol) {
+        for (k in 1:nrow(u)) {
+            a <- coor[u[k, 1], ]
+            b <- coor[u[k, 2], ]
+            ba <- b - a
+            ba <- ba/sqrt(sum(ba * ba))
+            x <- a + ba * alpha
+            y <- b - ba * alpha
+            switch(type + 1, segments(x[1], x[2], y[1], y[2], 
+                lty = 1, lwd = lwd, col = ecol), arrows(x[1], 
+                x[2], y[1], y[2], code = 2, angle = 20, length = 0.1, 
+                lty = 1, lwd = lwd, col = ecol), arrows(x[1], 
+                x[2], y[1], y[2], code = 3, angle = 20, length = 0.1, 
+                lty = 5, lwd = lwd, col = ecol), double.edges(x[1], 
+                x[2], y[1], y[2], lwd = lwd, ecol))
+        }
+    }
     def.coor <- function(ce, k, h, w) {
-      ## Default coords of the dots for an UG.
-      if (k == 1) 
-        return(ce)
-      else if (k == 2) {
-        r1 <- c(ce[1], ce[1])
-        r2 <- c(ce[2] + h * 0.3, ce[2] - h * 0.3)
-      }
-      else if (k == 3) {
-        r1 <- c(ce[1], ce[1], ce[1])
-        r2 <- c(ce[2] + h * 0.25, ce[2], ce[2] - h * 0.25)
-      }
-      else if (k == 4) {
-        r1 <- c(ce[1] - w * 0.3, ce[1] + w * 0.3, ce[1] + 
+        if (k == 1) 
+            return(ce)
+        else if (k == 2) {
+            r1 <- c(ce[1], ce[1])
+            r2 <- c(ce[2] + h * 0.3, ce[2] - h * 0.3)
+        }
+        else if (k == 3) {
+            r1 <- c(ce[1], ce[1], ce[1])
+            r2 <- c(ce[2] + h * 0.25, ce[2], ce[2] - h * 0.25)
+        }
+        else if (k == 4) {
+            r1 <- c(ce[1] - w * 0.3, ce[1] + w * 0.3, ce[1] + 
                 w * 0.3, ce[1] - w * 0.3)
-        r2 <- c(ce[2] - h * 0.3, ce[2] - h * 0.3, ce[2] + 
+            r2 <- c(ce[2] - h * 0.3, ce[2] - h * 0.3, ce[2] + 
                 h * 0.3, ce[2] + h * 0.3)
-      }
-      else {
-                                        # a <- runif(1, 0, pi)
-        a <- 1
-        z <- seq(a, a + 2 * pi, len = k + 1)
-        z <- z[-1]
-        r1 <- ce[1] + w/2.5 * cos(z)
-        r2 <- ce[2] + h/2.5 * sin(z)
-      }
-      cbind(r1, r2)
+        }
+        else {
+            a <- 1
+            z <- seq(a, a + 2 * pi, len = k + 1)
+            z <- z[-1]
+            r1 <- ce[1] + w/2.5 * cos(z)
+            r2 <- ce[2] + h/2.5 * sin(z)
+        }
+        cbind(r1, r2)
     }
-  def.coor.dag <- function(amat, w, h, left){
-    nod <- rownames(amat)
-    o <- topOrder(amat)
-    if(left)
-      o <- rev(o)
-    k <- length(nod)
-    x <- seq(0, 100, len=k)
-    y <- rep(c(20, 40, 60, 80),ceiling(k/4))[1:k] 
-    xy <- cbind(x, y)
-    rownames(xy) <- nod[o]
-    xy[nod,]
-  }    
-  
-  ## Basic definitions
-  
-  v <- rownames(amat)
-  n <- length(v)
-  
-  ## The dot type is fixed to 1.
-  
-  dottype <- rep(1,n)
-  
-  ## Initialize plot
-  old <- par(mar=c(0,0,0,0))
-  on.exit(par(old))
-  
-  plot(c(0, 100), c(0, 100), type = "n", axes = FALSE, xlab = "", 
-       ylab = "")
-  
-  center <- matrix(c(50, 50), ncol = 2)
-  
-  ## Default coordinates of the dots    
-  if (is.null(coor)) {
-    isdag <- isAcyclic(amat)
-    if(isdag)
-      coor <- def.coor.dag(amat, 100, 100, left=left)
-    else
-      coor <- def.coor(center, n, 100, 100)
-  }
-  ## Find the undirected edges
-  g0 <- amat * ((amat == 1) & (t(amat) == 1))
-  g0[lower.tri(g0)] <- 0
-  
-  ## Find the directed edges                                    
-  g1 <- amat * ((amat == 1)  & !((amat > 0) & (t(amat) > 0)))
-  
-  ## Find the bidirected edges (for ancestral graphs)
-  g2 <- amat * ((amat == 2) & (t(amat) == 2))
-  g2[lower.tri(g2)] <- 0    
-  
-  ## Find the double edges (for summary graphs)    
-  g3 <-  amat *( ((amat == 2)  & (t(amat) == 3)))
-  
-  i <- expand.grid(1:n, 1:n)
-  u0 <- i[g0 > 0, ]
-  u1 <- i[g1 > 0, ]
-  u2 <- i[g2 > 0, ]
-  u3 <- i[g3 > 0, ]
-  
-  ## Plot the dots and the edges
-  if(nrow(coor) !=  length(v))
-    stop("Wrong coordinates of the vertices.")  
-  plot.dots(coor, v, dottype, n, beta)  
-  draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol) 
-  draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
-  draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
-  draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
-  
-  ## Adjust the plot
-  if(adjust){
-    repeat {
-      xnew <- unlist(locator(1))
-      if (length(xnew) == 0) {
-        break
-      }
-      d2 <- (xnew[1] - coor[, 1])^2 + (xnew[2] - coor[, 2])^2
-      i <- (1:n)[d2 == min(d2)]
-      coor[i, 1] <- xnew[1]
-      coor[i, 2] <- xnew[2]
-      plot(c(0, 100), c(0, 100), type = "n", axes = FALSE,
-           xlab = "", ylab = "")
-      plot.dots(coor, v, dottype, n, beta)
-      draw.edges(coor, u0, alpha, type=0, lwd=lwd, ecol)
-      draw.edges(coor, u1, alpha, type=1, lwd=lwd, ecol) 
-      draw.edges(coor, u2, alpha, type=2, lwd=lwd, ecol)
-      draw.edges(coor, u3, alpha, type=3, lwd=lwd, ecol) 
+    def.coor.dag <- function(amat, w, h, left) {
+        nod <- rownames(amat)
+        o <- topOrder(amat)
+        if (left) 
+            o <- rev(o)
+        k <- length(nod)
+        x <- seq(0, 100, len = k)
+        y <- rep(c(20, 40, 60, 80), ceiling(k/4))[1:k]
+        xy <- cbind(x, y)
+        rownames(xy) <- nod[o]
+        xy[nod, ]
     }
-  }
-  colnames(coor) <- c("x", "y")
-  return(invisible(coor))
+    v <- rownames(amat)
+    n <- length(v)
+    dottype <- rep(1, n)
+    old <- par(mar = c(0, 0, 0, 0))
+    on.exit(par(old))
+    plot(c(0, 100), c(0, 100), type = "n", axes = FALSE, xlab = "", 
+        ylab = "")
+    center <- matrix(c(50, 50), ncol = 2)
+    if (is.null(coor)) {
+        isdag <- isAcyclic(amat)
+        if (isdag) 
+            coor <- def.coor.dag(amat, 100, 100, left = left)
+        else coor <- def.coor(center, n, 100, 100)
+    }
+    g0 <- amat * ((amat == 10) & (t(amat) == 10))
+    g0[lower.tri(g0)] <- 0
+    g1 <- amat * ((amat == 1) & !((amat > 0) & (t(amat) > 0)))
+    g2 <- amat * ((amat == 100) & (t(amat) == 100))
+    g2[lower.tri(g2)] <- 0
+    g3 <- (amat == 101) + 0
+    i <- expand.grid(1:n, 1:n)
+    u0 <- i[g0 > 0, ]
+    u1 <- i[g1 > 0, ]
+    u2 <- i[g2 > 0, ]
+    u3 <- i[g3 > 0, ]
+    if (nrow(coor) != length(v)) 
+        stop("Wrong coordinates of the vertices.")
+    plot.dots(coor, v, dottype, n, beta)
+    draw.edges(coor, u0, alpha, type = 0, lwd = lwd, ecol)
+    draw.edges(coor, u1, alpha, type = 1, lwd = lwd, ecol)
+    draw.edges(coor, u2, alpha, type = 2, lwd = lwd, ecol)
+    draw.edges(coor, u3, alpha, type = 3, lwd = lwd, ecol)
+    if (adjust) {
+        repeat {
+            xnew <- unlist(locator(1))
+            if (length(xnew) == 0) {
+                break
+            }
+            d2 <- (xnew[1] - coor[, 1])^2 + (xnew[2] - coor[, 
+                2])^2
+            i <- (1:n)[d2 == min(d2)]
+            coor[i, 1] <- xnew[1]
+            coor[i, 2] <- xnew[2]
+            plot(c(0, 100), c(0, 100), type = "n", axes = FALSE, 
+                xlab = "", ylab = "")
+            plot.dots(coor, v, dottype, n, beta)
+            draw.edges(coor, u0, alpha, type = 0, lwd = lwd, 
+                ecol)
+            draw.edges(coor, u1, alpha, type = 1, lwd = lwd, 
+                ecol)
+            draw.edges(coor, u2, alpha, type = 2, lwd = lwd, 
+                ecol)
+            draw.edges(coor, u3, alpha, type = 3, lwd = lwd, 
+                ecol)
+        }
+    }
+    colnames(coor) <- c("x", "y")
+    return(invisible(coor))
 }
 
 "dSep" <-
@@ -596,7 +586,7 @@ function(amat, first, second, cond) {
     all(e[first,second] == 0)
   }
 
-"edgeMatrix" <-
+"edgematrix" <-
 function (E, inv=FALSE) 
 {
 ### From the adjacency matrix to the edge matrix
@@ -703,9 +693,9 @@ function (amat, st, en, path = c())
   }
 }
 
-"fitAncestralGraph" <-
+`fitAncestralGraph` <-
 function (amat, S, n, tol = 1e-06){
-### Fit Ancestral Graph. Mathias Drton, 2003.
+### Fit Ancestral Graphs. Mathias Drton, 2003 2009. It works for ADMGs 
     nam <- rownames(S)
     nod <- vertices(amat)
     ## permute graph to have same layout as S
@@ -720,15 +710,9 @@ function (amat, S, n, tol = 1e-06){
     amat <- amat[sek,sek, drop=FALSE]        # and reorders amat
     
     temp <- icfmag(amat, S, tol)
-    lik <-  function(K, S, n, k){
-      ## Computes the deviance
-      trace <- function(a) sum(diag(a)) 
-      SK <- S %*% K 
-      (trace(SK) - log(det(SK)) - k) * n
-    }
     p <- ncol(S)
     df <- p*(p-1)/2 - sum(In(amat+t(amat)))/2   # Degrees of freedom 
-    dev <- lik(solve(temp$Sigmahat), S, n, p)
+    dev <- likGau(solve(temp$Sigmahat), S, n, p)
     if(is.null(temp$Bhat)){
       Beta <- NULL
     }
@@ -739,11 +723,23 @@ function (amat, S, n, tol = 1e-06){
     return(list(Shat=temp$Sigmahat, Lhat=temp$Lambdahat, Bhat=Beta,
                 Ohat=temp$Omegahat, dev = dev, df = df, it=temp$iterations))
   }
+               
 
-"fitConGraph" <-
-function (amat, S, n, pri=FALSE, alg=2, tol = 1e-06)
+
+`likGau` = function(K, S, n, k){
+# deviance of the Gaussian model.
+SK = S %*% K
+tr = function(A) sum(diag(A))
+(tr(SK) - log(det(SK)) - k) * n
+}
+
+
+
+`fitConGraph` <- function (amat, S, n, cli=NULL, alg = 3,  pri = FALSE, tol = 1e-06)
 {
-### Fits a concentration graph G.
+### Fits a concentration graph G.  
+### Now it does not compute the cliques of the graph.
+
   nam <- rownames(S)
   nod <- vertices(amat)
   if(is.null(nod)){
@@ -752,53 +748,54 @@ function (amat, S, n, pri=FALSE, alg=2, tol = 1e-06)
   if(!all(is.element(nod, nam)))
     stop("The nodes of the graph do not match the names of the variables.")
   else
-    sek <- intersect(nam, nod)
+  sek <- intersect(nam, nod)
   S <- S[sek,sek, drop=FALSE]              # Resizes eventually S
   amat <- amat[sek,sek, drop=FALSE]        # and reorders amat
-  nod <- vertices(amat)        
-  cli <- cliques(amat)              # Finds the cliques
-
-  lik <-  function(K, S, n, k){
-    ## Computes the deviance
-    trace <- function(a) sum(diag(a)) 
-    SK <- S %*% K 
-    (trace(SK) - log(det(SK)) - k) * n
+  nod <- vertices(amat)           
+  if (all(amat==0)){
+  	alg <-  2
+  	cli = as.list(nod)
+  	} 
+  if(is.null(cli)){
+	alg <- 3	
   }
-  
-  nc <- length(cli)
-  if(nc==1)
-    return(list(Shat = S, dev = 0, df = 0, it=1))
+  else {
+	alg <- 2   
+	nc <- length(cli) 
+	 if(nc==1) {
+    	return(list(Shat = S, dev = 0, df = 0, it=1))
+		}
+   }  
+
   k <- ncol(S)
-  it <- 0
-  if(alg == 1){
-    V <-   diag(diag(S))  # Starting value
-    dimnames(V) <- dimnames(S)
+
+  if(alg == 1){     # First algorithm by Whittaker (needs the cliques)
+	it <- 0
+    W <-   diag(diag(S))  # Starting value
+    dimnames(W) <- dimnames(S)
     repeat {
-      V.old <- V
+      W.old <- W
       it <- it+1
       for (i in 1:nc) {
         a <- cli[[i]]
         b <- setdiff(nod, a)
         Saa <- S[a, a]
-        Vaa <- V[a, a]
-        Vba <- V[b, a]
-        Vbb <- V[b, b]
-        B <- Vba %*% solve(Vaa)
-        Spar <- Vbb - B %*% Vaa %*% t(B)
+        Waa <- W[a, a]
+        Wba <- W[b, a]
+        Wbb <- W[b, b]
+        B <- Wba %*% solve(Waa)
+        Spar <- Wbb - B %*% Waa %*% t(B)
         BV <- B %*% Saa
-        V[b, a] <- BV
-        V[a, b] <- t(BV)
-        V[a, a] <- Saa
-        V[b, b] <- Spar + BV %*% t(B)
-        if(pri) {
-          dev <- lik(solve(V), S, n, k)
-          cat(dev, "\n")
-        }
+        W[b, a] <- BV
+        W[a, b] <- t(BV)
+        W[a, a] <- Saa
+        W[b, b] <- Spar + BV %*% t(B)
       }
-      if(sum(abs(V-V.old)) < tol) break
+      if(sum(abs(W-W.old)) < tol) break
     }
   }
-  else if(alg==2) {
+  else if(alg==2) {    # Second algorithm by Whittaker  (needs the cliques)
+	it = 0
      K <-   solve(diag(diag(S)))  # Starting value
     dimnames(K) <- dimnames(S)
     repeat {
@@ -809,24 +806,54 @@ function (amat, S, n, pri=FALSE, alg=2, tol = 1e-06)
         b <- setdiff(nod, a)
         K[a,a] <- solve(S[a,a]) + K[a,b] %*% solve(K[b,b]) %*% K[b,a] 
         if(pri) {
-          dev <- lik(K, S, n, k)
+          dev <- likGau(K, S, n, k)
           cat(dev, "\n")
         }
       }
       if(sum(abs(K-K.old)) < tol) break
     }
-     V <- solve(K)
-  }
-  df <- sum(amat[upper.tri(amat)] == 0) # Degrees of freedom
-  dev <- lik(solve(V), S, n, k) 
-  list(Shat = V, dev = dev, df = df, it=it)
+     W <- solve(K)
+  }              
+  else if(alg==3){   # Hastie Friedman Tibshirani p. 791
+ 	W0 <- S ; W <- S
+	it <- 0
+	converge = FALSE
+	while( !converge ) {
+	    it <- it+1
+	    for (j in 1:k){   
+	        W11 <- W[-j,-j,drop=FALSE]     
+	        w12 <- W[-j,j]     
+	        s12 <- S[-j,j, drop=FALSE]
+	        paj <- amat[j,] == 1; paj <- paj[-j]
+	        beta <- rep(0, k-1)
+	        beta[paj] <- solve(W11[paj,paj], s12[paj,])
+	        w <- W11 %*% beta
+	        W[-j,j] <- w      
+	        W[j,-j] <- w
+	    }
+	    di <- norm(W0-W)      
+		if(pri) {
+          cat(di, "\n")
+        }
+	    if (di < tol){
+	        converge <- TRUE
+	    }
+	    else {
+		W0 <- W 
+		 }
+	}   
+	   
+} 
+  df <- (sum(1-amat) - k)/2
+  Kh <- solve(W)  
+  dev <- likGau(Kh, S, n, k) 
+  list(Shat = W, dev = dev, df = df, it=it)
 }
-
 "fitCovGraph" <-
 function (amat, S, n, alg="icf", dual.alg=2, start.icf=NULL, tol = 1e-06){
 ### Fits a Covariance Graph. Mathias Drton, 2003
 ### amat: adjacency matrix; S: covariance matrix; n: sample size.
-    amat <- In(amat) # Forces the ones in a bidirected graph defined with makeAG
+    amat <- In(amat) # Forces the ones in a bidirected graph defined with makeMG
     nam <- rownames(S)
     nod <- vertices(amat)
     if(is.null(nod)){
@@ -852,17 +879,12 @@ function (amat, S, n, alg="icf", dual.alg=2, start.icf=NULL, tol = 1e-06){
         stop("Algorithm misspecified!")
       }
     }
-    lik <-  function(K, S, n, k){
-      ## Computes the deviance
-      trace <- function(a) sum(diag(a)) 
-      SK <- S %*% K 
-      (trace(SK) - log(det(SK)) - k) * n
-    }
+
     df <- sum(amat[upper.tri(amat)] == 0) # Degrees of freedom
     k <- ncol(S)
-    dev <- lik(solve(temp$Sigmahat), S, n, k) 
+    dev <- likGau(solve(temp$Sigmahat), S, n, k) 
     return(list(Shat=temp$Sigmahat, dev = dev, df = df, it=temp$iterations))
-  }
+}
 
 "fitDag" <-
 function (amat, S, n)
@@ -885,7 +907,7 @@ function (amat, S, n)
   amat <- amat[sek,sek]        # and reorders amat
   Delta <- rep(length(sek),0)
   
-  emat <- edgeMatrix(amat) 
+  emat <- edgematrix(amat) 
   A <- emat
   p <- ncol(S)
   ip <- 1:p
@@ -911,7 +933,7 @@ function (amat, S, n)
 }
 
 "fitDagLatent" <-
-function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=FALSE) 
+function (amat, Syy, n, latent, norm = 1,  seed, maxit=9000, tol=1e-6, pri=FALSE) 
 {
 ### Fits linear recursive regressions with independent residuals and one latent variable.
 ### Syy: covariance matrix, n: sample size, amat: adjacency matrix.
@@ -964,7 +986,7 @@ function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=F
       ## Fits linear recursive regressions with independent residuals (fast version).
       ## NOTE. amat and S must have the same size and variables. constr is a matrix
       ## indicating the edges that must be constrained to 1.
-      emat <- edgeMatrix(amat)
+      emat <- edgematrix(amat)
       A <- emat
       p <- ncol(S)
       Delta <- rep(p,0)
@@ -1034,8 +1056,7 @@ function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=F
   
   if(df <= 0)
     warning(paste("The degrees of freedom are ", df))
-  
-  set.seed(seed)     # For random starting value
+  if(!missing(seed))  set.seed(seed)     # For random starting value
   Sigma.old <- rcorr(p+1)
   Sigma.old <- setvar1(Sigma.old, wherez, paz, norm=norm)
   dimnames(Sigma.old) <- dn    
@@ -1076,7 +1097,7 @@ function (amat, Syy, n, latent, norm = 1,  seed=144, maxit=9000, tol=1e-6, pri=F
 function(amat){
 ### Finds a set of fundamental cycles for an UG with adj. matrix amat.
     fc <- c()
-    tr <- bfs(amat) # Spanning tree
+    tr <- bfsearch(amat) # Spanning tree
     if(is.null(tr)) return(NULL)
     if(is.null(tr$chords)) return(NULL)
     co <- tr$chords # edges of the cospanning tree
@@ -1192,9 +1213,9 @@ function(bi.graph, S, start=NULL, tol = 1e-06){
     return(list(Sigmahat=Sigma, iterations=i))
   }
 
-"icfmag" <-
+`icfmag` <-
 function(mag, S, tol = 1e-06){
-    ## Iterative conditional fitting for ancestral graphs. Mathias Drton, 2003.
+    ## Iterative conditional fitting for ancestral and mixed graphs. Mathias Drton, 2003, 2009.
     if(!is.matrix(S)){
       stop("Second argument is not a matrix!")
     }
@@ -1205,9 +1226,9 @@ function(mag, S, tol = 1e-06){
       stop("Second argument is not a positive definite matrix!")
     }
     p <- nrow(S)  # Dimensionality
-    temp <- unmakeAG(mag)
+    temp <- unmakeMG(mag)
     mag.ug <- temp$ug
-    mag.dag <- temp$dag
+    mag.dag <- temp$dg  
     mag.bg <- temp$bg
     
     ## Catch trivial case
@@ -1323,7 +1344,7 @@ function(amat, cc=vertices(amat), cond=NULL, type="LWF"){
 ### Induced chain graph with chain components cc.
     inducedBlockGraph <- function(amat, sel, cond){
       S <- inducedConGraph(amat, sel=union(cond, sel), cond=NULL)
-      S[cond, sel, drop=FALSE]
+      In(S[cond, sel, drop=FALSE])
     }
     nod <- vertices(amat)
     nam <- c(list(cond), cc)
@@ -1404,10 +1425,10 @@ function(amat, sel=vertices(amat), cond=NULL){
    
    trclos <- function(M) {
       ## Transitive closure of an UG with edge matrix M. See Wermuth and Cox (2004). 
-     edgeMatrix(transClos(adjMatrix(M)))
+     edgematrix(transClos(adjMatrix(M)))
     }
 
-    A <- edgeMatrix(amat) # From the adjacency matrix to edge matrix    
+    A <- edgematrix(amat) # From the adjacency matrix to edge matrix    
     nod <- vertices(A)
       if(!all(cond %in% nod))
         stop("Conditioning nodes are not among the vertices.")
@@ -1430,7 +1451,7 @@ function(amat, sel=vertices(amat), cond=NULL){
     DRl <- In(diag(length(R)) + TRl %*% t(TRl))
     out <- In(t(ARR.l) %*% trclos(DRl) %*% ARR.l)
     out <- out[g,g, drop=FALSE]
-    adjMatrix(out)
+    adjMatrix(out)*10
   }
 
 "inducedCovGraph" <-
@@ -1445,9 +1466,9 @@ function(amat, sel=vertices(amat), cond=NULL){
     }
      trclos <- function(M) {
       ## Transitive closure of an UG with edge matrix M. See Wermuth and Cox (2004). 
-     edgeMatrix(transClos(adjMatrix(M)))
+     edgematrix(transClos(adjMatrix(M)))
     }
-    A <- edgeMatrix(amat) # From the adjacency matrix to edge matrix
+    A <- edgematrix(amat) # From the adjacency matrix to edge matrix
     nod <- vertices(A)
     if(!all(cond %in% nod))
       stop("Conditioning nodes are not among the vertices.")
@@ -1467,7 +1488,7 @@ function(amat, sel=vertices(amat), cond=NULL){
     cl <- trclos(DLr)
     out <- In(AL %*% cl %*% t(AL))
     out <- out[g,g, drop=FALSE]
-    adjMatrix(out)*2
+    adjMatrix(out)*100
   }
 
 "inducedDAG" <-
@@ -1489,9 +1510,9 @@ function(amat, sel=vertices(amat), cond=NULL){
     }
     trclos <- function(M) {
       ## Transitive closure of an UG with edge matrix M. See Wermuth and Cox (2004). 
-     edgeMatrix(transClos(adjMatrix(M)))
+     edgematrix(transClos(adjMatrix(M)))
     }
-    A <- edgeMatrix(amat) # From the adjacency matrix to edge matrix
+    A <- edgematrix(amat) # From the adjacency matrix to edge matrix
     nod <- vertices(A)
     if(!all(cond %in% nod))
       stop("Conditioning nodes are not among the vertices.")
@@ -1553,52 +1574,7 @@ function(amat){
     all(g)
   }
 
-"makeAG" <-
-function(dag = NULL, ug = NULL, bg = NULL) {
-### Builds an ancestral graph from the adj.mat of: dag, ug, bg
-    dag.nodes <- vertices(dag)
-    ug.nodes <- vertices(ug) # ; print(ug.nodes)
-    bg.nodes <- vertices(bg) # ; print(bg.nodes)
-    if(all((!is.null(ug)) & (!is.null(bg)))){
-      if(length(intersect(ug.nodes, bg.nodes)) > 0)
-        warning("Undirected edges meeting an arrowhead.")
-    }
-    anteriorGraph <- function (amat) 
-      {
-        ## Adjacency matrix of the anterior graph from an AG.
-        A <- 0 + (amat == 1) # Select the directed and undirected edges
-        transClos(A)
-      }
-    vertices <- unique(c(bg.nodes, ug.nodes, dag.nodes))
-    d <- length(vertices)
-    amat <- matrix(0, d, d)
-    dimnames(amat) <- list(vertices, vertices)
-    amat.dag <- amat
-    amat.ug <- amat
-    amat.bg <- amat
-    if(!is.null(dag))
-      amat.dag[dag.nodes, dag.nodes] <- dag # directed edges
-    if(!is.null(ug)){
-      if(any(amat.dag[ug.nodes, ug.nodes] & ug))
-        warning("Overlapping directed and undirected edges.")
-    }
-    if(!is.null(bg)){
-      if(any(amat.dag[bg.nodes, bg.nodes] & bg))
-        warning("Overlapping directed and bi-directed edges.")
-    }
-    if(!is.null(ug))
-      amat.ug[ug.nodes, ug.nodes] <- ug      # undirected edges
-    if(!is.null(bg))
-      amat.bg[bg.nodes, bg.nodes] <- bg*2    # bi-directed edges
-    if(any(apply(amat.dag, 2, sum) & apply(amat.ug, 2, sum)))
-      warning("Undirected edges meeting an arrowhead...")
-    amat <- amat.dag + amat.ug + amat.bg
-    H <- anteriorGraph(amat)[bg.nodes, bg.nodes]
-    K <- amat[bg.nodes, bg.nodes]
-    if(any(H & (K == 2)))
-      warning("Spouses cannot be ancestors.")
-    amat
-  }
+
 
 "pa" <-
 function (nn, amat) 
@@ -1832,18 +1808,243 @@ function (f)
   amat
 }
 
-"unmakeAG" <-
-function(mag){
-    ### Returns a list with the three components of an Ancestral Graph.
-    temp <- mag+t(mag)
-    ug <- dag <- bg <- matrix(0, nrow(mag), ncol(mag))
-    dimnames(ug) <- dimnames(dag) <- dimnames(bg) <- dimnames(mag)
-    ug[temp==2] <- 1
-    dag[(temp==1) & (mag==1)] <- 1
-    bg[temp==4] <- 1
-    return(list(dag = dag, ug = ug, bg = bg))
-  }
-
 "vertices" <-
 function(amat) rownames(amat)
 
+`makeMG` <- function (dg = NULL, ug = NULL, bg = NULL) 
+{
+    dg.nodes <- vertices(dg)
+    ug.nodes <- vertices(ug)
+    bg.nodes <- vertices(bg)
+    ver <- unique(c(dg.nodes, ug.nodes, bg.nodes))
+    d <- length(ver)
+    amat <- matrix(0, d, d)
+    dimnames(amat) <- list(ver, ver)
+    amat.dg <- amat
+    amat.ug <- amat
+    amat.bg <- amat
+    if (!is.null(dg)) 
+        amat.dg[dg.nodes, dg.nodes] <- dg
+    if (!is.null(ug)) 
+        amat.ug[ug.nodes, ug.nodes] <- ug * 10
+    if (!is.null(bg)) 
+        amat.bg[bg.nodes, bg.nodes] <- bg * 100
+    amat.dg + amat.ug + amat.bg
+}     
+`unmakeMG` <- function(amat){
+    ### Returns a list with the three components of a loopless MG.
+    d <- nrow(amat)
+    ug <- dg <- bg <- amat
+    M <- expand.grid(dg = 0:1,ug = 0:1,bg = 0:1)
+    i <- strtoi(as.character(amat), 2)
+    GG <- M[i+1,]
+    ug[,] <- GG[,2] 
+    dg[,] <- GG[,1]
+    bg[,] <- GG[,3]
+    if(any(ug!=t(ug))) stop("Undirected edges are wrongly coded.")
+    if(any(bg!=t(bg))) stop("Undirected edges are wrongly coded.")
+    return(list(dg = dg, ug = ug, bg = bg))   
+}  
+`DG` <- function (...) 
+{
+    f <- list(...)
+    nb <- length(f)
+    nod <- c()
+    for (k in 1:nb) {
+        tt <- terms(f[[k]], specials = "I")
+        vars <- dimnames(attr(tt, "factors"))[[1]]
+        skip <- attr(tt, "specials")$I
+        if (!is.null(skip)) 
+            vars <- vars[-skip]
+        nod <- c(nod, vars)
+    }
+    N <- unique(nod)
+    dN <- length(N)
+    amat <- matrix(0, dN, dN)
+    for (k in 1:nb) {
+        tt <- terms(f[[k]], specials = "I")
+        vars <- dimnames(attr(tt, "factors"))[[1]]
+        if (attr(tt, "response") == 1) {
+            j <- match(vars[1], N)
+            i <- match(vars[-1], N)
+            amat[i, j] <- 1
+        }
+        else if (attr(tt, "response") == 0) 
+            stop("Some equations have no response")
+    }
+    dimnames(amat) <- list(N, N)
+    amat
+}    
+`isAG` <- function(amat) {
+### checks if a graph is an ancestral graph
+    comp <- unmakeMG(amat)
+    ug <- comp$ug; dag = comp$dg; bg = comp$bg  
+    out <- TRUE
+
+    if(any(amat > 100)){
+    	 warning("There are double edges.")
+    	 out <- FALSE
+    	 }
+    anteriorGraph <- function (amat) 
+      {
+        ## Adjacency matrix of the anterior graph from an AG.
+        A <- 0 + ((amat == 1) |(amat == 10)) # Select the directed and undirected edges
+        transClos(A)
+      }
+    if(any(apply(dag, 2, sum) & apply(ug, 2, sum))){
+    	warning("Undirected edges meeting an arrowhead.")
+    	out <- FALSE
+    	}
+    H <- anteriorGraph(amat)
+ 
+    if(any((H==1) & (amat == 100))){
+      warning("Spouses cannot be ancestors.")
+      out <- FALSE
+    }  
+    out
+  }      
+
+`isADMG`<- function(amat){
+    ### check is if a graph is an ADMG
+    comp <- unmakeMG(amat)
+    ug <- comp$ug; dag <- comp$dg; bg <- comp$bg  
+    out <- TRUE
+    if(any(amat > 100)){  
+    	warning("There are double edges.")
+    	out <- FALSE
+    	}
+    if(!isAcyclic(dag)){
+    	 warning("Not acyclic.")
+    	 out <- FALSE
+    	 }
+    out 
+ }       
+
+`plotGraph` <- function (a, dashed = FALSE, directed = FALSE, noframe = FALSE, 
+    nodesize = 15, vld = 0, vc = "gray", vfc = "black", colbid = "FireBrick3", 
+    coloth = "black", cex = 1.5) 
+{
+    if (class(a) == "igraph" || class(a) == "graphNEL" || class(a) == 
+        "character") {
+        a <- grMAT(a)
+    }
+    if (class(a) == "matrix") {
+        if (nrow(a) == ncol(a)) {
+            if (length(rownames(a)) != ncol(a)) {
+                rownames(a) <- 1:ncol(a)
+                colnames(a) <- 1:ncol(a)
+            }
+            if (!directed) {
+                if (all(a == t(a)) & all(a[a != 0] == 1)) {
+                  a <- a * 10
+                }
+            }
+            l1 <- c()
+            l2 <- c()
+            for (i in 1:nrow(a)) {
+                for (j in i:nrow(a)) {
+                  if (a[i, j] == 1) {
+                    l1 <- c(l1, i, j)
+                    l2 <- c(l2, 2)
+                  }
+                  if (a[j, i]%%10 == 1) {
+                    l1 <- c(l1, j, i)
+                    l2 <- c(l2, 2)
+                  }
+                  if (a[i, j] == 10) {
+                    l1 <- c(l1, i, j)
+                    l2 <- c(l2, 0)
+                  }
+                  if (a[i, j] == 11) {
+                    l1 <- c(l1, i, j, i, j)
+                    l2 <- c(l2, 2, 0)
+                  }
+                  if (a[i, j] == 100) {
+                    l1 <- c(l1, i, j)
+                    l2 <- c(l2, 3)
+                  }
+                  if (a[i, j] == 101) {
+                    l1 <- c(l1, i, j, i, j)
+                    l2 <- c(l2, 2, 3)
+                  }
+                  if (a[i, j] == 110) {
+                    l1 <- c(l1, i, j, i, j)
+                    l2 <- c(l2, 0, 3)
+                  }
+                  if (a[i, j] == 111) {
+                    l1 <- c(l1, i, j, i, j, i, j)
+                    l2 <- c(l2, 2, 0, 3)
+                  }
+                }
+            }
+        }
+        else {
+            stop("'object' is not in a valid adjacency matrix form")
+        }
+        if (length(l1) > 0) {
+            l1 <- l1 - 1
+            agr <- graph(l1, n = nrow(a), directed = TRUE)
+        }
+        if (length(l1) == 0) {
+            agr <- graph.empty(n = nrow(a), directed = TRUE)
+            return(plot(agr, vertex.label = rownames(a)))
+        }
+        ed0 <- get.edgelist(agr)
+        ne <- nrow(ed0)
+        ed <- apply(apply(ed0, 1, sort), 2, paste, collapse = "-")
+        tb = table(ed)
+        curve <- rep(0, ne)
+        if (any(tb > 1)) {
+            tb <- tb[tb > 1]
+            for (i in 1:length(tb)) {
+                reped <- names(tb[i]) == ed
+                U = ed0[reped, ]
+                if (sum(reped) == 2) {
+                  ed0[reped]
+                  if (all(is.element(c(0, 3), l2[reped]))) {
+                    curve[reped] <- c(0.9, -0.9)
+                  }
+                  if (all(U[1, ] == U[2, ])) {
+                    curve[reped] <- c(0.6, -0.6)
+                  }
+                  else {
+                    curve[reped] <- c(0.6, 0.6)
+                  }
+                }
+                if (sum(reped) == 3) {
+                  curve[(l2 == 3) & reped] <- 0.9
+                  curve[(l2 == 0) & reped] <- -0.9
+                }
+                if (sum(reped) == 4) {
+                  curve[(l2 == 3) & reped] <- 0.3
+                  curve[(l2 == 0) & reped] <- -0.3
+                  curve[(l2 == 1) & reped] <- 0.9
+                  curve[(l2 == 2) & reped] <- 0.9
+                }
+            }
+        }
+        col = rep(coloth, ne)
+        col[l2 == 3] <- colbid
+        if (dashed) {
+            ety = rep(1, ne)
+            ety[l2 == 3] <- 2
+            l2[l2 == 3] <- 0
+        }
+        else {
+            ety = rep(1, ne)
+        }
+        if (noframe) {
+            vfc <- "white"
+            vc <- "white"
+        }
+        return(tkplot(agr, layout = layout.kamada.kawai, edge.curved = curve, 
+            vertex.label = rownames(a), edge.arrow.mode = l2, 
+            edge.color = col, edge.lty = ety, vertex.label.family = "sans", 
+            edge.width = 1.5, vertex.size = nodesize, vertex.frame.color = vfc, 
+            vertex.color = vc, vertex.label.cex = cex, edge.arrow.width = 1, 
+            edge.arrow.size = 1.2, vertex.label.dist = vld))
+    }
+    else {
+        stop("'object' is not in a valid format")
+    }
+}

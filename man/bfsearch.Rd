@@ -1,11 +1,11 @@
-\name{bfs}
-\alias{bfs}
+\name{bfsearch}
+\alias{bfsearch}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Breadth first search}
 \description{Breadth-first search of a connected undirected graph.
 }
 \usage{
-bfs(amat, v = 1)
+bfsearch(amat, v = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,9 +37,9 @@ Aho, A.V., Hopcrtoft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
 \seealso{\code{\link{UG}}, \code{\link{findPath}}, \code{\link{cycleMatrix}}}
 \examples{
 ## Finding a spanning tree of the butterfly graph
-bfs(UG(~ a*b*o + o*u*j))
+bfsearch(UG(~ a*b*o + o*u*j))
 ## Starting from another node
-bfs(UG(~ a*b*o + o*u*j), v=3)
+bfsearch(UG(~ a*b*o + o*u*j), v=3)
 }
 \keyword{graphs}
 \keyword{models}

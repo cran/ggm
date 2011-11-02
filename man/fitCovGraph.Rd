@@ -2,24 +2,24 @@
 \alias{fitCovGraph}
 \title{Fitting of Gaussian covariance graph models}
 \description{
-Fits a Gaussian covariance graph by maximum likelihood.
+Fits a Gaussian covariance graph model by maximum likelihood.
 }
 \usage{
-fitCovGraph(amat, S, n, alg = "icf", dual.alg = 2, start.icf = NULL, tol = 1e-06)
+fitCovGraph(amat, S,n ,alg = "icf", dual.alg = 2, start.icf = NULL, tol = 1e-06)
 }
 \arguments{
   \item{amat}{A symmetric Booloean matrix with dimnames representing
-    the adjacency matrix of the graph.}
+    the adjacency matrix of an UG.}
   \item{S}{A symmetric positive definite matrix with dimnames, the
-  sample covariance matrix}
-  \item{n}{A positive integer, the sample size.}
+	  sample covariance matrix.}                
+	  \item{n}{A positive integer, the sample size.} 
   \item{alg}{A character string, the algorithm used.
     If  \code{alg="icf"} (the default) the algorithm is based on iterative
     conditional fitting (see Drton and Richardson, 2003). In this case
     the ML estimates are returned.
     If  \code{alg="dual"} the algorithm is based on the dual
-    likelihood (see Kauermann, 1996). The fitted values are not
-    true ML estimates. 
+    likelihood (see Kauermann, 1996). The fitted values are an approximation
+    of the ML estimates. 
     }
     \item{dual.alg}{And integer equal to 1 or 2. It is used if
       \code{alg="dual"}. In this case a concentration graph model
@@ -38,14 +38,15 @@ fitCovGraph(amat, S, n, alg = "icf", dual.alg = 2, start.icf = NULL, tol = 1e-06
   A covariance graph is an undirected graph  in which
   the variables associated to two non-adjacent nodes
   are marginally independent. The edges of these
-  models are represented by bidirected edges
-  (Drton \& Richardson, 2003) or by dashed lines
-  (Cox \& Wermuth, 1996).
+  models are represented by bi-directed edges
+  (Drton and Richardson, 2003) or by dashed lines
+  (Cox and Wermuth, 1996).
 
   By default, this function gives the ML estimates in the covariance 
-  graph model, by a new iterative method (Drton \&
-  Richardson, 2003).  If desired then estimates from a ``dual
-  likelihood'' heuristic (Kauermann, 1996; Edwards, 2000, section 7.4).
+  graph model, by iterative conditional fitting (Drton and
+  Richardson, 2003).  Otherwise, the estimates from a ``dual
+  likelihood'' estimator can be obtained (Kauermann, 1996; Edwards, 2000, 
+  section 7.4).
 }
 \value{
 \item{Shat}{the fitted covariance matrix.}
@@ -54,10 +55,10 @@ fitCovGraph(amat, S, n, alg = "icf", dual.alg = 2, start.icf = NULL, tol = 1e-06
 \item{it}{the iterations.}
 }
 \references{
-  Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
+  Cox, D. R. and Wermuth, N. (1996). \emph{Multivariate
     dependencies}. London: Chapman \& Hall.
 
-  Drton, M. \& Richardson, T. S. (2003). A new algorithm for
+  Drton, M. and Richardson, T. S. (2003). A new algorithm for
   maximum likelihood estimation in Gaussian graphical models for
   marginal independence. \emph{Proceedings
     of the Nineteenth Conference on Uncertainty in Artificial
@@ -73,23 +74,14 @@ fitCovGraph(amat, S, n, alg = "icf", dual.alg = 2, start.icf = NULL, tol = 1e-06
 \examples{
 ## Correlations among four strategies to cope with stress for 
 ## 72 students. Cox & Wermuth (1996), p. 73.
-##  Y = cognitive avoidance
-##  X = vigilance
-##  V = blunting
-##  U = monitoring
 
-R <- matrix(c(
-   1.00, -0.20,  0.46,  0.01,
-  -0.20,  1.00,  0.00,  0.47,
-   0.46,  0.00,  1.00, -0.15,
-   0.01,  0.47, -0.15,  1.00), 4, 4)
-nam <- c("Y", "X", "V", "U") 
-dimnames(R) <- list(nam, nam)
+data(stress)
 
 ## A chordless 4-cycle covariance graph
-gr <- UG(~ Y*X + X*U + U*V + V*Y)
-fitCovGraph(gr, R, n=72)
-fitCovGraph(gr, R, n=72, alg="dual")
+G <- UG(~ Y*X + X*U + U*V + V*Y)
+
+fitCovGraph(G, S = stress, n=72)
+fitCovGraph(G, S = stress, n=72, alg="dual")
 }
 \keyword{graphs}
 \keyword{models}

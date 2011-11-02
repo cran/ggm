@@ -8,8 +8,9 @@ drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.5,
 }
 \arguments{
   \item{amat}{the adjacency matrix representation of the graph. This
-    can be an undirected graph a directed acyclic graph or an ancestral graph.}
-  \item{coor}{an optional matrix of dimensions \eqn{p \times 2} where
+    can be an undirected graph, a directed acyclic graph or a mixed 
+    graph with at most a summary graph structure. See also \code{\link{plotGraph}}}.
+  \item{coor}{an optional matrix of dimensions \code{p} x 2 where
     \eqn{p} is the number of vertices of the graph. If \code{coor=NULL}
     then the function chooses a default position for the nodes.}
   \item{adjust}{a logical value. If \code{TRUE} the graph is plotted and
@@ -55,7 +56,7 @@ drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.5,
   \url{http://www.graphviz.org}.
 }
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{UG}}, \code{\link{DAG}}, \code{\link{makeAG}}}
+\seealso{\code{\link{UG}}, \code{\link{DAG}}, \code{\link{makeMG}}, \code{\link{plotGraph}}}
 \examples{
 ## A directed acyclic graph
 d <- DAG(y1 ~ y2+y6, y2 ~ y3, y3 ~ y5+y6, y4 ~ y5+y6)
@@ -66,9 +67,9 @@ g <- UG(~giova*anto*armo + anto*arj*sara)
 \dontrun{drawGraph(d)}
 
 ## An ancestral graph
-ag <- makeAG(ug=UG(~y0*y1), dag=DAG(y4~y2, y2~y1), bg=UG(~y2*y3+y3*y4))
-\dontrun{drawGraph(ag)}
-\dontrun{drawGraph(ag, bid=FALSE)}
+ag <- makeMG(ug=UG(~y0*y1), dg=DAG(y4~y2, y2~y1), bg=UG(~y2*y3+y3*y4))
+drawGraph(ag, adjust = FALSE)
+drawGraph(ag, adjust = FALSE)
 
 ## A more complex example with coordinates: the UNIX evolution
 xy <-

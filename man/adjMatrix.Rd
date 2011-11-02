@@ -19,10 +19,10 @@ adjMatrix(A)
   \item{E}{the adjacency matrix of the graph.}
 }
 \author{Giovanni M. Marchetti}
-\seealso{\code{\link{edgeMatrix}}}
+\seealso{\code{\link{edgematrix}}}
 \examples{
 amat <- DAG(y ~ x+z, z~u+v)
-E <- edgeMatrix(amat)
+E <- edgematrix(amat)
 adjMatrix(E)
 }
 \keyword{array}
