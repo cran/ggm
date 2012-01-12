@@ -200,8 +200,7 @@ function (nn, amat)
   setdiff(unique(unlist(p)), nn)
 }
 
-"checkIdent" <-
-function(amat, latent) {
+`checkIdent` <- function(amat, latent) {
 ### Checks SW sufficient conditions for identifiability of a DAG
 ### with adjacency matrix edge amat and one latent variable.
    "allSubsets" <-
@@ -229,7 +228,7 @@ function(amat, latent) {
     }
     else
       cond.i <- FALSE
-    gcon <- inducedConGraph(amat, sel=nod, cond=NULL) 
+    gcon <- inducedConGraph(amat, sel=nod, cond=NULL) ; gcon <- sign(gcon)
     cc <- bd(L, gcon)
     if(length(cc) > 2) {
       cond.ii <- isGident(gcon[cc, cc, drop=FALSE])
@@ -256,7 +255,7 @@ function(amat, latent) {
             break
           }
           else{
-            isgid <- isGident(inducedConGraph(amat, sel=a, cond=union(L, h)))
+            isgid <- isGident(sign(inducedConGraph(amat, sel=a, cond=union(L, h))))
             if(isgid){
               cond.iii <- TRUE
               break
@@ -278,7 +277,7 @@ function(amat, latent) {
             break
           }
           else{
-            isgid <- isGident(inducedConGraph(amat, sel=a, cond=union(L, h)))
+            isgid <- isGident(sign(inducedConGraph(amat, sel=a, cond=union(L, h))))
             if(isgid){
               cond.iv <- TRUE
               break
