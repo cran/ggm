@@ -25,9 +25,13 @@ of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and
 \code{RepMarBG} looks for presence of an unshielded collider 
 V-configuration in graph.}
 \value{
-Either "NOT Markov equivalent to a UG" or a matrix that is the 
-adjacency matrix of the generated graph.
-It consists of 4 different integers as an \eqn{ij}-element: 0 for a missing 
+  A list with two components: \code{verify} and
+  \code{amat}. \code{verify} is a logical value, \code{TRUE} if there is
+  a representational Markov equivalence and \code{FALSE} otherwise.
+  \code{amat} is either \code{NA} if \code{verify == FALSE} or
+  the adjacency matrix of the generated graph, if
+  \code{verify == TRUE}. In this case it consists of 4 different
+  integers as an \eqn{ij}-element: 0 for a missing 
 edge between \eqn{i} and \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between 
 \eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are 
 added to be associated with multiple edges of different types. The matrix is 

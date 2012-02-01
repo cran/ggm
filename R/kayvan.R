@@ -1,5 +1,7 @@
-#### Functions by Kayvan Sadeghi 2011
-require(gRbase)
+#### Functions by Kayvan Sadeghi 2011-2012
+# May 2012 Changed the return values of some functions to TRUE FALSE
+
+require(gRbase) # NOTE it should load igraph0 !
 #require(grid)
 #require(igraph)
 ######################################################################
@@ -1111,8 +1113,8 @@ msep<-function(a,alpha,beta,C=c()){
 	#			break
 	#			break}}}
 	if(max(ar[as.character(beta),as.character(alpha)]+ar[as.character(alpha),as.character(beta)]!=0)){
-		return("NOT separated")}
-			return("Separated")
+		return(FALSE)}
+			return(TRUE)
 }
 ############################################################################
 ############################################################################
@@ -1214,11 +1216,11 @@ MarkEqRcg<-function(amat,bmat)
 	na<-ncol(amat)
 	nb<-ncol(bmat)
 	if(na != nb){
-		return("NOT Markov Equivalent")}
+		return(FALSE)}
 	at<-which(amat+t(amat)+diag(na)==0,arr.ind=TRUE)
 	bt<-which(bmat+t(bmat)+diag(na)==0,arr.ind=TRUE)
 	if(identical(at,bt)==FALSE){
-		return("NOT Markov Equivalent")}
+		return(FALSE)}
 	ai<-c()
 	bi<-c()
 	if(dim(at)[1]!=0){
@@ -1229,10 +1231,10 @@ MarkEqRcg<-function(amat,bmat)
 			if((bmat[bt[i,1],j]%%10==1 || bmat[bt[i,1],j]>99) &&(bmat[bt[i,2],j]%%10==1 || bmat[bt[i,2],j]>99) ){
 				bi<-c(bi,j)}}
 			if(identical(ai,bi)==FALSE){
-				return("NOT Markov Equivalent")}
+				return(FALSE)}
 		ai<-c()
 		bi<-c()}}
-	return("Markov Equivalent")
+	return(TRUE)
 }
 ########################################################################################
 ########################################################################################
@@ -1260,11 +1262,11 @@ MarkEqMag<-function(amat,bmat)
 	na<-ncol(amat)
 	nb<-ncol(bmat)
 	if(na != nb){
-		return("NOT Markov Equivalent")}
+		return(FALSE)}
 	at<-which(amat+t(amat)+diag(na)==0,arr.ind=TRUE)
 	bt<-which(bmat+t(bmat)+diag(na)==0,arr.ind=TRUE)
 	if(identical(at,bt)==FALSE){
-		return("NOT Markov Equivalent")}
+		return(FALSE)}
 	a<-c()
 	b<-c()
 	if(length(at)>0){
@@ -1275,7 +1277,7 @@ MarkEqMag<-function(amat,bmat)
 			if((bmat[bt[i,1],j]%%10==1 || bmat[bt[i,1],j]>99) &&(bmat[bt[i,2],j]%%10==1 || bmat[bt[i,2],j]>99) ){
 					b<-rbind(b,c(bt[i,1],j,bt[i,2]))}}}
 		if(identical(a,b)==FALSE){
-			return("NOT Markov Equivalent")}}
+			return(FALSE)}}
 	ar<-which(amat%%10==1,arr.ind=TRUE)
 	br<-which(bmat%%10==1,arr.ind=TRUE)
 	ap<-c()
@@ -1355,15 +1357,15 @@ MarkEqMag<-function(amat,bmat)
 					Qbonen<-c()
 					Qbtwon<-c()}}}}
 	if(length(a)!=length(b)){
-		return("NOT Markov Equivalent")}
+		return(FALSE)}
 	f<-c()
 	if((length(a)>0) && (length(b)>0)){
 		for(i in 1:dim(a)[1]){
 			for(j in 1:dim(b)[1]){
 				f<-c(f,min(a[i,]==b[j,]))}
 			if(max(f)==0){
-				return("NOT Markov Equivalent")}}}	
-	return("Markov Equivalent")
+				return(FALSE)}}}	
+	return(TRUE)
 }
 ##########################################################################################
 ###########################################################################################
@@ -1384,7 +1386,7 @@ RepMarUG<-function(amat)
 		for(i in 1:dim(at)[1]){
 			for(j in 1:na){
 				if((amat[at[i,1],j]%%10==1 || amat[at[i,1],j]>99) &&(amat[at[i,2],j]%%10==1 || amat[at[i,2],j]>99) ){
-					return("NOT Markov equivalent to a UG")}}}}
+					return(list(verify = FALSE, amat = NA))}}}}
 	for(i in 1:na){
 		for(j in 1:na){
 			if(amat[i,j]==100){
@@ -1392,7 +1394,7 @@ RepMarUG<-function(amat)
 			if(amat[i,j]==1){
 				amat[i,j]<-10
 				amat[j,i]<-10}}}
-	return(amat)
+	return(list(verify = TRUE, amat = amat))
 }
 ########################################################################################
 #########################################################################################
@@ -1413,7 +1415,7 @@ RepMarBG<-function(amat)
 		for(i in 1:dim(at)[1]){
 			for(j in 1:na){
 				if(amat[at[i,1],j]%%100>9 || amat[j,at[i,1]]%%10==1 || amat[at[i,2],j]%%100>9 || amat[j,at[i,2]]%%10==1){
-					return("NOT Markov equivalent to a BG")}}}}
+					return(list(verify= FALSE, amat = NA))}}}}
 	for(i in 1:na){
 		for(j in 1:na){
 			if(amat[i,j]==10){
@@ -1421,7 +1423,7 @@ RepMarBG<-function(amat)
 			if(amat[i,j]==1){
 				amat[i,j]<-100
 				amat[j,i]<-100}}}
-	return(amat)
+	return(list(verify = TRUE, amat = amat))
 }
 ########################################################################################
 ########################################################################################
@@ -1449,7 +1451,7 @@ RepMarDAG<-function(amat)
 		s<-S[which(dim==max(dim))[1]]
 		ns<-which(amat[s,Ma]%%100>9,arr.ind=TRUE)
 		if(min(amat[ns,ns]+diag(length(ns)))==0){
-			return("NOT Markov equivalent to a DAG")}
+			return(FALSE)}
 		Ma<-c(Ma,s)
 		S<-S[S!=s]}
 	at<-which(amat+t(amat)==0,arr.ind=TRUE)
@@ -1463,7 +1465,7 @@ RepMarDAG<-function(amat)
 				break}
 			for(j in ((1:na)[-ai])){
 				if((max(amat[ai,j]>99)==1) &&(amat[at[i,2],j]%%10==1 || amat[at[i,2],j]>99) && (amat[at[i,1],j]%%10!=1) && (amat[at[i,1],j]<100)){
-					return("NOT Markov equivalent to a DAG")}}
+					return(list(verify = FALSE, amat = NA))}}
 		ai<-c()}}	
 	for(i in Ma){
 		v<-which(amat[i,]%%100>9)
@@ -1497,6 +1499,6 @@ RepMarDAG<-function(amat)
 				amat[aarc[i,1],aarc[i,2]]<-1}
 			else{
 				amat[aarc[i,1],aarc[i,2]]<-0}}}
-	return(amat)
+	return(list(verify = TRUE, amat = amat))
 }	
 ##################################################################################

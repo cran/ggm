@@ -1,4 +1,6 @@
 ## Modified in version 1.99
+# Improved isAcyclic.  Thanks to David Edwards
+# Changed conComp
 # Removed cliques, thanks to Castelo.         edgematrix
 # Modified fitConGraph wit new algorithm from Tibshirani Hastie Friedman.
 # Modified DAG
@@ -303,18 +305,24 @@ function(amat){
     g
   }
 
-"conComp" <-
-function (amat) 
+`conComp` <-  function (amat, method = 1) 
+### Finds the connected components of an UG graph from its adjacency matrix amat. 
 {
-### Finds the connected components of an UG graph from its adjacency matrix amat.
-  if(!all(amat == t(amat)))
-    stop("Not an undirected graph.")
-  A  <- transClos(amat)
-  diag(A) <- 1
-  n <- nrow(A)
-  A <- sign(A + t(A))
-  u <- A %*% 2^((n - 1):0)
-  return(match(u, unique(u)))
+    if (!all(amat == t(amat))) 
+       stop("Not an undirected graph.")
+  if(method == 2){
+  		u <- clusters(graph.adjacency(amat, mode="undirected"))$membership + 1
+    	return(u)
+  	}
+  	else if (method == 1){
+    	A <- transClos(amat)
+    	diag(A) <- 1
+    	n <- nrow(A)
+    	A <- sign(A + t(A))
+    	u <- A %*% 2^((n - 1):0)
+	 	return(match(u, unique(u)))
+	}
+	else{ stop("Wrong method.")}
 }
 
 "correlations" <-
@@ -818,38 +826,44 @@ tr = function(A) sum(diag(A))
 	it <- 0
 	converge = FALSE
 	while( !converge ) {
-	    it <- it+1
-	    for (j in 1:k){   
-	        W11 <- W[-j,-j,drop=FALSE]     
-	        w12 <- W[-j,j]     
-	        s12 <- S[-j,j, drop=FALSE]
-	        paj <- amat[j,] == 1; paj <- paj[-j]
+          it <- it+1
+          for (j in 1:k){   
+            W11 <- W[-j,-j,drop=FALSE]     
+            w12 <- W[-j,j]     
+            s12 <- S[-j,j, drop=FALSE]
+            paj <- amat[j,] == 1;
+            paj <- paj[-j]
 	        beta <- rep(0, k-1)
-	        beta[paj] <- solve(W11[paj,paj], s12[paj,])
-	        w <- W11 %*% beta
-	        W[-j,j] <- w      
-	        W[j,-j] <- w
-	    }
-	    di <- norm(W0-W)      
-		if(pri) {
-          cat(di, "\n")
-        }
-	    if (di < tol){
-	        converge <- TRUE
-	    }
-	    else {
-		W0 <- W 
-		 }
+            if (all(!paj)){
+              next
+            }
+            else{
+              beta[paj] <- solve(W11[paj, paj], s12[paj, ])
+              w <- W11 %*% beta
+              W[-j, j] <- w
+              W[j, -j] <- w
+            }
+          }
+          di <- norm(W0-W)      
+          if(pri) {
+            cat(di, "\n")
+          }
+          if (di < tol){
+            converge <- TRUE
+          }
+          else {
+            W0 <- W 
+          }
 	}   
-	   
-} 
+        
+      } 
   df <- (sum(1-amat) - k)/2
   Kh <- solve(W)  
   dev <- likGau(Kh, S, n, k) 
   list(Shat = W, dev = dev, df = df, it=it)
 }
-"fitCovGraph" <-
-function (amat, S, n, alg="icf", dual.alg=2, start.icf=NULL, tol = 1e-06){
+`fitCovGraph` <-
+  function (amat, S, n, alg="icf", dual.alg=2, start.icf=NULL, tol = 1e-06){
 ### Fits a Covariance Graph. Mathias Drton, 2003
 ### amat: adjacency matrix; S: covariance matrix; n: sample size.
     amat <- In(amat) # Forces the ones in a bidirected graph defined with makeMG
@@ -1535,15 +1549,24 @@ function(amat, sel=vertices(amat), cond=NULL){
     t(out[g,r, drop=FALSE])
   }
 
-"isAcyclic" <-
-function (amat) 
+`isAcyclic` <-
+function (amat, method = 1) 
 {
 ### Tests if the graph is acyclic.
+  if(method ==1){
+    G <- as(amat, "graphNEL")
+    return(max(sapply(strongComp(G),length))==1)
+  }
+  else if(method ==2){
   B <- transClos(amat)
   l <- B[lower.tri(B)]
   u <- t(B)[lower.tri(t(B))]
   com <- (l&u)
-  all(!com)
+  return(all(!com))
+  }
+  else{
+    stop("Wrong method.")
+  }
 }
 
 "isGident" <-
@@ -1753,7 +1776,7 @@ function (amat) {
     amat[ord, ord]
 }
 
-"transClos" <-
+`transClos` <-
 function (amat) 
 {
 ### Transitive closure of the relation with adjacency matrix amat.
@@ -2446,7 +2469,7 @@ if (! is.null(C)){ # se C non ha zero righe trova il null space di C
 
 }   
 
-list(LL=LL, beta=be, S=S, P=P)
+list(LL=LL, beta=be, S=solve(S), P=P)
 }               
 
 `marg.param` = function(lev,type) 

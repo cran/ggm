@@ -1,0 +1,487 @@
+\documentclass[bj, preprint]{imsart}
+\usepackage[a4paper, margin=3cm]{geometry}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\usetikzlibrary{arrows}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\startlocaldefs
+\setattribute{journal}{name}{}
+\newcommand\ci{\mathbin{\perp{\mkern-20mu}\perp}}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+%%%%%%%%%%%%%%%%%%%%
+
+
+\pgfarrowsdeclare{triangle 30}{triangle 30}
+{
+  \@tempdima=0.5pt%
+  \advance\@tempdima by.25\pgflinewidth%
+  \@tempdimb=8.705\@tempdima\advance\@tempdimb by.5\pgflinewidth%
+  \pgfarrowsleftextend{-\@tempdimb}
+  \@tempdimb=.5\@tempdima\advance\@tempdimb by1.28\pgflinewidth%
+  \pgfarrowsrightextend{\@tempdimb}
+}
+{
+  \@tempdima=0.5pt%
+  \advance\@tempdima by.25\pgflinewidth%
+  \pgfsetdash{}{0pt}
+  \pgfsetmiterjoin
+  \pgfpathmoveto{\pgfpointadd{\pgfpoint{0.5\@tempdima}{0pt}}{\pgfpointpolar{195}{10\@tempdima}}}
+  \pgfpathlineto{\pgfpoint{0.5\@tempdima}{0\@tempdima}}
+  \pgfpathlineto{\pgfpointadd{\pgfpoint{0.5\@tempdima}{0pt}}{\pgfpointpolar{-195}{10\@tempdima}}}
+  \pgfpathclose
+  \pgfusepathqfillstroke
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{secnumdepth}{2}
+\endlocaldefs
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+\begin{frontmatter}
+
+\title{Fitting Gaussian graphical model with \textsf{ggm}}
+
+\runtitle{Fitting Gaussian graphical models}
+
+\begin{aug}
+  \author{Giovanni Marchetti\ead[label=e1]{giovanni.marchetti@ds.unifi.it}}
+  \and
+  \author{Ilaria Carobbi}
+ 
+
+
+
+%\runauthor{Marchetti}
+
+  \affiliation{Department of Statistics, University of Florence}
+
+  \address{viale Morgagni, 59, 50134 Firenze, Italy \printead{e1}}
+
+
+
+\end{aug}
+\end{frontmatter}
+
+
+
+\setkeys{Gin}{width=2.5in}
+<<echo=false, results=hide>>=
+source("~/Documents/R/ggm2/R/functions2.R")
+source("~/Documents/R/ggm2/data/stress.R")
+source("~/Documents/R/ggm2/data/anger.R")
+@
+\section{Introduction}
+Graphical models are statistical models for data observed 
+on a set of variables $Y_1, \dots, Y_d$, 
+that specify a set of conditional and marginal independencies
+between the variables. The set of independencies 
+is exactly determined by the structure of a graph having the variables as nodes. 
+\section{Basic types of graph}
+In general, a graph $G$ is a mathematical object defined by a set of nodes (or vertices)  $V$ and by a set of edges $E$.
+In graphical models, graphs  are used to define relation between the variables. 
+Thus, the nodes in $V$ are in 1-1 correspondence with the variables, and the edges in $E$  are pairs of distinct
+nodes $i$ and $j$ denoting an association between the variables $Y_i$ and $Y_j$. Edges can be undirected or directed. Undirected edges  $ij$ specify no order between $i$ and $j$. They are typically denoted by a line $ i-{\mkern-15mu}-j$, or a dashed line, 
+or by a bi-directed arrow $i\longleftrightarrow j$. Directed edges $i \rightarrow j$ specify an order with $i$ 
+coming before $j$. 
+The graphs can be classified according to the type of edge they contain. 
+The main types are:
+\begin{itemize}
+\item undirected graphs, containing only undirected edges;
+\item directed acyclic graphs, containing only directed edges;
+\item mixed graphs, containing both undirected and directed edges. 
+\end{itemize}
+
+\subsection{Undirected graphs}
+An undirected graph contains only undirected edges. In statistics it is suitable to describe
+the associations between variables that are considered \emph{on equal standing}. 
+
+Consider the following example.
+Let $Y, X, V, U$ be 4 variables  and suppose that  we define the undirected graph 
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+Y &    V\\ 
+X &    U \\};
+\path[-,font=\scriptsize,  thick] 
+(m-1-1) edge   (m-2-1)
+(m-1-2) edge   (m-2-2)
+(m-1-1) edge   (m-2-2)
+(m-2-1) edge (m-2-2);
+\end{tikzpicture}
+$$ 
+% be 4 psychological variables measured on a sample of students.  The variables are $Y = $ state anxiety,  $X =$ state anger,
+%$V=$ trait anxiety, $U=$ trait anger. 
+with edges
+$
+VU, YU, UX, YX.
+$
+The graph may be defined by a square matrix, the \emph{adjacency matrix},  
+that has the elements in positions $(i,j)$ and $(j,i)$ equal to  $1$ whenever the edge $ij$ is in $G$. 
+This can be defined in \textsf{ggm} using the constructor function \code{UG}:
+<<>>=
+G = UG(~ V*U + Y*U + U*X + Y*X)
+G
+@
+The output is a matrix whose row and column names are the nodes.  
+The argument of the function \code{UG} 
+is a \emph{model formula} defining the edges of the graph by 4 two-way interaction terms. The same graph could be 
+defined by a different model formula, with one two-factor interaction $VU$ and a three-factor interaction $YXU$:
+<<>>=
+G = UG(~ V*U + Y*X*U)
+G
+@
+%\begin{center}
+%<<fig=true, width=5, height=5>>=
+%draw.graph(G, adjust=FALSE)
+%@
+%\end{center}
+The two subgraphs defined by the subsets $VU$ and $YXU$ are complete, that is, they have all the possible edges:
+<<>>=
+a = c("U", "V") ; b = c("Y", "X", "U")
+G[a,a]
+G[b,b]
+@ 
+Moreover, the two subgraphs are maximal in the sense that they cannot be enlarged without losing  completeness. 
+Therefore the two subsets  $VU$ and $YXU$ are called two \emph{cliques} of the graph. Finding the cliques of an undirected graph
+is an NP-hard problem.
+
+Sometimes we will need undirected graphs with bi-directed or dashed edges like for example   
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+Y &    V\\ 
+X &    U \\};
+\path[<->,   dashed,   >= triangle 30] 
+(m-1-1) edge   (m-1-2)
+(m-1-2) edge   (m-2-2)
+(m-1-1) edge   (m-2-1)
+(m-2-1) edge (m-2-2);
+\end{tikzpicture}
+\qquad
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+Y &    V\\ 
+X &    U \\};
+\path[-,thick,  dashed] 
+(m-1-1) edge   (m-1-2)
+(m-1-2) edge   (m-2-2)
+(m-1-1) edge   (m-2-1)
+(m-2-1) edge (m-2-2);
+\end{tikzpicture}
+$$ 
+To distinguish these graphs we code in their  adjacency matrix the edges  by a 2 instead of a 1. 
+Thus, with same function \code{UG},  we define the two previous graphs by 
+<<>>=
+G2 = 2*UG(~ Y*V + V*U + U*X + Y*X)
+G2
+@     
+\subsection{Directed acyclic graphs}
+A directed acyclic graph (a DAG for short) contains only directed edges. Each edge  
+is a couple $(i,j)$ of nodes, 
+defining the tail and the head of an arrow $i \rightarrow j$. Moreover in a DAG there are no cycles, i.e.,  is impossible 
+starting from a node and following the direction of the arrows to get  back to the starting node.
+For example the following graph is a DAG.
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+X &   &   &    \\ 
+  & Z & U & V \\ 
+Y &   &   &     \\};
+\path[->,thick, >= triangle 30] 
+(m-1-1) edge   (m-2-2)
+(m-3-1) edge   (m-2-2)
+(m-2-2) edge   (m-2-3)
+(m-1-1) edge   (m-2-4)
+(m-3-1) edge   (m-2-3)
+(m-2-3) edge (m-2-4);
+\end{tikzpicture}
+$$   
+ In a DAG each node $i$ has an  associated set of \emph{parents} meaning the (possibly empty)  set $\mathrm{pa}(j)$ of  the nodes 
+$i$ such that $i \rightarrow j$ is in $G$. Thus for example the parents of $V$ are $X$ and $U$, the parents of $U$ are $Z$ and $Y$, 
+while  $X$ and $Y$ have no parents each. 
+A directed acyclic graph is used in statistics to specify a data generating process, where each variable is directly dependent 
+by some parent variables, and indirectly dependent via intermediate variables.  
+
+A DAG $G$ may be defined by its \emph{adjacency matrix},  
+a square matrix that has the elements in position $(i,j)$ equal to  $1$ whenever the edge $i \rightarrow j$  is in $G$. 
+In \textsf{ggm} the previous DAG is defined by a constructor function \code{DAG} that
+takes as arguments several model formulae giving the parents of each node (except, possibly, the nodes with no parents).
+The previous DAG is defined as follows: 
+<<>>=
+D = DAG(V~ X + U, U ~ Z + Y, Z ~ X+Y)
+D
+@
+A property of DAGs is that the nodes can be always reordered (not uniquely, in general) such that the parents are before the children.
+This is called the \emph{topological order} of the DAG. For instance
+<<>>=
+Do = topSort(D) 
+Do
+@
+produces the adjacency matrix in the topological order,  that turns out to be always upper triangular.
+\subsubsection{Drawing graphs from right to left}
+The description of a DAG by a sequence of model formulae implies that each formula defines a node and its parents and that the 
+parents are to the right of the symbol $\sim$. Even if this is the opposite of the topological order, sometimes it is 
+convenient and therefore we shall draw a DAG from right to left. For example, 
+the DAG defined above could be drawn as follows. 
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+     &   &   &  X  \\ 
+  V  & U & Z &      \\ 
+     &   &   &  Y   \\};
+\path[<-,thick, >= triangle 30] 
+(m-2-1) edge   (m-1-4)
+(m-2-2) edge   (m-3-4)
+(m-2-3) edge   (m-1-4)
+(m-2-3) edge   (m-3-4)
+(m-2-1) edge   (m-2-2)
+(m-2-2) edge (m-2-3);
+\end{tikzpicture}
+$$   
+\subsubsection{Graphs with isolated nodes}
+A node is isolated if the set of its parents and children are empty. A DAG with an isolated node $X$ can be defined by 
+introducing in the model formula a term $X \sim X$. For instance the graph 
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+Z &  Y  &  X     \\}; 
+\path[<-,thick, >= triangle 30] 
+(m-1-1) edge   (m-1-2);
+\end{tikzpicture}
+$$     
+is defined by 
+<<>>=
+D = DAG(Z ~ Y, X~X) 
+D
+@
+\section{Some basic Gaussian graphical models}
+We distinguish 5 types of graphical models
+\begin{enumerate}
+\item Covariance graph models
+\item Concentration graph models
+\item Regression graph models
+\item General multivariate regression graph models
+\item Linear structural equation models
+\end{enumerate}
+These models can be developed for both continuous or discrete data, but our discussion 
+will be limited to the first situation. 
+
+In this case, the standard assumption is that the observed data are 
+a random sample from a $d$-dimensional Gaussian distribution $Y =(Y_1, \dots, Y_d) \sim N(\mu, \Sigma)$, representing the 
+population,  where $\mu$ is the mean vector 
+that, without loss of generality,  can be assumed to be zero, and where $\Sigma = [\sigma_{ij}]$ is a p.d. covariance matrix.  
+Often the Gaussian assumption is too strong, but as in linear regression, we can fit the  models 
+with a set weaker assumptions provided that we include appropriate nonlinear terms (see the package \textbf{checklin}). Each model can be simply 
+characterized by a set of linear constraints
+on parameters of the population. 
+
+\subsection{Covariance graph models} 
+A Gaussian covariance graph model for $Y$ is defined by zero constraints on the covariances as specified by the missing edges 
+of  an undirected graph $G$. The model specifies that  
+$$
+ \sigma_{ij} = 0 \text{ whenever the edge } ij \text{ is not in } G.  
+$$ 
+In a Gaussian distribution $\sigma_{ij} = 0$ if and only the two variables $Y_i$ and $Y_j$ are marginally independent. 
+Therefore a covariance graph model specifies an independence
+ $Y_i \ci Y_j$ for each missing edge $ij$. The model belongs to the class of linear in covariance structures (cf. Anderson, 1971).  
+
+\subsubsection{Example}
+We analyze for a sample of 72 students, the covariance matrix among 4 variables  
+measuring 4 different strategies to cope with stress. The variables are
+$Y$, cognitive avoidance; $X$, vigilance; $V$, blunting and $U$, monitoring.
+The data are contained in the package
+\code{SIN}. The following instructions compute the sample covariance matrix. 
+<<>>=
+require(SIN)
+data(stressful)
+S = sdcor2cov(stressful$stddev, stressful$corr)
+dimnames(S) = list(c("Y", "X", "V", "U"), c("Y", "X", "V", "U"))
+S
+@
+Inspection of the sample correlation matrix 
+<<>>=
+cov2cor(S)
+@
+shows that a possible hypothesis to test is 
+$\sigma_{XV} = \sigma_{YU} = 0$. This corresponds to a covariance graph model
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+Y &    V\\ 
+X &    U \\};
+\path[-,thick,  dashed] 
+(m-1-1) edge   (m-1-2)
+(m-1-2) edge   (m-2-2)
+(m-1-1) edge   (m-2-1)
+(m-2-1) edge (m-2-2);
+\end{tikzpicture}
+$$
+This model can be fitted by maximum likelihood with
+<<>>=
+# data(stress)
+G <- 2*UG(~ Y*X + X*U + U*V + V*Y)
+G
+fitCovGraph(G, S, n = 72)
+@
+The output of the function is a list with components
+\code{Shat}, the fitted covariance matrix, \code{dev}, the likelihood ratio statistic against the saturated model,
+i.e., the model with no restrictions on the covariances, and \code{it}, the number of iterations of the algorithm.
+The fit for the \code{stressful} data is almost perfect.  
+%Now we look at another example 
+%with a sample of simulated data from a Gaussian distribution with mean zero and covariance matrix
+%$$
+%V = \begin{bmatrix}
+%1 & .8&  0 &  0 \\ 
+%.8& 1 &  .5 &  0\\
+% 0& .5 &  1 &  -0.4\\
+% 0& 0 &  -0.4 &  1\\
+%\end{bmatrix} 
+%$$  
+%The structure of the covariance matrix implies a covariance graph 
+%$$
+% \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+%\matrix (m) [matrix of math nodes, row sep=3em, column sep=2em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+%X &    Y & Z & U\\}; 
+%\path[-,thick,  dashed] 
+%(m-1-1) edge   (m-1-2)
+%(m-1-2) edge   (m-1-3)
+%(m-1-3) edge   (m-1-4);
+%\end{tikzpicture}
+%$$
+%that is a 4-chain. The data are simulated using \code{mvrnorm} from package \code{MASS}.  
+%<<>>=
+%V = matrix(c(1, .8, 0, 0, 
+%            .8, 1, .5, 0,
+%             0, .5, 1, -0.4,
+%             0, 0, -0.4, 1), 4, 4) 
+%mu = c(0,0,0,0)
+%
+%library(MASS)
+%X = mvrnorm(100, mu, V)
+%X = data.frame(X)
+%names(X) = c("X", "Y", "Z", "U") 
+%cov(X)
+%@
+%Notice that we first convert the matrix of simulated data to a data frame with appropriate variable names. 
+%We can fit the 4-chain from the dataframe \code{X} with 
+%<<>>=
+%G = UG(~ X*Y + Y*Z + Z*U)
+%fitCovGraph(G, data = X)
+%@  
+\subsection{Concentration graph models}
+A Gaussian concentration graph model for a random vector $Y$ is defined by zero constraints on the inverse of the
+covariance matrix $\Sigma$. This is called the \emph{concentration matrix} and is denoted by $\Sigma^{-1} = [\sigma^{ij}]$.
+Given an undirected graph $G$ this model specifies that 
+$$
+\sigma^{ij} = 0 \text{ whenever the edge } ij \text{ is not in } G.
+$$ 
+If $Y$ has a Gaussian distribution, the constraint $\sigma^{ij} = 0$ is shown to be equivalent to the \emph{conditional independence } $Y_i \ci Y_j | $ given all the remaining variables. Thus the concentration graph model specifies a set of pairwise 
+conditional independencies for each missing edge in the graph.
+ 
+undirected graphs $G$ is defined by a set of nodes, usually denoted by integers $i = 1, \dots, d$,
+and by a set $E$ of edges, described by pairs $\{i,j\}$ of nodes. The \emph{set of missing edges} is the complementary set of $E$.
+A simple representation of the graph is given by its \emph{adjacency matrix}. A concentration graph model is also called
+a \emph{covariance selection model}; see Dempster (1972).   
+
+A Gaussian undirected graph model for a $d$-dimensional random vector $Y=(Y_1, \dots, Y_d)$   is defined by 
+a family of Gaussian distributions with mean vector zero and a $d\times d$ covariance matrix $\Sigma = [\sigma_{ij}]$
+ such that its inverse  $\Sigma^{-1}= [\sigma^{ij}]$ satisfies
+ $$
+ \sigma^{ij} = 0 \text{ whenever } i-{\mkern-15mu}-j \text{ is  not in } G
+ $$        
+The inverse of the covariance matrix is called a \emph{concentration matrix} and therefore the model specifies 
+zero constraints on the concentrations. The model is sometimes called a \emph{covariance selection model} (Dempster) or
+\emph{concentration graph model} (Cox and Wermuth, 1996).
+
+The concentration graph model specifies a set of conditional independencies: for each \emph{missing} edge
+$i-{\mkern-15mu}-j$, the variables $Y_i$ and $Y_j$ are independent given all the remaining variables  $Y_{V \setminus ij}$. 
+
+\subsubsection{example}       
+We analyze a covariance matrix for a sample of  684 female college students, concerning 4 variables on anxiety and anger. The 4 variables are: 
+$Y$ = state anxiety, $X$ = state anger, $V$ = trait anxiety, $U$ = trait anger. 
+The sample covariance matrix is as follows
+<<>>=
+S = matrix(c(37.1926,   24.9311,   21.6056,   15.6907,
+             24.9311,   44.8472,   17.8072,   21.5865,
+             21.6056,   17.8072,   32.2462,   18.3523,
+             15.6907,   21.5865,   18.3523,   43.1191), 4, 4)
+dimnames(S) = list(c("Y", "X", "V", "U"), c("Y", "X", "V", "U"))
+S
+@
+A preliminary analysis is that of computing the marginal and partial correlation matrices. The function
+\code{correlations} stores the marginal and partial correlations in the lower and upper triangle of a matrix, respectively: 
+<<>>=
+correlations(S)
+@
+The almost zero partial correlations $\hat \rho_{YU.XV}$ and $\hat\rho_{XV.YU}$ suggest the concentration graph model
+$$
+ \begin{tikzpicture}[description/.style={fill=white,inner sep=2pt}  ] 
+\matrix (m) [matrix of math nodes, row sep=3em, column sep=3em, text height=1.0ex, text depth=0.0ex, nodes = {outer sep = 1pt}] { 
+Y &    V\\ 
+X &    U \\};
+\path[-,thick] 
+(m-1-1) edge   (m-1-2)
+(m-1-2) edge   (m-2-2)
+(m-1-1) edge   (m-2-1)
+(m-2-1) edge (m-2-2);
+\end{tikzpicture}
+$$
+This can be fitted by ML using the function \code{fitConGraph} as follows. 
+<<>>=
+G = UG(~ Y*V + V*U + U*X+X*Y)
+ml = fitConGraph(amat = G, S, n = 684)
+ml
+@ 
+The output is the same of the function \code{fitConGraph} where \code{Shat} is the 
+fitted covariance matrix $\hat \Sigma = [\hat \sigma_{ij}]$. The fitted concentration matrix is
+simply the inverse $\hat \Sigma^{-1}$ and we can verify that the two conditions of the 
+maximum likelihood estimates are verified, that is (a)  the concentrations corresponding to the missing edges 
+are zero:
+<<>>=
+round(solve(ml$Shat),4)
+@
+and (b) the fitted covariances corresponding to the edges present coincide with the
+sample covariances. 
+\subsection{Directed acyclic graph models}      
+
+
+A Gaussian directed acyclic  graph model for a $d$-dimensional random vector $Y$   is defined by 
+the recursive equations 
+$$
+Y = B Y + \epsilon, \text{ where } \epsilon \sim N(0, \Delta)
+$$
+is a vector of independent residuals
+with a diagonal covariance matrix $\Delta$ and $B = [\beta_{ij}]$ is a matrix of coefficients 
+such that 
+$$
+\beta_{ij} = 0     \text{ whenever } i \leftarrow j \text{ is not in } G. 
+$$   
+Therefore the concentration and covariance matrices of $Y$ are
+$$
+\Sigma^{-1} = A^T \Delta^{-1} A, \quad \Sigma = A^{-1}\Delta A^T
+$$                                   
+where $A = I-B$.
+
+The model specifies a set of conditional independencies
+between $Y_i$ and $Y_j$ given all the remaining variables  $Y_{V \setminus ij}$ if the edge  $\{i,j\}$ is missing.
+\subsection{Structural equation models} 
+
+%\SweaveOpts{echo=false}
+%\begin{figure}
+%\centering
+%<<fig=true, width=12, height=6>>=
+%par(mfrow=c(1,2))
+%drawGraph(G)
+%drawGraph(notG)
+%par(mfrow=c(1,1))
+%@
+%\caption{A undirected graph and its complementary graph.}\label{fig:cmp}
+%\end{figure}
+%\SweaveOpts{echo=true}
+\end{document}
+  

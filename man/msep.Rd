@@ -28,9 +28,8 @@ A third disjoint subset of the node set of \code{a}}
 %%  ~~ If necessary, more details than the description above ~~
 %}
 \value{
-"Separated" if \code{alpha} and \code{beta} are m-separated given \code{C}. 
-"NOT separated" if \code{alpha} and \code{beta} are not m-separated 
-given \code{C}. 
+A logical value. \code{TRUE}  if \code{alpha} and \code{beta} are m-separated given \code{C}. 
+\code{FALSE} otherwise.  
 }
 \references{
 Richardson, T.S. and Spirtes, P. (2002) Ancestral graph Markov models. \emph{Annals
