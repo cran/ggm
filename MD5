@@ -1,7 +1,7 @@
-e80c51a77a4288b8e0877b6414755e75 *DESCRIPTION
-97416e40033805c1b08c283d034d33eb *NAMESPACE
-d9c460f17ab50fe7720edf1f1c775c78 *R/functions.R
-4f978d719649c47a2967df1f1282b018 *R/kayvan.R
+64ed480c6e547bed66c15bacaa0cd4fb *DESCRIPTION
+5e6a6857c8347586f5556d6d1665c1cc *NAMESPACE
+5cbeebca3420bce809b8ff8d30695cc8 *R/functions.R
+2143e9df72279119aa46f0cb16552b55 *R/kayvan.R
 fd6b7a71e321e67a84ba0c41a68f2a04 *data/anger.rda
 f2374c8772780f4893c16f873dd55c1d *data/derived.rda
 c0afb0b4c5cee614715a1d12a3531e2a *data/glucose.rda
@@ -60,7 +60,7 @@ c16b19d9456248bdc393b78cc75e8312 *man/glucose.Rd
 dda41553ffe6bc97bc9282815862fbcd *man/icf.Rd
 99787f57fbd691e1e80b05b4ee52f62b *man/isADMG.Rd
 fd229ee6f02d8632869246599c443ba9 *man/isAG.Rd
-e03d39ab47f9d96f468454ca418a0000 *man/isAcyclic.Rd
+c143c7115d93993bbc72f15b8a4a32e2 *man/isAcyclic.Rd
 fd314f77b723b0408ed6d37b8efbee3d *man/isGident.Rd
 75789374f48b169cdba7049b549bec7c *man/makeMG.Rd
 8ccdaeec90e4b803cfbf11924bc1593c *man/marg.param.Rd
@@ -84,14 +84,4 @@ c47624e0beb0e7b08e0e46cb7364f4e7 *man/topSort.Rd
 141278dee8ac77975fe103deb0a4422a *man/transClos.Rd
 82705a42917e86a09d59fab548c80c9d *man/triDec.Rd
 2e6f9d9a2a0aa878b86efb3a0f1c605d *man/unmakeMG.Rd
-d388c3e13466cb68e5ccda4153dce768 *misc/howto.txt
-7f1278ec708e63e6069e1e98e58f3fd6 *misc/sefit_senin-old.R
-ca4d5f9cad618bbe6517bbb9642c75fc *misc/sefit_senin.R
-d9a34a77151fcb9fe728985495d980a5 *misc/vignette/ex-kayvan.R
-38dcfc88e6a6c289e7ccc7af449794d8 *misc/vignette/ex-lat-elena.R
-9ec53d89396be5d8defa21e73adf11d4 *misc/vignette/ex-lat.R
-efe89055cf3eefe557b558abdb7f3851 *misc/vignette/ex_lat_fulvia.R
-9ccb3200e3ad6988af88c5d3e843197e *misc/vignette/ggm2vig.Rnw
-6125748fa59596484f3b9b7448d6ab77 *misc/vignette/ggm2vig.pdf
-d41d8cd98f00b204e9800998ecf8427e *misc/vignette/ggm2vig.synctex.gz(busy)
 bbba472fc5273b345c8fb739a68bc810 *vignettes/mixed-graphs.pdf

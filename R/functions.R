@@ -8,8 +8,9 @@
 # modified icfmag (call to fitConGraph) 
 # removed makeAG and unmakeAG
 # new functions makeMG, unmakeMG, isAG and isADMG
+# corrected isAcyclic
  
-
+require(igraph0)
 
 `fitDAG` <- function (..., data)
 {
@@ -1550,7 +1551,7 @@ function(amat, sel=vertices(amat), cond=NULL){
   }
 
 `isAcyclic` <-
-function (amat, method = 1) 
+function (amat, method = 2) 
 {
 ### Tests if the graph is acyclic.
   if(method ==1){

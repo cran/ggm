@@ -2,8 +2,8 @@
 # May 2012 Changed the return values of some functions to TRUE FALSE
 
 require(gRbase) # NOTE it should load igraph0 !
-#require(grid)
-#require(igraph)
+
+
 ######################################################################
 ######################################################################
 rem<-function(a,r){ # this is setdiff (a, r)

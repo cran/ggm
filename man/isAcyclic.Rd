@@ -6,7 +6,7 @@
   Checks if a given graph is acyclic.
 }
 \usage{
-isAcyclic(amat, method = 1)
+isAcyclic(amat, method = 2)
 }
 \arguments{
   \item{amat}{a square Boolean matrix with dimnames, the adjacency matrix of a graph.}
