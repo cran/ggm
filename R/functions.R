@@ -1,4 +1,6 @@
-## Modified in version 1.99
+# August 2012 removed function `vertices` 
+# August 2012 changed plotGraph
+# May 2012 corrected isAcyclic
 # Improved isAcyclic.  Thanks to David Edwards
 # Changed conComp
 # Removed cliques, thanks to Castelo.         edgematrix
@@ -8,9 +10,6 @@
 # modified icfmag (call to fitConGraph) 
 # removed makeAG and unmakeAG
 # new functions makeMG, unmakeMG, isAG and isADMG
-# corrected isAcyclic
- 
-require(igraph0)
 
 `fitDAG` <- function (..., data)
 {
@@ -114,7 +113,7 @@ function(amat){
 function(amat){
 ### Basis set of a DAG with adjacency matrix amat.
     amat <- topSort(amat)
-    nod <- vertices(amat)
+    nod <- rownames(amat)
     dv <- length(nod)
     ind <- NULL
     ## NOTE. This is correct if the adj mat is upper triangular.
@@ -141,7 +140,7 @@ function(amat){
 function (nn, amat) 
 {
 ### Boundary of the nodes nn for a graph with adjacency matrix amat.
-  nod <- vertices(amat)
+  nod <- rownames(amat)
   if(is.null(nod)) stop("The edge matrix must have dimnames!")
   if(!all(is.element(nn, nod))) stop("Some of the nodes are not among the vertices.")
   b <- vector(length(nn), mode="list")
@@ -191,7 +190,7 @@ function(amat, v=1) {
 function (nn, amat) 
 {
 ### List of the children of nodes nn for a given with adjacency matrix amat.
-  nod <- vertices(amat)
+  nod <- rownames(amat)
   if(is.null(nod)) stop("The adjacency matrix must have dimnames!")
   if(!all(is.element(nn, nod))) stop("Some of the nodes are not among the vertices.")
   k <- length(nn)
@@ -216,7 +215,7 @@ function (nn, amat)
          lapply(H, function(i) n[i])
        }
    
-    nod <- vertices(amat)
+    nod <- rownames(amat)
     if(is.null(nod)) stop("The adjacency matrix must have dimnames.")
     gcov <- inducedCovGraph(amat, sel=nod, cond=NULL); gcov <- sign(gcov)
     L <- latent
@@ -705,7 +704,7 @@ function (amat, st, en, path = c())
 function (amat, S, n, tol = 1e-06){
 ### Fit Ancestral Graphs. Mathias Drton, 2003 2009. It works for ADMGs 
     nam <- rownames(S)
-    nod <- vertices(amat)
+    nod <- rownames(amat)
     ## permute graph to have same layout as S
     if(is.null(nod)){
       stop("The adjacency matrix has no labels!")
@@ -749,7 +748,7 @@ tr = function(A) sum(diag(A))
 ### Now it does not compute the cliques of the graph.
 
   nam <- rownames(S)
-  nod <- vertices(amat)
+  nod <- rownames(amat)
   if(is.null(nod)){
     stop("The adjacency matrix has no labels.")
   }
@@ -759,7 +758,7 @@ tr = function(A) sum(diag(A))
   sek <- intersect(nam, nod)
   S <- S[sek,sek, drop=FALSE]              # Resizes eventually S
   amat <- amat[sek,sek, drop=FALSE]        # and reorders amat
-  nod <- vertices(amat)           
+  nod <- rownames(amat)           
   if (all(amat==0)){
   	alg <-  2
   	cli = as.list(nod)
@@ -869,7 +868,7 @@ tr = function(A) sum(diag(A))
 ### amat: adjacency matrix; S: covariance matrix; n: sample size.
     amat <- In(amat) # Forces the ones in a bidirected graph defined with makeMG
     nam <- rownames(S)
-    nod <- vertices(amat)
+    nod <- rownames(amat)
     if(is.null(nod)){
       stop("The adjacency matrix has no labels.")
     }
@@ -910,7 +909,7 @@ function (amat, S, n)
     dimnames(amat) <- dimnames(S)
   }
   nam <- rownames(S)
-  nod <- vertices(amat)
+  nod <- rownames(amat)
   if(is.null(nod))
     stop("The adjacency matrix has no labels.")
   if(!all(is.element(nod, nam)))
@@ -1046,7 +1045,7 @@ function (amat, Syy, n, latent, norm = 1,  seed, maxit=9000, tol=1e-6, pri=FALSE
   }
   ## Beginning  of the main function
   nam <- rownames(Syy)        # Names of the variables (they can be more than the nodes)
-  nod <- vertices(amat)       # Names of the nodes of the DAG (that contains the latent)
+  nod <- rownames(amat)       # Names of the nodes of the DAG (that contains the latent)
  
   if(is.null(nod))
     stop("The adjacency matrix has no labels.")
@@ -1057,7 +1056,7 @@ function (amat, Syy, n, latent, norm = 1,  seed, maxit=9000, tol=1e-6, pri=FALSE
   Syy <- Syy[sek,sek, drop=FALSE]          # Resizes eventually S
   sek <- c(sek, latent)
   amat <- amat[sek,sek, drop=FALSE]        # and reorders amat
-  nod <- vertices(amat)
+  nod <- rownames(amat)
   paz <- pa(latent, amat)                  # Parents of the latent
   paz <- is.element(nod, paz)
   dn <- list(nod,nod)
@@ -1354,13 +1353,13 @@ function (A)
 }
 
 "inducedChainGraph" <-
-function(amat, cc=vertices(amat), cond=NULL, type="LWF"){
+function(amat, cc=rownames(amat), cond=NULL, type="LWF"){
 ### Induced chain graph with chain components cc.
     inducedBlockGraph <- function(amat, sel, cond){
       S <- inducedConGraph(amat, sel=union(cond, sel), cond=NULL)
       In(S[cond, sel, drop=FALSE])
     }
-    nod <- vertices(amat)
+    nod <- rownames(amat)
     nam <- c(list(cond), cc)
     if(!all(unlist(nam) %in% nod))
       stop("The chain components or the conditioning set are wrong.")
@@ -1427,7 +1426,7 @@ function(amat, cc=vertices(amat), cond=NULL, type="LWF"){
   }
 
 "inducedConGraph" <-
-function(amat, sel=vertices(amat), cond=NULL){
+function(amat, sel=rownames(amat), cond=NULL){
 ### Induced concentration graph for a set of nodes given a conditioning set.
     ancGraph <- function(A) {
       ## Edge matrix of the overall ancestor graph.
@@ -1443,7 +1442,7 @@ function(amat, sel=vertices(amat), cond=NULL){
     }
 
     A <- edgematrix(amat) # From the adjacency matrix to edge matrix    
-    nod <- vertices(A)
+    nod <- rownames(A)
       if(!all(cond %in% nod))
         stop("Conditioning nodes are not among the vertices.")
     if(!all(sel %in% nod))
@@ -1469,7 +1468,7 @@ function(amat, sel=vertices(amat), cond=NULL){
   }
 
 "inducedCovGraph" <-
-function(amat, sel=vertices(amat), cond=NULL){
+function(amat, sel=rownames(amat), cond=NULL){
 ### Induced covariance graph for a set of nodes given a conditioning set.
     ancGraph <- function(A) {
       ## Edge matrix of the overall ancestor graph.
@@ -1483,7 +1482,7 @@ function(amat, sel=vertices(amat), cond=NULL){
      edgematrix(transClos(adjMatrix(M)))
     }
     A <- edgematrix(amat) # From the adjacency matrix to edge matrix
-    nod <- vertices(A)
+    nod <- rownames(A)
     if(!all(cond %in% nod))
       stop("Conditioning nodes are not among the vertices.")
     if(!all(sel %in% nod))
@@ -1513,7 +1512,7 @@ function(amat, order, cond=NULL){
   }
 
 "inducedRegGraph" <-
-function(amat, sel=vertices(amat), cond=NULL){
+function(amat, sel=rownames(amat), cond=NULL){
 ### Induced regression graph for a set of nodes given a conditioning set.
     ancGraph <- function(A) {
       ## Edge matrix of the overall ancestor graph.
@@ -1527,7 +1526,7 @@ function(amat, sel=vertices(amat), cond=NULL){
      edgematrix(transClos(adjMatrix(M)))
     }
     A <- edgematrix(amat) # From the adjacency matrix to edge matrix
-    nod <- vertices(A)
+    nod <- rownames(A)
     if(!all(cond %in% nod))
       stop("Conditioning nodes are not among the vertices.")
     if(!all(sel %in% nod))
@@ -1831,14 +1830,11 @@ function (f)
   amat
 }
 
-"vertices" <-
-function(amat) rownames(amat)
-
 `makeMG` <- function (dg = NULL, ug = NULL, bg = NULL) 
 {
-    dg.nodes <- vertices(dg)
-    ug.nodes <- vertices(ug)
-    bg.nodes <- vertices(bg)
+    dg.nodes <- rownames(dg)
+    ug.nodes <- rownames(ug)
+    bg.nodes <- rownames(bg)
     ver <- unique(c(dg.nodes, ug.nodes, bg.nodes))
     d <- length(ver)
     amat <- matrix(0, d, d)
@@ -2005,7 +2001,7 @@ function(amat) rownames(amat)
             stop("'object' is not in a valid adjacency matrix form")
         }
         if (length(l1) > 0) {
-            l1 <- l1 - 1
+          ## l1 <- l1 - 1   # old igraph
             agr <- graph(l1, n = nrow(a), directed = TRUE)
         }
         if (length(l1) == 0) {

@@ -10,10 +10,10 @@
   Functions to find induced graphs after conditioning on a set of variables and marginalizing over another set. 
 }
 \usage{
-inducedCovGraph(amat, sel = vertices(amat), cond = NULL)
-inducedConGraph(amat, sel = vertices(amat), cond = NULL)
-inducedRegGraph(amat, sel = vertices(amat), cond = NULL)
-inducedChainGraph(amat, cc=vertices(amat), cond = NULL, type="LWF")
+inducedCovGraph(amat, sel = rownames(amat), cond = NULL)
+inducedConGraph(amat, sel = rownames(amat), cond = NULL)
+inducedRegGraph(amat, sel = rownames(amat), cond = NULL)
+inducedChainGraph(amat, cc=rownames(amat), cond = NULL, type="LWF")
 inducedDAG(amat, order, cond = NULL)
 }
 \arguments{

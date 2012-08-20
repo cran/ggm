@@ -1,8 +1,7 @@
 #### Functions by Kayvan Sadeghi 2011-2012
-# May 2012 Changed the return values of some functions to TRUE FALSE
-
-require(gRbase) # NOTE it should load igraph0 !
-
+## May 2012 Changed the return values of some functions to TRUE FALSE
+require(graph)
+require(igraph)
 
 ######################################################################
 ######################################################################
@@ -55,13 +54,13 @@ RR<-function(a){   ## This is unique(a)
 }
 #################################################################################
 #################################################################################
-grMAT<-function(agr)
+`grMAT` <- function(agr)
 {
 	 if (class(agr) == "graphNEL") {
         	agr<-igraph.from.graphNEL(agr)
        }
 	 if (class(agr)== "igraph"){
-		return(get.adjacency(agr))
+		return(get.adjacency(agr, sparse = FALSE))
 	 }
 	 if(class(agr) == "character"){
 		if (length(agr)%%3!=0){
@@ -625,7 +624,7 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 }
 ##############################################################################
 ##############################################################################
-AG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`AG`<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 {	
 	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
 		amat<-grMAT(amat)}
