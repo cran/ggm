@@ -47,7 +47,10 @@ increased to accommodate larger labels.}
 \code{plotGraph} uses \code{\link{tkplot}} in the \code{\link{igraph}} package.
 }
 \value{
-Plot of the associated graph and returns an integer, the identifier of the plot.  
+Plot of the associated graph and returns a list with two slots:
+\code{tkp.id},
+\code{graph}, the input graph as an \code{igraph} object. 
+The id can be used to get the layout of the adjusted graph. 
 The bi-directed edges are plotted in red. 
 }
 %\references{

@@ -1,6 +1,6 @@
 Package: ggm
-Version: 1.995-0
-Date: 2012-8-20
+Version: 1.995-2
+Date: 2012-8-30
 Title: A package for Graphical Markov Models
 Author: Giovanni M. Marchetti, Mathias Drton, Kayvan Sadeghi
 Maintainer: Giovanni M. Marchetti <giovanni.marchetti@ds.unifi.it>
@@ -9,6 +9,6 @@ Description: Functions for analyzing and fitting Graphical Markov
         models
 Encoding: latin1
 License: GPL (>= 2)
-Packaged: 2012-08-24 08:27:11 UTC; giovanni
+Packaged: 2012-09-14 10:37:52 UTC; giovanni
 Repository: CRAN
-Date/Publication: 2012-08-24 08:35:36
+Date/Publication: 2012-09-14 12:05:56

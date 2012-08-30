@@ -1,15 +1,17 @@
-# August 2012 removed function `vertices` 
-# August 2012 changed plotGraph
-# May 2012 corrected isAcyclic
-# Improved isAcyclic.  Thanks to David Edwards
-# Changed conComp
-# Removed cliques, thanks to Castelo.         edgematrix
-# Modified fitConGraph wit new algorithm from Tibshirani Hastie Friedman.
-# Modified DAG
-# New function fitDAG     
-# modified icfmag (call to fitConGraph) 
-# removed makeAG and unmakeAG
-# new functions makeMG, unmakeMG, isAG and isADMG
+## September 2012 corrected isAG, added example in makeMG
+## September 2012 added a new igraph output to plotGraph
+## August 2012 removed function `vertices` 
+## August 2012 changed plotGraph
+## May 2012 corrected isAcyclic
+## Improved isAcyclic.  Thanks to David Edwards
+## Changed conComp
+## Removed cliques, thanks to Castelo.         edgematrix
+## Modified fitConGraph wit new algorithm from Tibshirani Hastie Friedman.
+## Modified DAG
+## New function fitDAG     
+## modified icfmag (call to fitConGraph) 
+## removed makeAG and unmakeAG
+## new functions makeMG, unmakeMG, isAG and isADMG
 
 `fitDAG` <- function (..., data)
 {
@@ -1911,9 +1913,13 @@ function (f)
         transClos(A)
       }
     if(any(apply(dag, 2, sum) & apply(ug, 2, sum))){
-    	warning("Undirected edges meeting an arrowhead.")
+    	warning("Undirected edges meeting a directed edge.")
     	out <- FALSE
     	}
+    if(any(apply(bg, 2, sum) & apply(ug, 2, sum))){
+      warning("Undirected edges meeting a bidirected edge.")
+      out <- FALSE
+    }    
     H <- anteriorGraph(amat)
  
     if(any((H==1) & (amat == 100))){
@@ -2001,12 +2007,12 @@ function (f)
             stop("'object' is not in a valid adjacency matrix form")
         }
         if (length(l1) > 0) {
-          ## l1 <- l1 - 1   # old igraph
+          ## l1 <- l1 - 1   # igraph0
             agr <- graph(l1, n = nrow(a), directed = TRUE)
         }
         if (length(l1) == 0) {
             agr <- graph.empty(n = nrow(a), directed = TRUE)
-            return(plot(agr, vertex.label = rownames(a)))
+            return(tkplot(agr, vertex.label = rownames(a)))
         }
         ed0 <- get.edgelist(agr)
         ne <- nrow(ed0)
@@ -2056,12 +2062,15 @@ function (f)
             vfc <- "white"
             vc <- "white"
         }
-        return(tkplot(agr, layout = layout.kamada.kawai, edge.curved = curve, 
-            vertex.label = rownames(a), edge.arrow.mode = l2, 
-            edge.color = col, edge.lty = ety, vertex.label.family = "sans", 
-            edge.width = 1.5, vertex.size = nodesize, vertex.frame.color = vfc, 
-            vertex.color = vc, vertex.label.cex = cex, edge.arrow.width = 1, 
-            edge.arrow.size = 1.2, vertex.label.dist = vld))
+        id <- tkplot(agr, layout = layout.kamada.kawai, edge.curved = curve, 
+               vertex.label = rownames(a), edge.arrow.mode = l2, 
+               edge.color = col, edge.lty = ety, vertex.label.family = "sans", 
+               edge.width = 1.5, vertex.size = nodesize, vertex.frame.color = vfc, 
+               vertex.color = vc, vertex.label.cex = cex, edge.arrow.width = 1, 
+               edge.arrow.size = 1.2, vertex.label.dist = vld)
+        V(agr)$name <- rownames(a)
+        agr = set.edge.attribute(agr, "edge.arrow.mode", index = E(agr), l2)
+        return(list(tkp.id = id, igraph = agr))
     }
     else {
         stop("'object' is not in a valid format")

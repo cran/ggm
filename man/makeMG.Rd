@@ -55,6 +55,8 @@ delta~beta))  # Fig. 6 p. 973
 a4 <- makeMG(ug=UG(~y0*y1), dg=DAG(y4~y2, y2~y1), bg=UG(~y2*y3+y3*y4))  
 ## A mixed graphs with double edges. 
 mg <- makeMG(dg = DG(Y ~ X, Z~W, W~Z, Q~X), ug = UG(~X*Q), bg = UG(~ Y*X+X*Q+Q*W + Y*Z) )
+## Chronic pain data: a regression graph
+chronic.pain <- makeMG(dg = DAG(Y ~ Za, Za ~ Zb + A, Xa ~ Xb, Xb ~ U+V, U ~ A + V, Zb ~ B, A ~ B), bg = UG(~Za*Xa + Zb*Xb))
 }
 \keyword{graphs} 
 \keyword{ancestral graph}      

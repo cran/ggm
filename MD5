@@ -1,14 +1,15 @@
-8f8787ade4a3084c27e260b75ad8dac5 *DESCRIPTION
+033ffe9190a8bb952b73c7e024fc8624 *DESCRIPTION
 2a5dea2991c1e4fe9459cae9eafcf68e *NAMESPACE
-cb0b9a5279bafe61ded8cdc9c7a9e836 *R/functions.R
-a017240607fbda1ee2a70633d104f9db *R/kayvan.R
+5e2c8622a71af77fccd349dab5726de7 *R/functions.R
+2e7e62b33e7e76e8e7ff84fb98d64424 *R/kayvan.R
 8bab7f4c6a0364c34b5948461ddb4989 *data/anger.rda
 ffdd356f0aeccc164252f420cd46ba0a *data/derived.rda
 d93c31717b531a3a1abd1d102e1fb8cd *data/glucose.rda
 58e77d335029d5630c9a72437d832fc2 *data/marks.rda
 f27530d9c5675660c6243a7b753cfe81 *data/stress.rda
 e35bdbad8bf1cd6b41d402f9919afcef *data/surdata.rda
-bef3e81803ee30592e5b3c4fabc54eb6 *inst/doc/mixed-graphs.pdf
+43c59f0a19cb7c25438583b954cd52d8 *ggm-Ex.R
+56202bc096e932977bde0d21c121afb4 *inst/doc/mixed-graphs.pdf
 27c9e7299cd66f3f139da7d6f4afe92c *man/AG.Rd
 525b90492db0bbe196904cd632f8d6ac *man/DAG.Rd
 1757cf491f6593cc8b18bc32f904a370 *man/DG.Rd
@@ -63,7 +64,7 @@ dda41553ffe6bc97bc9282815862fbcd *man/icf.Rd
 fd229ee6f02d8632869246599c443ba9 *man/isAG.Rd
 c143c7115d93993bbc72f15b8a4a32e2 *man/isAcyclic.Rd
 fd314f77b723b0408ed6d37b8efbee3d *man/isGident.Rd
-75789374f48b169cdba7049b549bec7c *man/makeMG.Rd
+4879f778d062939d16854cfbce8b2247 *man/makeMG.Rd
 8ccdaeec90e4b803cfbf11924bc1593c *man/marg.param.Rd
 457efbee8af98a450b26d7cc0915bf15 *man/marks.Rd
 75c95278a28bf5a77292fbc55580e706 *man/mat.mlogit.Rd
@@ -72,7 +73,7 @@ f676955ee999cedeba80400f8bc4caa7 *man/null.Rd
 d0c414e24ba960be521a0595d81bd7f6 *man/parcor.Rd
 3c556de20fc2a810007ed8612677eed6 *man/pcor.Rd
 c556749e74922268f263ea40c58d20e0 *man/pcor.test.Rd
-a2303164078446091cf5295fd6df210e *man/plotGraph.Rd
+e4f49dcbdc9eedc1773e2c1c9efd98ad *man/plotGraph.Rd
 c7484eb69f5e0aef83ae0ad2608401ca *man/powerset.Rd
 2b821005a5843b3d16c57462cdab8efb *man/rcorr.Rd
 0932d501517fe700da435ec235823d7e *man/rnormDag.Rd
@@ -85,3 +86,4 @@ c47624e0beb0e7b08e0e46cb7364f4e7 *man/topSort.Rd
 141278dee8ac77975fe103deb0a4422a *man/transClos.Rd
 82705a42917e86a09d59fab548c80c9d *man/triDec.Rd
 2e6f9d9a2a0aa878b86efb3a0f1c605d *man/unmakeMG.Rd
+bbba472fc5273b345c8fb739a68bc810 *vignettes/mixed-graphs.pdf

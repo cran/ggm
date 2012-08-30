@@ -568,6 +568,18 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 		 amatr<-amat20+t(amat20)+amatr
 	
 	}
+
+		for(i in 1:ncol(amatr)) {
+		for(j in 1:ncol(amatr)) {
+			if(amatr[i,j]%%100>9){
+				amatr[i,j]<-10
+				for(k in 1:ncol(amatr)){
+					if(amatr[k,j]==100){
+						amatr[j,k]<-1
+						amatr[k,j]<-0
+						}}
+				}			
+			}}
 	
 	SS<-S
 	SSt<-c()	
@@ -589,17 +601,6 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 				amatr[j,i]<-10}}}
 
 
-		for(i in 1:ncol(amatr)) {
-		for(j in 1:ncol(amatr)) {
-			if(amatr[i,j]%%100>9){
-				amatr[i,j]<-10
-				for(k in 1:ncol(amatr)){
-					if(amatr[k,j]==100){
-						amatr[j,k]<-1
-						amatr[k,j]<-0
-						}}
-				}			
-			}}
 
 	Mn<-c()
 	Cn<-c()
@@ -849,6 +850,19 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 		 amatr<-amat20+t(amat20)+amatr
 	
 	}
+
+		for(i in 1:ncol(amatr)) {
+		for(j in 1:ncol(amatr)) {
+			if(amatr[i,j]%%100>9){
+				amatr[i,j]<-10
+				for(k in 1:ncol(amatr)){
+					if(amatr[k,j]==100){
+						amatr[j,k]<-1
+						amatr[k,j]<-0
+						}}
+				}			
+			}}
+
 	
 	SS<-S
 	SSt<-c()	
@@ -870,17 +884,6 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 				amatr[j,i]<-10}}}
 
 
-		for(i in 1:ncol(amatr)) {
-		for(j in 1:ncol(amatr)) {
-			if(amatr[i,j]%%100>9){
-				amatr[i,j]<-10
-				for(k in 1:ncol(amatr)){
-					if(amatr[k,j]==100){
-						amatr[j,k]<-1
-						amatr[k,j]<-0
-						}}
-				}			
-			}}
 
 		amatn <- amatr
  	   for (kk in 1:ncol(amatr)) {
