@@ -37,7 +37,8 @@ for path models based on directed acyclic graphs. \emph{Structural
 \examples{
 ## A decomposable model for the mathematics marks data
 data(marks)
-dag <- DAG(mechanics ~ vectors+algebra, vectors ~ algebra, statistics ~ algebra+analysis, analysis ~ algebra)
+dag <- DAG(mechanics ~ vectors+algebra, vectors ~ algebra, 
+statistics ~ algebra+analysis, analysis ~ algebra)
 shipley.test(dag, cov(marks), n=88)
 }
 \keyword{graphs}

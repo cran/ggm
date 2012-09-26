@@ -35,7 +35,7 @@ fitDagLatent(amat, Syy, n, latent, norm = 1, seed,
   each iteration is printed.}
 }
 \details{
-For the EM algorithm used see Kiivery (1987).  
+For the EM algorithm used see Kiiveri (1987).  
 }
 \value{
   \item{Shat}{

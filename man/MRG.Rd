@@ -59,8 +59,8 @@ of Statistics}, 30(4), 962-1030.
 Sadeghi, K. (2011). Stable classes of graphs containing directed acyclic graphs. 
 \emph{Submitted}.
 
-Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless mixed graphs.
-\emph{Submitted}. URL \url{http://arxiv.org/abs/1109.5909}.
+Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless 
+mixed graphs. \emph{Submitted}. URL \url{http://arxiv.org/abs/1109.5909}.
 }
 \author{
 Kayvan Sadeghi
@@ -94,9 +94,9 @@ C <- c(4,7)
 MRG(ex, M, C, plot = TRUE)
 ###################################################
 H <- matrix(c( 0, 100,   1,   0,
-	         100,   0, 100,   0,
-	           0, 100,   0, 100,
-	           0,   1, 100,   0), 4,4)
+  	         100,   0, 100,   0,
+ 	             0, 100,   0, 100,
+	             0,   1, 100,   0), 4,4)
 Max(H)
 }
 \keyword{graphs}

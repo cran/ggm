@@ -6,7 +6,7 @@
   formulae.
   }
 \usage{
-DAG(..., order = FALSE)
+DAG(\dots, order = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

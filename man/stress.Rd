@@ -22,7 +22,9 @@ See Cox and Wermuth (1996).
 }
 \references{
 Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-dependencies}. London: Chapman \& Hall.
+dependencies}. London: Chapman \& Hall. 
+
+Slangen K., Kleemann P.P and Krohne H.W. (1993). Coping with surgical stress. In: Krohne H. W. (ed.).  \emph{Attention and avoidance: Strategies in coping with aversiveness}. New York, Heidelberg: Springer, 321-346.
 }
 \examples{
 data(stress)

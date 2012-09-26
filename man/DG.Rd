@@ -5,7 +5,7 @@
   Defines the adjacency of a directed graph.
   }
 \usage{
-DG(...)
+DG(\dots)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

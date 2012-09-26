@@ -33,10 +33,8 @@ for the covariance matrix \code{S}.
 \references{
   Wermuth N. and Cox D.R. (1995). Derived 
   variables calculated from similar joint responses:
-  some characteristics and examples. \emph{Computational Statistics and Data Analysis}, 19, 223-234.
-
-  
-Slangen K., Kleemann P.P and Krohne H.W. (1993). Coping with surgical stress. In: Krohne H. W. (ed.).  \emph{Attention and avoidance: Strategies in coping with aversiveness}. New York, Heidelberg: Springer, 321-346.
+  some characteristics and examples. \emph{Computational Statistics and Data
+  Analysis}, 19, 223-234.
 }
 \examples{
 # A DAG model with a latent variable U

@@ -284,9 +284,9 @@ C <- c(4,7)
 MRG(ex, M, C, plot = TRUE)
 ###################################################
 H <- matrix(c( 0, 100,   1,   0,
-	         100,   0, 100,   0,
-	           0, 100,   0, 100,
-	           0,   1, 100,   0), 4,4)
+  	         100,   0, 100,   0,
+ 	             0, 100,   0, 100,
+	             0,   1, 100,   0), 4,4)
 Max(H)
 
 
@@ -1414,9 +1414,11 @@ delta~beta))  # Fig. 6 p. 973
 ## Another Example
 a4 <- makeMG(ug=UG(~y0*y1), dg=DAG(y4~y2, y2~y1), bg=UG(~y2*y3+y3*y4))  
 ## A mixed graphs with double edges. 
-mg <- makeMG(dg = DG(Y ~ X, Z~W, W~Z, Q~X), ug = UG(~X*Q), bg = UG(~ Y*X+X*Q+Q*W + Y*Z) )
+mg <- makeMG(dg = DG(Y ~ X, Z~W, W~Z, Q~X), ug = UG(~X*Q), 
+bg = UG(~ Y*X+X*Q+Q*W + Y*Z) )
 ## Chronic pain data: a regression graph
-chronic.pain <- makeMG(dg = DAG(Y ~ Za, Za ~ Zb + A, Xa ~ Xb, Xb ~ U+V, U ~ A + V, Zb ~ B, A ~ B), bg = UG(~Za*Xa + Zb*Xb))
+chronic.pain <- makeMG(dg = DAG(Y ~ Za, Za ~ Zb + A, Xa ~ Xb, 
+Xb ~ U+V, U ~ A + V, Zb ~ B, A ~ B), bg = UG(~Za*Xa + Zb*Xb))
 
 
 
@@ -1725,7 +1727,8 @@ flush(stderr()); flush(stdout())
 
 ## A decomposable model for the mathematics marks data
 data(marks)
-dag <- DAG(mechanics ~ vectors+algebra, vectors ~ algebra, statistics ~ algebra+analysis, analysis ~ algebra)
+dag <- DAG(mechanics ~ vectors+algebra, vectors ~ algebra, 
+statistics ~ algebra+analysis, analysis ~ algebra)
 shipley.test(dag, cov(marks), n=88)
 
 
