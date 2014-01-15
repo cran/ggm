@@ -50,12 +50,11 @@ The package is intended as a contribution to the gR-project
 derscribed by Lauritzen (2002).
 }
 \section{Authors}{
-Giovanni M. Marchetti, Dipartimento di Statistica 'G. Parenti'.
-Universita' di Firenze, Italy; 
+Giovanni M. Marchetti, Dipartimento di Statistica, Informatica, Applicazioni 'G. Parenti'. Università di Firenze, Italy 
  
-Mathias Drton,  Department of Statistics, University of Chicago, USA. 
+Mathias Drton,  Department of Statistics, University of Washington, USA 
 
-Kayvan Sadeghi, Department of Statistics, Oxford University, UK.
+Kayvan Sadeghi, Department of Statistics, Carnegie Mellon University, USA
 }
 \section{Acknowledgements}{
 Many thanks to Fulvia Pennoni for testing some of 

@@ -15,5 +15,5 @@ export(basiSet, bd, edgematrix, swp, adjMatrix,
         RepMarUG, RG, RR, SG, SPl, rem, isAG, isADMG, plotGraph, DG,
         binve, blkdiag, blodiag, diagv, fitmlogit,    
         mat.mlogit, marg.param, null, powerset)
-# import(graph, igraph, RBGL)
-#importFrom(RBGL, strongComp)
+import(igraph)
+importFrom(RBGL, strongComp)

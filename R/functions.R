@@ -1,3 +1,4 @@
+## January 2014 fixed function icfmag, corrected email addresses
 ## October 2012 changed plotGraph
 ## September 2012 corrected isAG, added example in makeMG, added functionality do plotGraph
 ## September 2012 added a new igraph output to plotGraph
@@ -1341,14 +1342,20 @@ function(mag, S, tol = 1e-06){
       if(sum(abs(Omega.old-Omega)) + sum(abs(B.old-B)) < tol) break
     }
     Sigma <- solve(B)%*%Omega%*%solve(t(B))
-    Lambda <- Omega
-    Lambda[-UG.part,-UG.part] <- 0
+  ##  Corrections by Thomas Richardson of the following:
+  ##  Lambda <- Omega
+  ##  Lambda[-UG.part,-UG.part] <- 0
+    Lambda <- matrix(0, p, p)
+    if(length(UG.part) > 0){  
+      Lambda[-UG.part, -UG.part] <- Omega[-UG.part, -UG.part]
+  }   
+    
     Omega[UG.part,UG.part] <- 0
     return(list(Sigmahat=Sigma, Bhat=B, Omegahat=Omega, Lambdahat=Lambda,
                 iterations=i))
   }
 
-"In" <-
+`In` <-
 function (A) 
 {
 ### Indicator matrix of structural zeros.
