@@ -16,4 +16,3 @@ export(basiSet, bd, edgematrix, swp, adjMatrix,
         binve, blkdiag, blodiag, diagv, fitmlogit,    
         mat.mlogit, marg.param, null, powerset)
 import(igraph)
-importFrom(RBGL, strongComp)

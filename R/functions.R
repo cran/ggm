@@ -1,3 +1,6 @@
+## March 2014 Changed function isAcyclic eliminating dependence on RBGL
+##            Removed dependence on RBGL
+##            Fixed function fitConGraph          
 ## January 2014 fixed function icfmag, corrected email addresses
 ## October 2012 changed plotGraph
 ## September 2012 corrected isAG, added example in makeMG, added functionality do plotGraph
@@ -835,18 +838,18 @@ tr = function(A) sum(diag(A))
             W11 <- W[-j,-j,drop=FALSE]     
             w12 <- W[-j,j]     
             s12 <- S[-j,j, drop=FALSE]
-            paj <- amat[j,] == 1;
+            paj <- amat[j,] == 1; # neighbors
             paj <- paj[-j]
-	        beta <- rep(0, k-1)
+	         beta <- rep(0, k-1)
             if (all(!paj)){
-              next
+            w <- rep(0, k-1)  
             }
             else{
               beta[paj] <- solve(W11[paj, paj], s12[paj, ])
               w <- W11 %*% beta
+            }
               W[-j, j] <- w
               W[j, -j] <- w
-            }
           }
           di <- norm(W0-W)      
           if(pri) {
@@ -1564,8 +1567,8 @@ function (amat, method = 2)
 {
 ### Tests if the graph is acyclic.
   if(method ==1){
-    G <- as(amat, "graphNEL")
-    return(max(sapply(strongComp(G),length))==1)
+    G <- graph.adjacency(amat)
+    return(max(clusters(G, mode = "strong")$csize) == 1)
   }
   else if(method ==2){
   B <- transClos(amat)
