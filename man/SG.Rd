@@ -8,7 +8,7 @@ summary graph
 \code{SG} generates and plots summary graphs after marginalization
  and conditioning.}
 \usage{
-SG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+SG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, \dots)
 }
 \arguments{
 \item{amat}{
@@ -31,6 +31,10 @@ A logical value. \code{TRUE} (by default) to print the generated matrix.
 A logical value, \code{FALSE} (by default). \code{TRUE} to plot 
 the generated graph. 
 }
+\item{plotfun}{
+Function to plot the graph when \code{plot == TRUE}. Can be \code{plotGraph} (the default) or \code{drawGraph}.
+}
+\item{\dots}{Further arguments passed to \code{plotfun}.}
 }
 
 \value{
@@ -76,6 +80,7 @@ Kayvan Sadeghi
 M <- c(3,5,6,15,16)
 C <- c(4,7)
 SG(ex, M, C, plot = TRUE)
+SG(ex, M, C, plot = TRUE, plotfun = drawGraph, adjust = FALSE)
 }
 \keyword{graphs}
 \keyword{directed acyclic graph}

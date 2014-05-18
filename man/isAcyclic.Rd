@@ -10,7 +10,7 @@ isAcyclic(amat, method = 2)
 }
 \arguments{
   \item{amat}{a square Boolean matrix with dimnames, the adjacency matrix of a graph.}
-  \item{method}{an integer 1 or 2 specifying the method used. If \code{method=1} the  function calls the function \code{strongComp} in package \code{RBGL}: two nodes v and w are in the same strong component iff there are directed paths from v to w and from w to v. If \code{method=2} the function uses the \code{ggm} function \code{transClos}. Method 1 is faster.}
+  \item{method}{an integer 1 or 2 specifying the method used. If \code{method=1} the  function calls the function \code{clusters} in package \code{igraph} to find the strong components: two nodes v and w are in the same strong component iff there are directed paths from v to w and from w to v. If \code{method=2} the function uses the \code{ggm} function \code{transClos}. Method 1 is faster.}
 }
 \value{
   a logical value, \code{TRUE} if the graph is acyclic and \code{FALSE}
@@ -28,6 +28,7 @@ rownames(d) <- colnames(d) <- c("x", "y", "z")
 d["x","y"] <- d["y", "z"] <- d["z", "x"] <- 1
 ## Test if the graph is acyclic
 isAcyclic(d)
+isAcyclic(d, method = 1)
 }
 \keyword{graphs}
 \keyword{models}

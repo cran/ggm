@@ -96,7 +96,7 @@ RR<-function(a){   ## This is unique(a)
 
 ##############################################################################
 ##############################################################################
-RG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`RG` <- function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {	
 	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
 		amat<-grMAT(amat)}
@@ -337,14 +337,14 @@ RG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 	if(length(Mn)==0&length(Cn)==0){
 		fr<-amatr}	
 	if(plot==TRUE){
-		plotGraph(fr)}
+		plotfun(fr,...)}
 	if(showmat==FALSE){
 		invisible(fr)}
 	else{return(fr)}
 }
 ##############################################################################
 ##############################################################################
-SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`SG`<-function (amat,M=c(),C=c(),showmat=TRUE, plot=FALSE, plotfun = plotGraph, ...)
 {	
 	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
 		amat<-grMAT(amat)}
@@ -617,7 +617,7 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 	if(length(Mn)==0&length(Cn)==0){
 		fr<-amatr}	
 	if(plot==TRUE){
-		plotGraph(fr)}
+		plotfun(fr,...)}
 	if(showmat==FALSE){
 		invisible(fr)}
 	else{return(fr)}
@@ -625,7 +625,7 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 }
 ##############################################################################
 ##############################################################################
-`AG`<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`AG`<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {	
 	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
 		amat<-grMAT(amat)}
@@ -969,7 +969,7 @@ SG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
 	if(length(Mn)==0&length(Cn)==0){
 		fr<-amatr}	
 	if(plot==TRUE){
-		plotGraph(fr)}
+		plotfun(fr, ...)}
 	if(showmat==FALSE){
 		invisible(fr)}
 	else{return(fr)}
@@ -1120,21 +1120,21 @@ msep<-function(a,alpha,beta,C=c()){
 }
 ############################################################################
 ############################################################################
-MRG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`MRG` <- function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {
-	return(Max(RG(amat,M,C,showmat,plot)))
+	return(Max(RG(amat,M,C,showmat,plot, plotfun = plotGraph, ...)))
 }
 ##########################################################################
 ##########################################################################
-MSG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`MSG` <- function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {
-	return(Max(SG(amat,M,C,showmat,plot)))
+	return(Max(SG(amat,M,C,showmat,plot, plotfun = plotGraph, ...)))
 }
 ############################################################################
 ###########################################################################
-MAG<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+`MAG`<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {
-	return(Max(AG(amat,M,C,showmat,plot)))
+	return(Max(AG(amat,M,C,showmat,plot, plotfun = plotGraph, ...)))
 }
 ############################################################################
 ############################################################################

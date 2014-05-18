@@ -8,7 +8,7 @@ Maximal ribbonless graph
 \code{MRG} generates and plots maximal ribbonless graphs (a modification 
 of MC graph to use m-separation) after marginalisation and conditioning.}
 \usage{
-MRG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE) 
+MRG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, \dots) 
 }
 \arguments{
 \item{amat}{
@@ -38,6 +38,10 @@ A logical value. \code{TRUE} (by default) to print the generated matrix.
 A logical value, \code{FALSE} (by default). \code{TRUE} to plot 
 the generated graph. 
 }
+\item{plotfun}{
+Function to plot the graph when \code{plot == TRUE}. Can be \code{plotGraph} (the default) or \code{drawGraph}.
+}
+\item{\dots}{Further arguments passed to \code{plotfun}.}
 }
 \details{
 This function uses the functions \code{\link{RG}} and \code{\link{Max}}.

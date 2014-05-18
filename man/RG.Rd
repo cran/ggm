@@ -8,7 +8,7 @@ Ribbonless graph
 \code{RG} generates and plots ribbonless graphs (a modification of MC graph
 to use m-separation) after marginalization and conditioning.}
 \usage{
-RG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)
+RG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, \dots)
 }
 \arguments{
 \item{amat}{
@@ -31,6 +31,10 @@ A logical value. \code{TRUE} (by default) to print the generated matrix.
 A logical value, \code{FALSE} (by default). \code{TRUE} to plot 
 the generated graph. 
 }
+\item{plotfun}{
+Function to plot the graph when \code{plot == TRUE}. Can be \code{plotGraph} (the default) or \code{drawGraph}.
+}
+\item{\dots}{Further arguments passed to \code{plotfun}.}
 }
 \value{
 A matrix that consists 4 different integers as an \eqn{ij}-element: 0 for a missing 

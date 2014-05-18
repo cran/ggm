@@ -35,9 +35,7 @@ covariance graphs and ancestral graphs:
 \code{\link{fitCovGraph}}, \code{\link{fitAncestralGraph}};
 \item Functions for testing several conditional independences:\code{\link{shipley.test}};
 \item Functions for checking global identification 
-of DAG Gaussian  models with one 
-latent variable (Stanghellini-Vicard's condition for concentration graphs, 
-new sufficient conditions for DAGs):
+of DAG Gaussian  models with one latent variable (Stanghellini-Vicard's condition for concentration graphs, new sufficient conditions for DAGs):
 \code{\link{isGident}}, \code{\link{checkIdent}};
 \item Functions for fitting Gaussian DAG models with one latent variable:
 \code{\link{fitDagLatent}};
@@ -50,7 +48,7 @@ The package is intended as a contribution to the gR-project
 derscribed by Lauritzen (2002).
 }
 \section{Authors}{
-Giovanni M. Marchetti, Dipartimento di Statistica, Informatica, Applicazioni 'G. Parenti'. Università di Firenze, Italy 
+Giovanni M. Marchetti, Dipartimento di Statistica, Informatica, Applicazioni 'G. Parenti'. University of Florence, Italy 
  
 Mathias Drton,  Department of Statistics, University of Washington, USA 
 
@@ -62,8 +60,8 @@ the functions, to Elena Stanghellini for discussion and
 examples and to Claus Dethlefsen and Jens Henrik Badsberg for
 suggestions and corrections. The function \code{fitConGraph} was corrected by
 Ilaria Carobbi. Helpful discussions with Steffen Lauritzen and Nanny Wermuth,
-are gratefully acknowledged. Thanks also to Michael Perlman and
-Thomas Richardson.
+are gratefully acknowledged. Thanks also to Michael Perlman, 
+Thomas Richardson and David Edwards.
 
 Giovanni Marchetti has been supported by MIUR, Italy, under grant 
 scheme PRIN 2002, and Mathias Drton has been supported by NSF grant 

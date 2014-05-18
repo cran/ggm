@@ -1,5 +1,6 @@
+## May 2014 Included further argument plotfun in functions SG, RG, MSG, MRG, MAG, AG.
 ## March 2014 Changed function isAcyclic eliminating dependence on RBGL
-##            Removed dependence on RBGL
+##            Removed dependence on RBGL corrected the docs
 ##            Fixed function fitConGraph          
 ## January 2014 fixed function icfmag, corrected email addresses
 ## October 2012 changed plotGraph

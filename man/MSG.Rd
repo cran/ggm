@@ -7,7 +7,7 @@ Maximal summary graph
 \code{MAG} generates and plots maximal summary graphs after marginalization
  and conditioning.}
 \usage{
-MSG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE)  
+MSG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, \dots)  
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +38,10 @@ A logical value. \code{TRUE} (by default) to print the generated matrix.
 A logical value, \code{FALSE} (by default). \code{TRUE} to plot 
 the generated graph. 
 }
+\item{plotfun}{
+Function to plot the graph when \code{plot == TRUE}. Can be \code{plotGraph} (the default) or \code{drawGraph}.
+}
+\item{\dots}{Further arguments passed to \code{plotfun}.}
 }
 \details{
 This function uses the functions \code{\link{SG}} and \code{\link{Max}}.
