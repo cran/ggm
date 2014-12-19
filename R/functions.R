@@ -1,24 +1,3 @@
-## May 2014 Included further argument plotfun in functions SG, RG, MSG, MRG, MAG, AG.
-## March 2014 Changed function isAcyclic eliminating dependence on RBGL
-##            Removed dependence on RBGL corrected the docs
-##            Fixed function fitConGraph          
-## January 2014 fixed function icfmag, corrected email addresses
-## October 2012 changed plotGraph
-## September 2012 corrected isAG, added example in makeMG, added functionality do plotGraph
-## September 2012 added a new igraph output to plotGraph
-## August 2012 removed function `vertices` 
-## August 2012 changed plotGraph
-## May 2012 corrected isAcyclic
-## Improved isAcyclic.  Thanks to David Edwards
-## Changed conComp
-## Removed cliques, thanks to Castelo.         edgematrix
-## Modified fitConGraph wit new algorithm from Tibshirani Hastie Friedman.
-## Modified DAG
-## New function fitDAG     
-## modified icfmag (call to fitConGraph) 
-## removed makeAG and unmakeAG
-## new functions makeMG, unmakeMG, isAG and isADMG
-
 `fitDAG` <- function (..., data)
 {
 ### Fits linear recursive regressions with independent residuals. 
@@ -410,8 +389,8 @@ function (...,order=FALSE)
   amat
 }
 
-`drawGraph` <- function (amat, coor = NULL, adjust = TRUE, alpha = 1.5, beta = 3, 
-    lwd = 1, ecol = "blue", left = FALSE) 
+`drawGraph` <- function (amat, coor = NULL, adjust = FALSE, alpha = 1.5, beta = 3, 
+    lwd = 1, ecol = "blue", bda = 0.1, layout = layout.auto) 
 {
     if (is.null(dimnames(amat))) {
         rownames(a) <- 1:ncol(amat)
@@ -419,6 +398,77 @@ function (...,order=FALSE)
     }
     if (all(amat == t(amat)) & all(amat[amat != 0] == 1)) {
         amat <- amat * 10
+    }
+    `lay` = function(a, directed  = TRUE, start = layout){
+        if (class(a) == "igraph" || class(a) == "graphNEL" || class(a) == 
+                "character") {
+            a <- grMAT(a)
+        }
+        if (class(a) == "matrix") {
+            if (nrow(a) == ncol(a)) {
+                if (length(rownames(a)) != ncol(a)) {
+                    rownames(a) <- 1:ncol(a)
+                    colnames(a) <- 1:ncol(a)
+                }
+                if (!directed) {
+                    if (all(a == t(a)) & all(a[a != 0] == 1)) {
+                        a <- a * 10
+                    }
+                }
+                l1 <- c()
+                l2 <- c()
+                for (i in 1:nrow(a)) {
+                    for (j in i:nrow(a)) {
+                        if (a[i, j] == 1) {
+                            l1 <- c(l1, i, j)
+                            l2 <- c(l2, 2)
+                        }
+                        if (a[j, i]%%10 == 1) {
+                            l1 <- c(l1, j, i)
+                            l2 <- c(l2, 2)
+                        }
+                        if (a[i, j] == 10) {
+                            l1 <- c(l1, i, j)
+                            l2 <- c(l2, 0)
+                        }
+                        if (a[i, j] == 11) {
+                            l1 <- c(l1, i, j, i, j)
+                            l2 <- c(l2, 2, 0)
+                        }
+                        if (a[i, j] == 100) {
+                            l1 <- c(l1, i, j)
+                            l2 <- c(l2, 3)
+                        }
+                        if (a[i, j] == 101) {
+                            l1 <- c(l1, i, j, i, j)
+                            l2 <- c(l2, 2, 3)
+                        }
+                        if (a[i, j] == 110) {
+                            l1 <- c(l1, i, j, i, j)
+                            l2 <- c(l2, 0, 3)
+                        }
+                        if (a[i, j] == 111) {
+                            l1 <- c(l1, i, j, i, j, i, j)
+                            l2 <- c(l2, 2, 0, 3)
+                        }
+                    }
+                }
+            }
+            else {
+                stop("'object' is not in a valid adjacency matrix form")
+            }
+            if (length(l1) > 0) {
+                ## l1 <- l1 - 1   # igraph0
+                agr <- graph(l1, n = nrow(a), directed = TRUE)
+            }
+        }
+        else {
+            stop("'object' is not in a valid format")
+        }
+        x = start(agr)
+        x[,1] =  10 + 80 * (x[,1] - min(x[,1])) / (max(x[,1]) - min(x[,1]))
+        x[,2] = 10 + 80 * (x[,2] - min(x[,2])) / (max(x[,2]) - min(x[,2]))
+        x
     }
     plot.dots <- function(xy, v, dottype, n, beta) {
         for (i in 1:n) {
@@ -430,7 +480,7 @@ function (...,order=FALSE)
                 points(xy[i, 1], xy[i, 2], pch = 16, cex = 1.2)
             }
         }
-        text(xy[, 1] - beta, xy[, 2] + beta, v, cex = 1.2)
+        text(xy[, 1] - beta, xy[, 2] + 2*beta, v, cex = 1.2)
     }
     angle <- function(v, alpha = pi/2) {
         theta <- Arg(complex(real = v[1], imaginary = v[2]))
@@ -479,7 +529,7 @@ function (...,order=FALSE)
                 angle = 20, length = 0.1, lwd = lwd, col = ecol)
         }
     }
-    draw.edges <- function(coor, u, alpha, type, lwd, ecol) {
+    draw.edges <- function(coor, u, alpha, type, lwd, ecol, bda) {
         for (k in 1:nrow(u)) {
             a <- coor[u[k, 1], ]
             b <- coor[u[k, 2], ]
@@ -491,50 +541,50 @@ function (...,order=FALSE)
                 lty = 1, lwd = lwd, col = ecol), arrows(x[1], 
                 x[2], y[1], y[2], code = 2, angle = 20, length = 0.1, 
                 lty = 1, lwd = lwd, col = ecol), arrows(x[1], 
-                x[2], y[1], y[2], code = 3, angle = 20, length = 0.1, 
+                x[2], y[1], y[2], code = 3, angle = 20, length = bda, 
                 lty = 5, lwd = lwd, col = ecol), double.edges(x[1], 
                 x[2], y[1], y[2], lwd = lwd, ecol))
         }
     }
-    def.coor <- function(ce, k, h, w) {
-        if (k == 1) 
-            return(ce)
-        else if (k == 2) {
-            r1 <- c(ce[1], ce[1])
-            r2 <- c(ce[2] + h * 0.3, ce[2] - h * 0.3)
-        }
-        else if (k == 3) {
-            r1 <- c(ce[1], ce[1], ce[1])
-            r2 <- c(ce[2] + h * 0.25, ce[2], ce[2] - h * 0.25)
-        }
-        else if (k == 4) {
-            r1 <- c(ce[1] - w * 0.3, ce[1] + w * 0.3, ce[1] + 
-                w * 0.3, ce[1] - w * 0.3)
-            r2 <- c(ce[2] - h * 0.3, ce[2] - h * 0.3, ce[2] + 
-                h * 0.3, ce[2] + h * 0.3)
-        }
-        else {
-            a <- 1
-            z <- seq(a, a + 2 * pi, len = k + 1)
-            z <- z[-1]
-            r1 <- ce[1] + w/2.5 * cos(z)
-            r2 <- ce[2] + h/2.5 * sin(z)
-        }
-        cbind(r1, r2)
-    }
-    def.coor.dag <- function(amat, w, h, left) {
-        nod <- rownames(amat)
-        o <- topOrder(amat)
-        if (left) 
-            o <- rev(o)
-        k <- length(nod)
-        x <- seq(0, 100, len = k)
-        y <- rep(c(20, 40, 60, 80), ceiling(k/4))[1:k]
-        xy <- cbind(x, y)
-        rownames(xy) <- nod[o]
-        xy[nod, ]
-    }
-    v <- rownames(amat)
+#     def.coor <- function(ce, k, h, w) {
+#         if (k == 1) 
+#             return(ce)
+#         else if (k == 2) {
+#             r1 <- c(ce[1], ce[1])
+#             r2 <- c(ce[2] + h * 0.3, ce[2] - h * 0.3)
+#         }
+#         else if (k == 3) {
+#             r1 <- c(ce[1], ce[1], ce[1])
+#             r2 <- c(ce[2] + h * 0.25, ce[2], ce[2] - h * 0.25)
+#         }
+#         else if (k == 4) {
+#             r1 <- c(ce[1] - w * 0.3, ce[1] + w * 0.3, ce[1] + 
+#                 w * 0.3, ce[1] - w * 0.3)
+#             r2 <- c(ce[2] - h * 0.3, ce[2] - h * 0.3, ce[2] + 
+#                 h * 0.3, ce[2] + h * 0.3)
+#         }
+#         else {
+#             a <- 1
+#             z <- seq(a, a + 2 * pi, len = k + 1)
+#             z <- z[-1]
+#             r1 <- ce[1] + w/2.5 * cos(z)
+#             r2 <- ce[2] + h/2.5 * sin(z)
+#         }
+#         cbind(r1, r2)
+#     }
+#     def.coor.dag <- function(amat, w, h, left) {
+#         nod <- rownames(amat)
+#         o <- topOrder(amat)
+#         if (left) 
+#             o <- rev(o)
+#         k <- length(nod)
+#         x <- seq(0, 100, len = k)
+#         y <- rep(c(20, 40, 60, 80), ceiling(k/4))[1:k]
+#         xy <- cbind(x, y)
+#         rownames(xy) <- nod[o]
+#         xy[nod, ]
+#     }
+    v <- parse(text = rownames(amat))
     n <- length(v)
     dottype <- rep(1, n)
     old <- par(mar = c(0, 0, 0, 0))
@@ -543,10 +593,11 @@ function (...,order=FALSE)
         ylab = "")
     center <- matrix(c(50, 50), ncol = 2)
     if (is.null(coor)) {
-        isdag <- isAcyclic(amat)
-        if (isdag) 
-            coor <- def.coor.dag(amat, 100, 100, left = left)
-        else coor <- def.coor(center, n, 100, 100)
+        coor <- lay(amat)
+#         isdag <- isAcyclic(amat)
+#         if (isdag) 
+#             coor <- def.coor.dag(amat, 100, 100, left = left)
+#         else coor <- def.coor(center, n, 100, 100)
     }
     g0 <- amat * ((amat == 10) & (t(amat) == 10))
     g0[lower.tri(g0)] <- 0
@@ -562,10 +613,10 @@ function (...,order=FALSE)
     if (nrow(coor) != length(v)) 
         stop("Wrong coordinates of the vertices.")
     plot.dots(coor, v, dottype, n, beta)
-    draw.edges(coor, u0, alpha, type = 0, lwd = lwd, ecol)
-    draw.edges(coor, u1, alpha, type = 1, lwd = lwd, ecol)
-    draw.edges(coor, u2, alpha, type = 2, lwd = lwd, ecol)
-    draw.edges(coor, u3, alpha, type = 3, lwd = lwd, ecol)
+    draw.edges(coor, u0, alpha, type = 0, lwd = lwd, ecol, bda)
+    draw.edges(coor, u1, alpha, type = 1, lwd = lwd, ecol, bda)
+    draw.edges(coor, u2, alpha, type = 2, lwd = lwd, ecol, bda)
+    draw.edges(coor, u3, alpha, type = 3, lwd = lwd, ecol, bda)
     if (adjust) {
         repeat {
             xnew <- unlist(locator(1))
@@ -581,13 +632,13 @@ function (...,order=FALSE)
                 xlab = "", ylab = "")
             plot.dots(coor, v, dottype, n, beta)
             draw.edges(coor, u0, alpha, type = 0, lwd = lwd, 
-                ecol)
+                ecol, bda)
             draw.edges(coor, u1, alpha, type = 1, lwd = lwd, 
-                ecol)
+                ecol, bda)
             draw.edges(coor, u2, alpha, type = 2, lwd = lwd, 
-                ecol)
+                ecol, bda)
             draw.edges(coor, u3, alpha, type = 3, lwd = lwd, 
-                ecol)
+                ecol, bda)
         }
     }
     colnames(coor) <- c("x", "y")

@@ -1,6 +1,7 @@
-6142301bdf0a70f966a4f84ec25d2e4a *DESCRIPTION
+c3bdd75113f22113757471260c4a72f2 *DESCRIPTION
 980da5deb93d563b80f5b76fcc6c3a59 *NAMESPACE
-f4ac099cd2a6ae56cc16c85aa716df9f *R/functions.R
+dd49e58f89b1bba6208ab7c7e049473a *NEWS
+ea3c814f58bc63507eaf83c5fd7d0d93 *R/functions.R
 dd32ff33d7a493ca91c38bae3c2f97cc *R/kayvan.R
 fa242bd826362329beeb9f0e8f1094be *data/anger.rda
 28055191f4a4aaf467145937e9e7814a *data/derived.rda
@@ -44,7 +45,7 @@ be394f4a9504b22f20be2d670f5e4e05 *man/cycleMatrix.Rd
 8e568787964330762c56de123e9da675 *man/dSep.Rd
 27f3124a0dca111780a45d3ce3909556 *man/derived.Rd
 47ddb442232ec170174f493e0e3b1e6b *man/diagv.Rd
-8f36c35bc208fc56a88e437c47a5120a *man/drawGraph.Rd
+5490bb72bdda7683256c157ae4d4d5d5 *man/drawGraph.Rd
 8dae61c18089e96db2c0f580c1799e98 *man/edgematrix.Rd
 f4ac6a734a33f554879b0d549e5eb244 *man/essentialGraph.Rd
 84d13e016f92563ee17be0730495976c *man/findPath.Rd
@@ -72,7 +73,7 @@ f676955ee999cedeba80400f8bc4caa7 *man/null.Rd
 d0c414e24ba960be521a0595d81bd7f6 *man/parcor.Rd
 3c556de20fc2a810007ed8612677eed6 *man/pcor.Rd
 c556749e74922268f263ea40c58d20e0 *man/pcor.test.Rd
-b014396dbb946a9017b7388404934231 *man/plotGraph.Rd
+922da1ecf9e690da319181ad7aa5e2ed *man/plotGraph.Rd
 c7484eb69f5e0aef83ae0ad2608401ca *man/powerset.Rd
 2b821005a5843b3d16c57462cdab8efb *man/rcorr.Rd
 0932d501517fe700da435ec235823d7e *man/rnormDag.Rd

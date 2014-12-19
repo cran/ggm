@@ -24,7 +24,7 @@ Or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object.Or a 
 \item{dashed}{A logical value. If \code{TRUE} the bi-directed edges are plotted as 
 undirected dashed edges.}   
 \item{tcltk}{A logical value. If \code{TRUE} the function opens a tcltk device to plot the graphs, allowing the interactive manimulation of the graph. If \code{FALSE}the function opens a standard device without interaction.}
-\item{layout}{The name of a function used to compute the (initial) layout of the graph. The default is \code{layout.grid}. This can be further adjusted if \code{tcltk} is \code{TRUE}.}
+\item{layout}{The name of a function used to compute the (initial) layout of the graph. The default is \code{layout.auto}. This can be further adjusted if \code{tcltk} is \code{TRUE}.}
 \item{directed}{A logical value. If \code{FALSE} a symmetric adjacency matrix with entries 1
 is interpreted as an undirected graph. If \code{FALSE} it is interpreted as a directed graph
 with double arrows. If \code{a} is not an adjacency matrix, it is ignored.}

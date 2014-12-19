@@ -3,8 +3,8 @@
 \title{Drawing a graph with a simple point and click interface.}
 \description{Draw a graph from its adjacency matrix representation.}
 \usage{
-drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.5,
-                beta = 3, lwd = 1, ecol = "blue", left = FALSE)
+drawGraph(amat, coor = NULL, adjust = FALSE, alpha = 1.5,
+                beta = 3, lwd = 1, ecol = "blue", bda = 0.1, layout = layout.auto)
 }
 \arguments{
   \item{amat}{the adjacency matrix representation of the graph. This
@@ -13,8 +13,7 @@ drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.5,
   \item{coor}{an optional matrix of dimensions \code{p} x 2 where
     \eqn{p} is the number of vertices of the graph. If \code{coor=NULL}
     then the function chooses a default position for the nodes.}
-  \item{adjust}{a logical value. If \code{TRUE} the graph is plotted and
-    the system waits until the mouse button is pressed (same behaviour
+  \item{adjust}{a logical value, defaults to \code{FALSE}. If \code{TRUE} the graph is plotted and the system waits until the mouse button is pressed (same behaviour
     of \code{locator} function.}  
   \item{alpha}{a positive value between controlling the
     distance from the end of the edges to the nodes of the graph.}
@@ -22,8 +21,8 @@ drawGraph(amat, coor = NULL, adjust = TRUE, alpha = 1.5,
     the variables from the nodes.}
   \item{lwd}{line width of the edges (default: 1).}
   \item{ecol}{color of the edges (default: "blue").}
-  \item{left}{a logical value. If \code{TRUE} the default location of
-    the vertices of DAGs in topological order is from right to left.}
+  \item{bda}{bidirected edge arrow length (default: 0.1).}
+  \item{layout}{The name of a function used to compute the (initial) layout of the graph. The default is \code{layout.auto}. This can be further adjusted if \code{adjust} is \code{TRUE}.}
 }
 \details{
   The function is a very simple tool useful for displaying small graphs,
