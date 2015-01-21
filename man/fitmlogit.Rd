@@ -45,8 +45,7 @@ See Evans and Forcina (2011).
 \item{P}{The estimated cell probabilities for each individual.} 
 }
 \references{
-Evans, R.J. and Forcina, A. (2011). Two algorithms for fitting constrained marginal models.
-Submitted, \url{arXiv:1110.2894v1 [stat.CO]}.  
+Evans, R.J. and Forcina, A. (2013). Two algorithms for fitting constrained marginal models. \emph{Computational Statistics and Data Analysis}, 66, 1-7. 
 }
 \author{
 Antonio Forcina, Giovanni M. Marchetti

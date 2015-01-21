@@ -1,4 +1,4 @@
-c3bdd75113f22113757471260c4a72f2 *DESCRIPTION
+307e3d4e609343df35335223bdfb1fcf *DESCRIPTION
 980da5deb93d563b80f5b76fcc6c3a59 *NAMESPACE
 dd49e58f89b1bba6208ab7c7e049473a *NEWS
 ea3c814f58bc63507eaf83c5fd7d0d93 *R/functions.R
@@ -54,7 +54,7 @@ f4ac6a734a33f554879b0d549e5eb244 *man/essentialGraph.Rd
 e32d72597370ea8c20acb06bd30a321c *man/fitCovGraph.Rd
 3c208a475bc1775b3d3a124c2be3e85a *man/fitDag.Rd
 43091da524f2411d5407b431d9b9e8f0 *man/fitDagLatent.Rd
-c0539e62fd345c82f26878b57817a8b6 *man/fitmlogit.Rd
+da49d5347cf477b8b91dc9097c85c9c3 *man/fitmlogit.Rd
 dcc2116bbcdfe2ae6625681b35216edc *man/fundCycles.Rd
 0e642577d904fde6690dd30f55f17cce *man/ggm.Rd
 c16b19d9456248bdc393b78cc75e8312 *man/glucose.Rd
