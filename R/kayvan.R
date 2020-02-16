@@ -15,7 +15,7 @@ rem<-function(a,r){ # this is setdiff (a, r)
 				b<-b[-k]
 				k<-k-1
 				break}
-			
+
 			}
 		}
 	return(b)
@@ -34,9 +34,9 @@ rem<-function(a,r){ # this is setdiff (a, r)
 #					break}}}}
 #	return(r)
 #}
-############################################################################### 
+###############################################################################
 # Finds indices of b in sorted a
-                        
+
 'SPl' = function(a, b) (1:length(a))[is.element(sort(a), b)]
 ##############################################################################
 RR<-function(a){   ## This is unique(a)
@@ -48,21 +48,49 @@ RR<-function(a){   ## This is unique(a)
 			i<-i+1}
 		else{
 			r<-c(r,a[i+1])
-			i<-i+1	
+			i<-i+1
 			}}
 	return(r)
 }
 #################################################################################
 #################################################################################
+
+
+#' Graph to adjacency matrix
+#'
+#' \code{grMAT} generates the associated adjacency matrix to a given graph.
+#'
+#'
+#' @param agr A graph that can be a \code{graphNEL} or an \code{\link{igraph}}
+#' object or a vector of length \eqn{3e}, where \eqn{e} is the number of edges
+#' of the graph, that is a sequence of triples (type, node1label, node2label).
+#' The type of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"}
+#' (arcs), and \code{"l"} (lines).
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @keywords graphs adjacency matrix mixed graph vector
+#' @examples
+#'
+#' ## Generating the adjacency matrix from a vector
+#' exvec <-c ('b',1,2,'b',1,14,'a',9,8,'l',9,11,'a',10,8,
+#'            'a',11,2,'a',11,10,'a',12,1,'b',12,14,'a',13,10,'a',13,12)
+#' grMAT(exvec)
+#'
+#'
 `grMAT` <- function(agr)
 {
-	 if (class(agr) == "graphNEL") {
+	 if (class(agr)[1] == "graphNEL") {
         	agr<-igraph.from.graphNEL(agr)
        }
-	 if (class(agr)== "igraph"){
+	 if (class(agr)[1]== "igraph"){
 		return(get.adjacency(agr, sparse = FALSE))
 	 }
-	 if(class(agr) == "character"){
+	 if(class(agr)[1] == "character"){
 		if (length(agr)%%3!=0){
 			stop("'The character object' is not in a valid form")}
 		seqt<-seq(1,length(agr),3)
@@ -90,25 +118,84 @@ RR<-function(a){   ## This is unique(a)
 		}
 		rownames(mat)<-Ragr
 		colnames(mat)<-Ragr
-	}			
+	}
 	return(mat)
-}		
+}
 
-##############################################################################
-##############################################################################
+
+#' Ribbonless graph
+#'
+#' \code{RG} generates and plots ribbonless graphs (a modification of MC graph
+#' to use m-separation) after marginalization and conditioning.
+#'
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @param M A subset of the node set of \code{a} that is going to be
+#' marginalized over
+#' @param C Another disjoint subset of the node set of \code{a} that is going
+#' to be conditioned on.
+#' @param showmat A logical value. \code{TRUE} (by default) to print the
+#' generated matrix.
+#' @param plot A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+#' the generated graph.
+#' @param plotfun Function to plot the graph when \code{plot == TRUE}. Can be
+#' \code{plotGraph} (the default) or \code{drawGraph}.
+#' @param \dots Further arguments passed to \code{plotfun}.
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{AG}},, \code{\link{MRG}}, \code{\link{SG}}
+#' @references Koster, J.T.A. (2002). Marginalizing and conditioning in
+#' graphical models.  \emph{Bernoulli}, 8(6), 817-840.
+#'
+#' Sadeghi, K. (2011). Stable classes of graphs containing directed acyclic
+#' graphs.  \emph{Submitted}.
+#' @keywords graphs directed acyclic graph marginalisation and conditioning MC
+#' graph ribbonless graph
+#' @examples
+#'
+#' 	ex <- matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, ##The adjacency matrix of a DAG
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+#' 	               1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0),16,16, byrow = TRUE)
+#'
+#' M<-c(3,5,6,15,16)
+#' C<-c(4,7)
+#' RG(ex,M,C,plot=TRUE)
+#'
 `RG` <- function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
-{	
-	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
+{
+	if(class(amat)[1] == "igraph" || class(amat)[1] == "graphNEL" || class(amat)[1] == "character") {
 		amat<-grMAT(amat)}
-	if(class(amat) == "matrix"){
+	if(is(amat,"matrix")){
 		if(nrow(amat)==ncol(amat)){
 			if(length(rownames(amat))!=ncol(amat)){
 	 			rownames(amat)<-1:ncol(amat)
-	 			colnames(amat)<-1:ncol(amat)}	
+	 			colnames(amat)<-1:ncol(amat)}
 					}
 		else {
       	  stop("'object' is not in a valid adjacency matrix form")}}
-	if(class(amat) != "matrix") {	
+	if(!is(amat,"matrix")) {
 	stop("'object' is not in a valid form")}
 
 
@@ -122,9 +209,9 @@ RR<-function(a){   ## This is unique(a)
 				if(amat[i,j]%%10 == 1){
 					S<-c(i,S[S!=i])}
 				}
-			}	
-	}	
-			
+			}
+	}
+
 
 	amatr<-amat
 	amatt<-2*amat
@@ -140,7 +227,7 @@ RR<-function(a){   ## This is unique(a)
 		 	if (amatr[kkk,kk]%%10==1|amatr[kk,kkk]%%10==1) {
 				amat31[kk,kkk]<-amatr[kkk,kk]
 				amat31[kkk,kk]<-amatr[kk,kkk]}
-        		
+
        		 idx <- which(amat31[, kk]%%10 == 1)
         		lenidx <- length(idx)
         		if ((lenidx > 1&amat31[kkk,kk]%%10==1)) {
@@ -152,10 +239,10 @@ RR<-function(a){   ## This is unique(a)
             		}
        		 }
 			}
-    		
-		amatr<-amat21	
 
-################################################################2	
+		amatr<-amat21
+
+################################################################2
 
 		amat22 <- matrix(rep(0,length(amat)),dim(amat))
     		 for (kk in S) {
@@ -169,7 +256,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%10==0 & idx[ii]!=idy[jj]){
                   amat22[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat22+amatr
@@ -189,7 +276,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idy[jj], idx[ii]]%%10==0 & idx[ii]!=idy[jj]){
                   amat23[idy[jj], idx[ii]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat23+amatr
@@ -207,12 +294,12 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%10==0 & idx[ii]!=idy[jj]){
                   amat24[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat24+amatr
 
-####################################################################5		
+####################################################################5
 
 
 
@@ -246,10 +333,10 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idy[jj], idx[ii]]<100 & idx[ii]!=idy[jj]){
                   amat26[idy[jj], idx[ii]] <- 100
       				          }}
-	            		}	
+	            		}
         			}
  		   }
-		 amatr<-amat26+t(amat26)+amatr		
+		 amatr<-amat26+t(amat26)+amatr
 
 #################################################################7
 
@@ -280,11 +367,11 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idx[jj]]%%100<10){
                   amat28[idx[ii], idx[jj]] <- 10
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat28+t(amat28)+amatr
-	
+
 #################################################################9
 
 			amat29 <- matrix(rep(0,length(amat)),dim(amat))
@@ -299,7 +386,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%100<10 & idx[ii]!=idy[jj]){
                   amat29[idx[ii], idy[jj]] <- 10
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat29+t(amat29)+amatr
@@ -320,7 +407,7 @@ RR<-function(a){   ## This is unique(a)
       			  }
    		 }
 		 amatr<-amat20+t(amat20)+amatr
-	
+
 	}
 	Mn<-c()
 	Cn<-c()
@@ -335,7 +422,7 @@ RR<-function(a){   ## This is unique(a)
 	if(length(Mn)==0&length(Cn)>0){
 		fr<-amatr[-c(Cn),-c(Cn)]}
 	if(length(Mn)==0&length(Cn)==0){
-		fr<-amatr}	
+		fr<-amatr}
 	if(plot==TRUE){
 		plotfun(fr,...)}
 	if(showmat==FALSE){
@@ -344,19 +431,81 @@ RR<-function(a){   ## This is unique(a)
 }
 ##############################################################################
 ##############################################################################
+
+
+#' summary graph
+#'
+#' \code{SG} generates and plots summary graphs after marginalization and
+#' conditioning.
+#'
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @param M A subset of the node set of \code{a} that is going to be
+#' marginalised over
+#' @param C Another disjoint subset of the node set of \code{a} that is going
+#' to be conditioned on.
+#' @param showmat A logical value. \code{TRUE} (by default) to print the
+#' generated matrix.
+#' @param plot A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+#' the generated graph.
+#' @param plotfun Function to plot the graph when \code{plot == TRUE}. Can be
+#' \code{plotGraph} (the default) or \code{drawGraph}.
+#' @param \dots Further arguments passed to \code{plotfun}.
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{AG}}, \code{\link{MSG}}, \code{\link{RG}}
+#' @references Sadeghi, K. (2011). Stable classes of graphs containing directed
+#' acyclic graphs.  \emph{Submitted}.
+#'
+#' Wermuth, N. (2011). Probability distributions with summary graph structure.
+#' \emph{Bernoulli}, 17(3),845-879.
+#' @keywords graphs directed acyclic graph marginalization and conditioning
+#' summary graph
+#' @examples
+#'
+#' 	ex <- matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, ##The adjacency matrix of a DAG
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+#' 	               1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#' 	               1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+#' 	               0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0),16,16, byrow = TRUE)
+#' M <- c(3,5,6,15,16)
+#' C <- c(4,7)
+#' SG(ex, M, C, plot = TRUE)
+#' SG(ex, M, C, plot = TRUE, plotfun = drawGraph, adjust = FALSE)
+#'
 `SG`<-function (amat,M=c(),C=c(),showmat=TRUE, plot=FALSE, plotfun = plotGraph, ...)
-{	
-	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
+{
+	if(class(amat)[1] == "igraph" || class(amat)[1] == "graphNEL" || class(amat)[1] == "character") {
 		amat<-grMAT(amat)}
-	if(class(amat) == "matrix"){
+	if(is(amat,"matrix")){
 		if(nrow(amat)==ncol(amat)){
 			if(length(rownames(amat))!=ncol(amat)){
 	 			rownames(amat)<-1:ncol(amat)
-	 			colnames(amat)<-1:ncol(amat)}	
+	 			colnames(amat)<-1:ncol(amat)}
 					}
 		else {
       	  stop("'object' is not in a valid adjacency matrix form")}}
-	if(class(amat) != "matrix") {	
+	if(!is(amat,"matrix")) {
 	stop("'object' is not in a valid form")}
 
 	S<-C
@@ -369,8 +518,8 @@ RR<-function(a){   ## This is unique(a)
 				if(amat[i,j]%%10 == 1){
 					S<-c(i,S[S!=i])}
 				}
-			}	
-	}		
+			}
+	}
 
 	amatr<-amat
 	amatt<-2*amat
@@ -386,7 +535,7 @@ RR<-function(a){   ## This is unique(a)
 		 	if (amatr[kkk,kk]%%10==1|amatr[kk,kkk]%%10==1) {
 				amat31[kk,kkk]<-amatr[kkk,kk]
 				amat31[kkk,kk]<-amatr[kk,kkk]}
-        		
+
        		 idx <- which(amat31[, kk]%%10 == 1)
         		lenidx <- length(idx)
         		if ((lenidx > 1&amat31[kkk,kk]%%10==1)) {
@@ -398,10 +547,10 @@ RR<-function(a){   ## This is unique(a)
             		}
        		 }
 			}
-    		
-		amatr<-amat21	
 
-################################################################2	
+		amatr<-amat21
+
+################################################################2
 
 		amat22 <- matrix(rep(0,length(amat)),dim(amat))
     		 for (kk in S) {
@@ -415,7 +564,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%10==0 & idx[ii]!=idy[jj]){
                   amat22[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat22+amatr
@@ -435,7 +584,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idy[jj], idx[ii]]%%10==0 & idx[ii]!=idy[jj]){
                   amat23[idy[jj], idx[ii]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat23+amatr
@@ -453,12 +602,12 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%10==0 & idx[ii]!=idy[jj]){
                   amat24[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat24+amatr
 
-####################################################################5		
+####################################################################5
 
 
 
@@ -492,10 +641,10 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idy[jj], idx[ii]]<100 & idx[ii]!=idy[jj]){
                   amat26[idy[jj], idx[ii]] <- 100
       				          }}
-	            		}	
+	            		}
         			}
  		   }
-		 amatr<-amat26+t(amat26)+amatr		
+		 amatr<-amat26+t(amat26)+amatr
 
 #################################################################7
 
@@ -526,11 +675,11 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idx[jj]]%%100<10){
                   amat28[idx[ii], idx[jj]] <- 10
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat28+t(amat28)+amatr
-	
+
 #################################################################9
 
 			amat29 <- matrix(rep(0,length(amat)),dim(amat))
@@ -545,7 +694,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%100<10 & idx[ii]!=idy[jj]){
                   amat29[idx[ii], idy[jj]] <- 10
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat29+t(amat29)+amatr
@@ -566,7 +715,7 @@ RR<-function(a){   ## This is unique(a)
       			  }
    		 }
 		 amatr<-amat20+t(amat20)+amatr
-	
+
 	}
 
 		for(i in 1:ncol(amatr)) {
@@ -578,11 +727,11 @@ RR<-function(a){   ## This is unique(a)
 						amatr[j,k]<-1
 						amatr[k,j]<-0
 						}}
-				}			
+				}
 			}}
-	
+
 	SS<-S
-	SSt<-c()	
+	SSt<-c()
 	while(identical(SS,SSt)==FALSE)
 	{
 		SSt<-SS
@@ -591,11 +740,11 @@ RR<-function(a){   ## This is unique(a)
 				if(amatr[i,j]%%10 == 1){
 					SS<-c(i,SS[SS!=i])}
 				}
-			}	
-	}	
-		
+			}
+	}
+
 		for(i in SS){
-		for(j in SS) {	
+		for(j in SS) {
 			if(amatr[i,j]%%10==1){
 				amatr[i,j]<-10
 				amatr[j,i]<-10}}}
@@ -615,7 +764,7 @@ RR<-function(a){   ## This is unique(a)
 	if(length(Mn)==0&length(Cn)>0){
 		fr<-amatr[-c(Cn),-c(Cn)]}
 	if(length(Mn)==0&length(Cn)==0){
-		fr<-amatr}	
+		fr<-amatr}
 	if(plot==TRUE){
 		plotfun(fr,...)}
 	if(showmat==FALSE){
@@ -625,19 +774,83 @@ RR<-function(a){   ## This is unique(a)
 }
 ##############################################################################
 ##############################################################################
+
+
+#' Ancestral graph
+#'
+#' \code{AG} generates and plots ancestral graphs after marginalization and
+#' conditioning.
+#'
+#'
+#' @param amat An adjacency matrix, or a graph that can be of class
+#' \code{graphNEL-class} or an \code{\link{igraph}} object, or a vector of
+#' length \eqn{3e}, where \eqn{e} is the number of edges of the graph, that is
+#' a sequence of triples (type, node1label, node2label). The type of edge can
+#' be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and
+#' \code{"l"} (lines).
+#' @param M A subset of the node set of \code{a} that is going to be
+#' marginalized over
+#' @param C Another disjoint subset of the node set of \code{a} that is going
+#' to be conditioned on.
+#' @param showmat A logical value. \code{TRUE} (by default) to print the
+#' generated matrix.
+#' @param plot A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+#' the generated graph.
+#' @param plotfun Function to plot the graph when \code{plot == TRUE}. Can be
+#' \code{plotGraph} (the default) or \code{drawGraph}.
+#' @param \dots Further arguments passed to \code{plotfun}.
+#' @return A matrix that is the adjacency matrix of the generated graph. It
+#' consists of 4 different integers as an \eqn{ij}-element: 0 for a missing
+#' edge between \eqn{i} and \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10
+#' for a full line between \eqn{i} and \eqn{j}, and 100 for a bi-directed arrow
+#' between \eqn{i} and \eqn{j}. These numbers are added to be associated with
+#' multiple edges of different types. The matrix is symmetric w.r.t full lines
+#' and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MAG}}, \code{\link{RG}}, \code{\link{SG}}
+#' @references Richardson, T.S. and Spirtes, P. (2002).  Ancestral graph Markov
+#' models. \emph{Annals of Statistics}, 30(4), 962-1030.
+#'
+#' Sadeghi, K. (2011).  Stable classes of graphs containing directed acyclic
+#' graphs.  \emph{Submitted}.
+#' @keywords graphs ancestral graph directed acyclic graph marginalization and
+#' conditioning
+#' @examples
+#'
+#' ##The adjacency matrix of a DAG
+#' ex<-matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+#'              1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0),16,16,byrow=TRUE)
+#' M <- c(3,5,6,15,16)
+#' C <- c(4,7)
+#' AG(ex, M, C, plot = TRUE)
+#'
 `AG`<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
-{	
-	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
+{
+	if(class(amat)[1] == "igraph" || class(amat)[1] == "graphNEL" || class(amat)[1] == "character") {
 		amat<-grMAT(amat)}
-	if(class(amat) == "matrix"){
+	if(is(amat,"matrix")){
 		if(nrow(amat)==ncol(amat)){
 			if(length(rownames(amat))!=ncol(amat)){
 	 			rownames(amat)<-1:ncol(amat)
-	 			colnames(amat)<-1:ncol(amat)}	
+	 			colnames(amat)<-1:ncol(amat)}
 					}
 		else {
       	  stop("'object' is not in a valid adjacency matrix form")}}
-	if(class(amat) != "matrix") {	
+	if(!is(amat,"matrix")) {
 	stop("'object' is not in a valid form")}
 
 	S<-C
@@ -650,8 +863,8 @@ RR<-function(a){   ## This is unique(a)
 				if(amat[i,j]%%10 == 1){
 					S<-c(i,S[S!=i])}
 				}
-			}	
-	}		
+			}
+	}
 
 	amatr<-amat
 	amatt<-2*amat
@@ -668,7 +881,7 @@ RR<-function(a){   ## This is unique(a)
 		 	if (amatr[kkk,kk]%%10==1|amatr[kk,kkk]%%10==1) {
 				amat31[kk,kkk]<-amatr[kkk,kk]
 				amat31[kkk,kk]<-amatr[kk,kkk]}
-        		
+
        		 idx <- which(amat31[, kk]%%10 == 1)
         		lenidx <- length(idx)
         		if ((lenidx > 1&amat31[kkk,kk]%%10==1)) {
@@ -680,10 +893,10 @@ RR<-function(a){   ## This is unique(a)
             		}
        		 }
 			}
-    		
-		amatr<-amat21	
 
-################################################################2	
+		amatr<-amat21
+
+################################################################2
 
 		amat22 <- matrix(rep(0,length(amat)),dim(amat))
     		 for (kk in S) {
@@ -697,7 +910,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%10==0 & idx[ii]!=idy[jj]){
                   amat22[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat22+amatr
@@ -717,7 +930,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idy[jj], idx[ii]]%%10==0 & idx[ii]!=idy[jj]){
                   amat23[idy[jj], idx[ii]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat23+amatr
@@ -735,12 +948,12 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%10==0 & idx[ii]!=idy[jj]){
                   amat24[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat24+amatr
 
-####################################################################5		
+####################################################################5
 
 
 
@@ -774,10 +987,10 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idy[jj], idx[ii]]<100 & idx[ii]!=idy[jj]){
                   amat26[idy[jj], idx[ii]] <- 100
       				          }}
-	            		}	
+	            		}
         			}
  		   }
-		 amatr<-amat26+t(amat26)+amatr		
+		 amatr<-amat26+t(amat26)+amatr
 
 #################################################################7
 
@@ -808,11 +1021,11 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idx[jj]]%%100<10){
                   amat28[idx[ii], idx[jj]] <- 10
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat28+t(amat28)+amatr
-	
+
 #################################################################9
 
 			amat29 <- matrix(rep(0,length(amat)),dim(amat))
@@ -827,7 +1040,7 @@ RR<-function(a){   ## This is unique(a)
 			if(amatr[idx[ii], idy[jj]]%%100<10 & idx[ii]!=idy[jj]){
                   amat29[idx[ii], idy[jj]] <- 10
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatr<-amat29+t(amat29)+amatr
@@ -848,7 +1061,7 @@ RR<-function(a){   ## This is unique(a)
       			  }
    		 }
 		 amatr<-amat20+t(amat20)+amatr
-	
+
 	}
 
 		for(i in 1:ncol(amatr)) {
@@ -860,12 +1073,12 @@ RR<-function(a){   ## This is unique(a)
 						amatr[j,k]<-1
 						amatr[k,j]<-0
 						}}
-				}			
+				}
 			}}
 
-	
+
 	SS<-S
-	SSt<-c()	
+	SSt<-c()
 	while(identical(SS,SSt)==FALSE)
 	{
 		SSt<-SS
@@ -874,11 +1087,11 @@ RR<-function(a){   ## This is unique(a)
 				if(amatr[i,j]%%10 == 1){
 					SS<-c(i,SS[SS!=i])}
 				}
-			}	
-	}	
-		
+			}
+	}
+
 		for(i in SS){
-		for(j in SS) {	
+		for(j in SS) {
 			if(amatr[i,j]%%10==1){
 				amatr[i,j]<-10
 				amatr[j,i]<-10}}}
@@ -892,7 +1105,7 @@ RR<-function(a){   ## This is unique(a)
 		 	if (amatr[kkk,kk]%%10==1|amatr[kk,kkk]%%10==1) {
 				amat3n[kk,kkk]<-amatr[kkk,kk]
 				amat3n[kkk,kk]<-amatr[kk,kkk]}
-        		
+
        		 idx <- which(amat3n[, kk]%%10 == 1)
         		lenidx <- length(idx)
         		if ((lenidx > 1&amat3n[kkk,kk]%%10==1)) {
@@ -904,14 +1117,14 @@ RR<-function(a){   ## This is unique(a)
             		}
        		 }
 			}
-    		
-	
+
+
 	amatt<-2*amat
 	while(identical(amatr,amatt)==FALSE)
 	{
 		amatt<-amatr
 
-		
+
 	 amat27n <- matrix(rep(0,length(amat)),dim(amat))
   		  for (kk in 1:ncol(amatr)) {
      			   idx <- which(amatn[, kk]>99)
@@ -941,13 +1154,13 @@ RR<-function(a){   ## This is unique(a)
 
                   amat22n[idx[ii], idy[jj]] <- 1
       				          }}
-	            		}	
+	            		}
         			}
  		   }
 		amatn<-amat22n+amatn
 		amatr<-amat22n+amatr
 	}
-	
+
 	for(i in 1:ncol(amatr)) {
 		for(j in 1:ncol(amatr)) {
 			if(amatr[i,j]==101){
@@ -967,7 +1180,7 @@ RR<-function(a){   ## This is unique(a)
 	if(length(Mn)==0&length(Cn)>0){
 		fr<-amatr[-c(Cn),-c(Cn)]}
 	if(length(Mn)==0&length(Cn)==0){
-		fr<-amatr}	
+		fr<-amatr}
 	if(plot==TRUE){
 		plotfun(fr, ...)}
 	if(showmat==FALSE){
@@ -977,25 +1190,63 @@ RR<-function(a){   ## This is unique(a)
 
 ##############################################################################
 ##############################################################################
+
+
+#' Maximisation for graphs
+#'
+#' \code{Max} generates a maximal graph that induces the same independence
+#' model from a non-maximal graph.
+#'
+#' \code{Max} looks for non-adjacent pais of nodes that are connected by
+#' primitive inducing paths, and connect such pairs by an appropriate edge.
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MAG}}, \code{\link{MRG}}, \code{\link{msep}},
+#' \code{\link{MSG}}
+#' @references Richardson, T.S. and Spirtes, P. (2002). Ancestral graph Markov
+#' models. \emph{Annals of Statistics}, 30(4), 962-1030.
+#'
+#' Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless mixed
+#' graphs. \emph{Submitted}. \url{http://arxiv.org/abs/1109.5909}.
+#' @keywords graphs loopless mixed graph m-separation maximality
+#' @examples
+#'
+#' H <- matrix(c(  0,100,  1,  0,
+#' 	          100,  0,100,  0,
+#' 	            0,100,  0,100,
+#' 	            0,  1,100,  0), 4, 4)
+#' Max(H)
+#'
 Max<-function(amat)
 {
-	if(class(amat) == "igraph" || class(amat) == "graphNEL" || class(amat) == "character") {
+	if(class(amat)[1] == "igraph" || class(amat)[1] == "graphNEL" || class(amat)[1] == "character") {
 		amat<-grMAT(amat)}
-	if(class(amat) == "matrix"){
+	if(is(amat,"matrix")){
 		if(nrow(amat)==ncol(amat)){
 			if(length(rownames(amat))!=ncol(amat)){
 	 			rownames(amat)<-1:ncol(amat)
-	 			colnames(amat)<-1:ncol(amat)}	
+	 			colnames(amat)<-1:ncol(amat)}
 					}
 		else {
       	  stop("'object' is not in a valid adjacency matrix form")}}
-	if(class(amat) != "matrix") {	
+	if(!is(amat,"matrix")) {
 	stop("'object' is not in a valid form")}
 
 	na<-ncol(amat)
 	at<-which(amat+t(amat)+diag(na)==0,arr.ind=TRUE)
 	if(dim(at)[1]>0){
-	for(i in 1:dim(at)[1]){	
+	for(i in 1:dim(at)[1]){
 		S<-at[i,]
 		St<-c()
 		while(identical(S,St)==FALSE){
@@ -1009,9 +1260,9 @@ Max<-function(amat)
 	one<-at[i,1]
 	two<-at[i,2]
 	onearrow<-c()
-	onearc<-c()	
+	onearc<-c()
 	twoarrow<-c()
-	twoarc<-c()		
+	twoarc<-c()
 	Sr<-S
 	Sr<-Sr[Sr!=at[i,1]]
 	Sr<-Sr[Sr!=at[i,2]]
@@ -1035,9 +1286,9 @@ Max<-function(amat)
 					if(j==k || amat[j,k]>99){
 						amat[at[i,1],at[i,2]]<-100
 						amat[at[i,2],at[i,1]]<-100}}
-				twoarc<-c(twoarc,j)}}}				
+				twoarc<-c(twoarc,j)}}}
 		if(length(c(onearc,onearrow,twoarc,twoarrow))>0){
-			
+
 			for(j in c(onearc,onearrow,twoarc,twoarrow)){
 				Sr<-Sr[Sr!=j]}
 		onearcn<-c()
@@ -1074,13 +1325,13 @@ Max<-function(amat)
 								amat[at[i,2],at[i,1]]<-100}}
 						twoarrown<-c(twoarrown,j)}}}
 			if(length(c(onearcn,onearrown,twoarcn,twoarrown))==0){
-				break}			
+				break}
 			for(j in c(onearcn,onearrown,twoarcn,twoarrown)){
-				Sr<-Sr[Sr!=j]}	
+				Sr<-Sr[Sr!=j]}
 			onearc<-onearcn
 			twoarc<-twoarcn
 			onearrow<-onearrown
-			twoarrow<-twoarrown					
+			twoarrow<-twoarrown
 			onearcn<-c()
 			twoarcn<-c()
 			onearrown<-c()
@@ -1089,22 +1340,57 @@ Max<-function(amat)
 }
 #####################################################################################################
 ######################################################################################################
+
+
+#' The m-separation criterion
+#'
+#' \code{msep} determines whether two set of nodes are m-separated by a third
+#' set of nodes.
+#'
+#'
+#' @param a An adjacency matrix, or a graph that can be a \code{graphNEL} or an
+#' \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e} is
+#' the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @param alpha A subset of the node set of \code{a}
+#' @param beta Another disjoint subset of the node set of \code{a}
+#' @param C A third disjoint subset of the node set of \code{a}
+#' @return A logical value. \code{TRUE} if \code{alpha} and \code{beta} are
+#' m-separated given \code{C}.  \code{FALSE} otherwise.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{dSep}}, \code{\link{MarkEqMag}}
+#' @references Richardson, T.S. and Spirtes, P. (2002) Ancestral graph Markov
+#' models. \emph{Annals of Statistics}, 30(4), 962-1030.
+#'
+#' Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless mixed
+#' graphs. \emph{Submitted}, 2011. URL \url{http://arxiv.org/abs/1109.5909}.
+#' @keywords graphs d-separation m-separation mixed graph
+#' @examples
+#'
+#' H <-matrix(c(0,0,0,0,
+#' 	         1,0,0,1,
+#' 	         0,1,0,0,
+#' 	         0,0,0,0),4,4)
+#' msep(H,1,4, 2)
+#' msep(H,1,4, c())
+#'
 msep<-function(a,alpha,beta,C=c()){
-	if(class(a) == "igraph" || class(a) == "graphNEL" || class(a) == "character") {
+	if(class(a)[1] == "igraph" || class(a)[1] == "graphNEL" || class(a)[1] == "character") {
 		a<-grMAT(a)}
-	if(class(a) == "matrix"){
+	if(is(a,"matrix")){
 		if(nrow(a)==ncol(a)){
 			if(length(rownames(a))!=ncol(a)){
 	 			rownames(a)<-1:ncol(a)
-	 			colnames(a)<-1:ncol(a)}	
+	 			colnames(a)<-1:ncol(a)}
 					}
 		else {
       	  stop("'object' is not in a valid adjacency matrix form")}}
-	if(class(a) != "matrix") {	
+	if(!is(a,"matrix")) {
 	stop("'object' is not in a valid form")}
 
 		M<-rem(rownames(a),c(alpha,beta,C))
-		ar<-Max(RG(a,M,C))	
+		ar<-Max(RG(a,M,C))
 
 	#aralpha<-as.matrix(ar[SPl(c(alpha,beta),alpha),SPl(c(alpha,beta),beta)])
 	#arbeta<-as.matrix(ar[SPl(c(alpha,beta),beta),SPl(c(alpha,beta),alpha)])
@@ -1120,18 +1406,235 @@ msep<-function(a,alpha,beta,C=c()){
 }
 ############################################################################
 ############################################################################
+
+
+#' Maximal ribbonless graph
+#'
+#' \code{MRG} generates and plots maximal ribbonless graphs (a modification of
+#' MC graph to use m-separation) after marginalisation and conditioning.
+#'
+#' This function uses the functions \code{\link{RG}} and \code{\link{Max}}.
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @param M A subset of the node set of \code{a} that is going to be
+#' marginalized over
+#' @param C Another disjoint subset of the node set of \code{a} that is going
+#' to be conditioned on.
+#' @param showmat A logical value. \code{TRUE} (by default) to print the
+#' generated matrix.
+#' @param plot A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+#' the generated graph.
+#' @param plotfun Function to plot the graph when \code{plot == TRUE}. Can be
+#' \code{plotGraph} (the default) or \code{drawGraph}.
+#' @param \dots Further arguments passed to \code{plotfun}.
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MAG}}, \code{\link{Max}}, \code{\link{MSG}},
+#' \code{\link{RG}}
+#' @references Koster, J.T.A. (2002). Marginalizing and conditioning in
+#' graphical models.  \emph{Bernoulli}, 8(6), 817-840.
+#'
+#' Richardson, T.S. and Spirtes, P. (2002). Ancestral graph Markov models.
+#' \emph{Annals of Statistics}, 30(4), 962-1030.
+#'
+#' Sadeghi, K. (2011). Stable classes of graphs containing directed acyclic
+#' graphs.  \emph{Submitted}.
+#'
+#' Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless mixed
+#' graphs. \emph{Submitted}. URL \url{http://arxiv.org/abs/1109.5909}.
+#' @keywords graphs directed acyclic graph marginalisation and conditioning
+#' maximality of graphs MC graph ribbonless graph
+#' @examples
+#'
+#' ex <- matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, ##The adjacency matrix of a DAG
+#'                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+#'                1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+#'                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'                1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+#'                0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0),16,16, byrow = TRUE)
+#' M <- c(3,5,6,15,16)
+#' C <- c(4,7)
+#' MRG(ex, M, C, plot = TRUE)
+#' ###################################################
+#' H <- matrix(c( 0, 100,   1,   0,
+#'   	         100,   0, 100,   0,
+#'  	             0, 100,   0, 100,
+#' 	             0,   1, 100,   0), 4,4)
+#' Max(H)
+#'
 `MRG` <- function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {
 	return(Max(RG(amat,M,C,showmat,plot, plotfun = plotGraph, ...)))
 }
 ##########################################################################
 ##########################################################################
+
+
+#' Maximal summary graph
+#'
+#' \code{MAG} generates and plots maximal summary graphs after marginalization
+#' and conditioning.
+#'
+#' This function uses the functions \code{\link{SG}} and \code{\link{Max}}.
+#'
+#' @param amat An adjacency matrix of a MAG, or a graph that can be a
+#' \code{graphNEL} or an \code{\link{igraph}} object or a vector of length
+#' \eqn{3e}, where \eqn{e} is the number of edges of the graph, that is a
+#' sequence of triples (type, node1label, node2label). The type of edge can be
+#' \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and \code{"l"}
+#' (lines).
+#' @param M A subset of the node set of \code{a} that is going to be
+#' marginalized over
+#' @param C Another disjoint subset of the node set of \code{a} that is going
+#' to be conditioned on.
+#' @param showmat A logical value. \code{TRUE} (by default) to print the
+#' generated matrix.
+#' @param plot A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+#' the generated graph.
+#' @param plotfun Function to plot the graph when \code{plot == TRUE}. Can be
+#' \code{plotGraph} (the default) or \code{drawGraph}.
+#' @param \dots Further arguments passed to \code{plotfun}.
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MAG}}, \code{\link{Max}}, \code{\link{MRG}},
+#' \code{\link{SG}}
+#' @references Richardson, T.S. and Spirtes, P. (2002). Ancestral graph Markov
+#' models. \emph{Annals of Statistics}, 30(4), 962-1030.
+#'
+#' Sadeghi, K. (2011). Stable classes of graphs containing directed acyclic
+#' graphs.  \emph{Submitted}.
+#'
+#' Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless mixed
+#' graphs. \emph{Submitted}. URL \url{http://arxiv.org/abs/1109.5909}.
+#'
+#' Wermuth, N. (2011). Probability distributions with summary graph structure.
+#' \emph{Bernoulli}, 17(3), 845-879.
+#' @keywords graphs directed acyclic graph marginalisation and conditioning
+#' maximality of graphs summary graph
+#' @examples
+#'
+#' ex<-matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, ##The adjacency matrix of a DAG
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+#'              1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0), 16, 16, byrow=TRUE)
+#' M <- c(3,5,6,15,16)
+#' C <- c(4,7)
+#' MSG(ex,M,C,plot=TRUE)
+#' ###################################################
+#' H<-matrix(c(0,100,1,0,100,0,100,0,0,100,0,100,0,1,100,0),4,4)
+#' Max(H)
+#'
 `MSG` <- function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {
 	return(Max(SG(amat,M,C,showmat,plot, plotfun = plotGraph, ...)))
 }
 ############################################################################
 ###########################################################################
+
+
+#' Maximal ancestral graph
+#'
+#' \code{MAG} generates and plots maximal ancestral graphs after
+#' marginalisation and conditioning.
+#'
+#' This function uses the functions \code{\link{AG}} and \code{\link{Max}}.
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @param M A subset of the node set of \code{a} that is going to be
+#' marginalized over
+#' @param C Another disjoint subset of the node set of \code{a} that is going
+#' to be conditioned on.
+#' @param showmat A logical value. \code{TRUE} (by default) to print the
+#' generated matrix.
+#' @param plot A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+#' the generated graph.
+#' @param plotfun Function to plot the graph when \code{plot == TRUE}. Can be
+#' \code{plotGraph} (the default) or \code{drawGraph}.
+#' @param \dots Further arguments passed to \code{plotfun}.
+#' @return A matrix that consists 4 different integers as an \eqn{ij}-element:
+#' 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from
+#' \eqn{i} to \eqn{j}, 10 for a full line between \eqn{i} and \eqn{j}, and 100
+#' for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are added
+#' to be associated with multiple edges of different types. The matrix is
+#' symmetric w.r.t full lines and bi-directed arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{AG}}, \code{\link{Max}}, \code{\link{MRG}},
+#' \code{\link{MSG}}
+#' @references Richardson, T. S. and Spirtes, P. (2002). Ancestral graph Markov
+#' models. \emph{Annals of Statistics}, 30(4), 962-1030.
+#'
+#' Sadeghi, K. (2011). Stable classes of graphs containing directed acyclic
+#' graphs.  \emph{Submitted}.
+#'
+#' Sadeghi, K.  and Lauritzen, S.L. (2011). Markov properties for loopless
+#' mixed graphs. \emph{Submitted}. URL \url{http://arxiv.org/abs/1109.5909}.
+#' @keywords ancestral graph directed acyclic graph marginalization and
+#' conditioning maximality of graphs
+#' @examples
+#'
+#' ex<-matrix(c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0, ##The adjacency matrix of a DAG
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,
+#'              1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+#'              1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+#'              0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0), 16, 16, byrow = TRUE)
+#' M <- c(3,5,6,15,16)
+#' C <- c(4,7)
+#' MAG(ex, M, C, plot=TRUE)
+#' ###################################################
+#' H <- matrix(c(0,100,1,0,100,0,100,0,0,100,0,100,0,1,100,0),4,4)
+#' Max(H)
+#'
 `MAG`<-function (amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, ...)
 {
 	return(Max(AG(amat,M,C,showmat,plot, plotfun = plotGraph, ...)))
@@ -1140,20 +1643,20 @@ msep<-function(a,alpha,beta,C=c()){
 ############################################################################
 #Plot<-function(a)
 #{
-#	if(class(a) == "igraph" || class(a) == "graphNEL" || class(a) == "character") {
+#	if(class(a)[1] == "igraph" || class(a)[1] == "graphNEL" || class(a)[1] == "character") {
 #		a<-grMAT(a)}
-#	if(class(a) == "matrix"){
+#	if(is(a,"matrix")){
 #		if(nrow(a)==ncol(a)){
 #			if(length(rownames(a))!=ncol(a)){
 #	 			rownames(a)<-1:ncol(a)
-#	 			colnames(a)<-1:ncol(a)}	
+#	 			colnames(a)<-1:ncol(a)}
 #			l1<-c()
 #			l2<-c()
 #			for (i in 1:nrow(a)){
 #				for (j in i:nrow(a)){
 #					if (a[i,j]==1){
 #						l1<-c(l1,i,j)
-#						l2<-c(l2,2)}		
+#						l2<-c(l2,2)}
 #					if (a[j,i]%%10==1){
 #						l1<-c(l1,j,i)
 #						l2<-c(l2,2)}
@@ -1187,29 +1690,63 @@ msep<-function(a,alpha,beta,C=c()){
 #    	if(length(l1)==0){
 #    		agr<-graph.empty(n=nrow(a), directed=TRUE)
 #		return(plot(agr,vertex.label=rownames(a)))}
-#    	return( tkplot(agr, layout=layout.kamada.kawai, edge.curved=FALSE:TRUE, vertex.label=rownames(a),edge.arrow.mode=l2))	
+#    	return( tkplot(agr, layout=layout.kamada.kawai, edge.curved=FALSE:TRUE, vertex.label=rownames(a),edge.arrow.mode=l2))
 #	}
 #	else {
 #        stop("'object' is not in a valid format")}
 #}
 ############################################################################
 ############################################################################
+
+
+#' Markov equivalence for regression chain graphs.
+#'
+#' \code{MarkEqMag} determines whether two RCGs (or subclasses of RCGs) are
+#' Markov equivalent.
+#'
+#' The function checks whether the two graphs have the same skeleton and
+#' unshielded colliders.
+#'
+#' @param amat An adjacency matrix of an RCG or a graph that can be a
+#' \code{graphNEL} or an \code{\link{igraph}} object or a vector of length
+#' \eqn{3e}, where \eqn{e} is the number of edges of the graph, that is a
+#' sequence of triples (type, node1label, node2label). The type of edge can be
+#' \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and \code{"l"}
+#' (lines).
+#' @param bmat The same as \code{amat}.
+#' @return "Markov Equivalent" or "NOT Markov Equivalent".
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MarkEqMag}}, \code{\link{msep}}
+#' @references Wermuth, N. and Sadeghi, K. (2011). Sequences of regressions and
+#' their independences. \emph{TEST}, To appear.
+#' \url{http://arxiv.org/abs/1103.2523}.
+#' @keywords graphs bidirected graph directed acyclic graph Markov equivalence
+#' regression chain graph undirected graph multivariate
+#' @examples
+#'
+#' H1<-matrix(c(0,100,0,0,0,100,0,100,0,0,0,100,0,0,0,1,0,0,0,100,0,0,1,100,0),5,5)
+#' H2<-matrix(c(0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,100,0,0,1,100,0),5,5)
+#' H3<-matrix(c(0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0),5,5)
+#' #MarkEqRcg(H1,H2)
+#' #MarkEqRcg(H1,H3)
+#' #MarkEqRcg(H2,H3)
+#'
 MarkEqRcg<-function(amat,bmat)
 	{
-	if(class(amat) == "igraph"){
+	if(class(amat)[1] == "igraph"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "graphNEL"){
+	if(class(amat)[1] == "graphNEL"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "character"){
+	if(class(amat)[1] == "character"){
 		amat<-grMAT(amat)}
 	if( length(rownames(amat))!=ncol(amat) | length(colnames(amat))!=ncol(amat)){
 		rownames(amat)<-1:ncol(amat)
 		colnames(amat)<-1:ncol(amat)}
-	if(class(bmat) == "igraph"){
+	if(class(bmat)[1] == "igraph"){
 		bmat<-grMAT(bmat)}
-	if(class(bmat) == "graphNEL"){
+	if(class(bmat)[1] == "graphNEL"){
 		bmat<-grMAT(bmat)}
-	if(class(bmat) == "character"){
+	if(class(bmat)[1] == "character"){
 		bmat<-grMAT(bmat)}
 	if( length(rownames(bmat))!=ncol(bmat) | length(colnames(bmat))!=ncol(bmat)){
 		rownames(bmat)<-1:ncol(bmat)
@@ -1240,22 +1777,57 @@ MarkEqRcg<-function(amat,bmat)
 }
 ########################################################################################
 ########################################################################################
-MarkEqMag<-function(amat,bmat)
+
+
+#' Markov equivalence of maximal ancestral graphs
+#'
+#' \code{MarkEqMag} determines whether two MAGs are Markov equivalent.
+#'
+#' The function checks whether the two graphs have the same skeleton and
+#' colliders with order.
+#'
+#' @param amat An adjacency matrix of a MAG, or a graph that can be a
+#' \code{graphNEL} or an \code{\link{igraph}} object or a vector of length
+#' \eqn{3e}, where \eqn{e} is the number of edges of the graph, that is a
+#' sequence of triples (type, node1label, node2label). The type of edge can be
+#' \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and \code{"l"}
+#' (lines).
+#' @param bmat The same as \code{amat}.
+#' @return "Markov Equivalent" or "NOT Markov Equivalent".
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MarkEqRcg}}, \code{\link{msep}}
+#' @references Ali, R.A., Richardson, T.S. and Spirtes, P. (2009) Markov
+#' equivalence for ancestral graphs. \emph{Annals of Statistics},
+#' 37(5B),2808-2837.
+#' @keywords graphs Markov equivalence maximal ancestral graphs multivariate
+#' @examples
+#'
+#' H1<-matrix(  c(0,100,  0,  0,
+#' 	         100,  0,100,  0,
+#'                0,100,  0,100,
+#'                0,  1,100,  0), 4, 4)
+#' H2<-matrix(c(0,0,0,0,1,0,100,0,0,100,0,100,0,1,100,0),4,4)
+#' H3<-matrix(c(0,0,0,0,1,0,0,0,0,1,0,100,0,1,100,0),4,4)
+#' MarkEqMag(H1,H2)
+#' MarkEqMag(H1,H3)
+#' MarkEqMag(H2,H3)
+#'
+`MarkEqMag` <- function(amat,bmat)
 	{
-	if(class(amat) == "igraph"){
+	if(class(amat)[1] == "igraph"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "graphNEL"){
+	if(class(amat)[1] == "graphNEL"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "character"){
+	if(class(amat)[1] == "character"){
 		amat<-grMAT(amat)}
 	if( length(rownames(amat))!=ncol(amat) | length(colnames(amat))!=ncol(amat)){
 		rownames(amat)<-1:ncol(amat)
 		colnames(amat)<-1:ncol(amat)}
-	if(class(bmat) == "igraph"){
+	if(class(bmat)[1] == "igraph"){
 		bmat<-grMAT(bmat)}
-	if(class(bmat) == "graphNEL"){
+	if(class(bmat)[1] == "graphNEL"){
 		bmat<-grMAT(bmat)}
-	if(class(bmat) == "character"){
+	if(class(bmat)[1] == "character"){
 		bmat<-grMAT(bmat)}
 	if( length(rownames(bmat))!=ncol(bmat) | length(colnames(bmat))!=ncol(bmat)){
 		rownames(bmat)<-1:ncol(bmat)
@@ -1283,12 +1855,12 @@ MarkEqMag<-function(amat,bmat)
 	ar<-which(amat%%10==1,arr.ind=TRUE)
 	br<-which(bmat%%10==1,arr.ind=TRUE)
 	ap<-c()
-	bp<-c()		
+	bp<-c()
 	if(length(ar)>0){
 		for(i in 1:dim(ar)[1]){
 			for(j in 1:na){
 				if((amat[ar[i,1],j]>99) &&(amat[ar[i,2],j]>99)){
-					ap<-rbind(ap,c(ar[i,1],j,ar[i,2]))}}}}								
+					ap<-rbind(ap,c(ar[i,1],j,ar[i,2]))}}}}
 	if(length(br)>0){
 		for(i in 1:dim(br)[1]){
 			for(j in 1:nb){
@@ -1303,10 +1875,10 @@ MarkEqMag<-function(amat,bmat)
 			apt<-aptt
 			for(i in (1:dim(ap)[1])){
 				Qone<-ap[i,1]
-				Qtwo<-ap[i,2]			
+				Qtwo<-ap[i,2]
 				while(length(Qone)>0){
 					for(l in (1:length(Qone))){
-						J<-which(((amat+t(amat)+diag(na))[ap[i,3],]==0) && ((amat[Qone[l],]>99) || (amat[,Qone[l]]%%100==1)))
+						J<-which(((amat+t(amat)+diag(na))[ap[i,3],]==0) & ((amat[Qone[l],]>99) | (amat[,Qone[l]]%%100==1)))
 						for(j in J){
 							for(k in 1:dim(a)[1]){
 								if(min(a[k,]==c(j,Qone[l],Qtwo[l]))==1){
@@ -1316,7 +1888,7 @@ MarkEqMag<-function(amat,bmat)
 									break
 									break
 									break}}}
-						Q<-which((amat[,ap[i,3]]%%10==1) && (amat[Qone[l],]>99))
+						Q<-which((amat[,ap[i,3]]%%10==1) & (amat[Qone[l],]>99))
 						for(q in Q){
 							for(k in 1:dim(a)[1]){
 								if(min(a[k,]==c(q,Qone[l],Qtwo[l]))==1){
@@ -1335,10 +1907,10 @@ MarkEqMag<-function(amat,bmat)
 			bpt<-bptt
 			for(i in (1:dim(bp)[1])){
 				Qbone<-bp[i,1]
-				Qbtwo<-bp[i,2]			
+				Qbtwo<-bp[i,2]
 				while(length(Qbone)>0){
 					for(l in (1:length(Qbone))){
-						J<-which(((bmat+t(bmat)+diag(nb))[bp[i,3],]==0) && ((bmat[Qbone[l],]>99) || (bmat[,Qbone[l]]%%100==1)))
+						J<-which(((bmat+t(bmat)+diag(nb))[bp[i,3],]==0) & ((bmat[Qbone[l],]>99) | (bmat[,Qbone[l]]%%100==1)))
 						for(j in J){
 							for(k in 1:dim(b)[1]){
 								if(min(b[k,]==c(j,Qbone[l],Qbtwo[l]))==1){
@@ -1348,7 +1920,7 @@ MarkEqMag<-function(amat,bmat)
 									break
 									break
 									break}}}
-						Qb<-which((bmat[,bp[i,3]]%%10==1) && (bmat[Qbone[l],]>99))
+						Qb<-which((bmat[,bp[i,3]]%%10==1) & (bmat[Qbone[l],]>99))
 						for(q in Qb){
 							for(k in 1:dim(b)[1]){
 								if(min(b[k,]==c(q,Qbone[l],Qbtwo[l]))==1){
@@ -1366,18 +1938,57 @@ MarkEqMag<-function(amat,bmat)
 			for(j in 1:dim(b)[1]){
 				f<-c(f,min(a[i,]==b[j,]))}
 			if(max(f)==0){
-				return(FALSE)}}}	
+				return(FALSE)}}}
 	return(TRUE)
 }
 ##########################################################################################
 ###########################################################################################
+
+
+#' Representational Markov equivalence to undirected graphs.
+#'
+#' \code{RepMarUG} determines whether a given maximal ancestral graph can be
+#' Markov equivalent to an undirected graph, and if that is the case, it finds
+#' an undirected graph that is Markov equivalent to the given graph.
+#'
+#' \code{RepMarBG} looks for presence of an unshielded collider V-configuration
+#' in graph.
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @return A list with two components: \code{verify} and \code{amat}.
+#' \code{verify} is a logical value, \code{TRUE} if there is a representational
+#' Markov equivalence and \code{FALSE} otherwise.  \code{amat} is either
+#' \code{NA} if \code{verify == FALSE} or the adjacency matrix of the generated
+#' graph, if \code{verify == TRUE}. In this case it consists of 4 different
+#' integers as an \eqn{ij}-element: 0 for a missing edge between \eqn{i} and
+#' \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between
+#' \eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and
+#' \eqn{j}. These numbers are added to be associated with multiple edges of
+#' different types. The matrix is symmetric w.r.t full lines and bi-directed
+#' arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MarkEqMag}}, \code{\link{MarkEqRcg}},
+#' \code{\link{RepMarBG}}, \code{\link{RepMarDAG}}
+#' @references Sadeghi, K. (2011). Markov equivalences for subclasses of
+#' loopless mixed graphs. \emph{Submitted}, 2011.
+#' @keywords graphs bidirected graph Markov equivalence maximal ancestral graph
+#' representational Markov equivalence
+#' @examples
+#'
+#' H<-matrix(c(0,10,0,0,10,0,0,0,0,1,0,100,0,0,100,0),4,4)
+#' RepMarUG(H)
+#'
 RepMarUG<-function(amat)
 {
-	if(class(amat) == "igraph"){
+	if(class(amat)[1] == "igraph"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "graphNEL"){
+	if(class(amat)[1] == "graphNEL"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "character"){
+	if(class(amat)[1] == "character"){
 		amat<-grMAT(amat)}
 	if( length(rownames(amat))!=ncol(amat) | length(colnames(amat))!=ncol(amat)){
 		rownames(amat)<-1:ncol(amat)
@@ -1400,13 +2011,52 @@ RepMarUG<-function(amat)
 }
 ########################################################################################
 #########################################################################################
+
+
+#' Representational Markov equivalence to bidirected graphs.
+#'
+#' \code{RepMarBG} determines whether a given maximal ancestral graph can be
+#' Markov equivalent to a bidirected graph, and if that is the case, it finds a
+#' bidirected graph that is Markov equivalent to the given graph.
+#'
+#' \code{RepMarBG} looks for presence of an unshielded non-collider
+#' V-configuration in graph.
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @return A list with two components: \code{verify} and \code{amat}.
+#' \code{verify} is a logical value, \code{TRUE} if there is a representational
+#' Markov equivalence and \code{FALSE} otherwise.  \code{amat} is either
+#' \code{NA} if \code{verify == FALSE} or the adjacency matrix of the generated
+#' graph, if \code{verify == TRUE}. In this case it consists of 4 different
+#' integers as an \eqn{ij}-element: 0 for a missing edge between \eqn{i} and
+#' \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between
+#' \eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and
+#' \eqn{j}. These numbers are added to be associated with multiple edges of
+#' different types. The matrix is symmetric w.r.t full lines and bi-directed
+#' arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MarkEqMag}}, \code{\link{MarkEqRcg}},
+#' \code{\link{RepMarDAG}}, \code{\link{RepMarUG}}
+#' @references Sadeghi, K. (2011). Markov equivalences for subclasses of
+#' loopless mixed graphs. \emph{Submitted}, 2011.
+#' @keywords graphs bidirected graph Markov equivalence maximal ancestral graph
+#' representational Markov equivalence
+#' @examples
+#'
+#' H<-matrix(c(0,10,0,0,10,0,0,0,0,1,0,100,0,0,100,0),4,4)
+#' RepMarBG(H)
+#'
 RepMarBG<-function(amat)
 {
-	if(class(amat) == "igraph"){
+	if(class(amat)[1] == "igraph"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "graphNEL"){
+	if(class(amat)[1] == "graphNEL"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "character"){
+	if(class(amat)[1] == "character"){
 		amat<-grMAT(amat)}
 	if( length(rownames(amat))!=ncol(amat) | length(colnames(amat))!=ncol(amat)){
 		rownames(amat)<-1:ncol(amat)
@@ -1429,13 +2079,53 @@ RepMarBG<-function(amat)
 }
 ########################################################################################
 ########################################################################################
+
+
+#' Representational Markov equivalence to directed acyclic graphs.
+#'
+#' \code{RepMarDAG} determines whether a given maximal ancestral graph can be
+#' Markov equivalent to a directed acyclic graph, and if that is the case, it
+#' finds a directed acyclic graph that is Markov equivalent to the given graph.
+#'
+#' \code{RepMarDAG} first looks whether the subgraph induced by full lines is
+#' chordal and whether there is a minimal collider path or cycle of length 4 in
+#' graph.
+#'
+#' @param amat An adjacency matrix, or a graph that can be a \code{graphNEL} or
+#' an \code{\link{igraph}} object or a vector of length \eqn{3e}, where \eqn{e}
+#' is the number of edges of the graph, that is a sequence of triples (type,
+#' node1label, node2label). The type of edge can be \code{"a"} (arrows from
+#' node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+#' @return A list with two components: \code{verify} and \code{amat}.
+#' \code{verify} is a logical value, \code{TRUE} if there is a representational
+#' Markov equivalence and \code{FALSE} otherwise.  \code{amat} is either
+#' \code{NA} if \code{verify == FALSE} or the adjacency matrix of the generated
+#' graph, if \code{verify == TRUE}. In this case it consists of 4 different
+#' integers as an \eqn{ij}-element: 0 for a missing edge between \eqn{i} and
+#' \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between
+#' \eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and
+#' \eqn{j}. These numbers are added to be associated with multiple edges of
+#' different types. The matrix is symmetric w.r.t full lines and bi-directed
+#' arrows.
+#' @author Kayvan Sadeghi
+#' @seealso \code{\link{MarkEqMag}}, \code{\link{MarkEqRcg}},
+#' \code{\link{RepMarBG}}, \code{\link{RepMarUG}}
+#' @references Sadeghi, K. (2011). Markov equivalences for subclasses of
+#' loopless mixed graphs. \emph{Submitted}, 2011.
+#' @keywords graphs bidirected graph Markov equivalence maximal ancestral graph
+#' representational Markov equivalence
+#' @examples
+#'
+#' H<-matrix(c(0,10,0,0,10,0,0,0,0,1,0,100,0,0,100,0),4,4)
+#' RepMarBG(H)
+#'
 RepMarDAG<-function(amat)
 {
-	if(class(amat) == "igraph"){
+	if(class(amat)[1] == "igraph"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "graphNEL"){
+	if(class(amat)[1] == "graphNEL"){
 		amat<-grMAT(amat)}
-	if(class(amat) == "character"){
+	if(class(amat)[1] == "character"){
 		amat<-grMAT(amat)}
 	if(length(rownames(amat))!=ncol(amat) | length(colnames(amat))!=ncol(amat)){
 		rownames(amat)<-1:ncol(amat)
@@ -1468,7 +2158,7 @@ RepMarDAG<-function(amat)
 			for(j in ((1:na)[-ai])){
 				if((max(amat[ai,j]>99)==1) &&(amat[at[i,2],j]%%10==1 || amat[at[i,2],j]>99) && (amat[at[i,1],j]%%10!=1) && (amat[at[i,1],j]<100)){
 					return(list(verify = FALSE, amat = NA))}}
-		ai<-c()}}	
+		ai<-c()}}
 	for(i in Ma){
 		v<-which(amat[i,]%%100>9)
 		for(j in v){
@@ -1484,11 +2174,11 @@ RepMarDAG<-function(amat)
 	O<-c()
 	Oc<-arrow
 	while(length(Oc)>0){
-		for(i in Oc){		
+		for(i in Oc){
 	 		if(max(amat[i,Oc]%%10)==0){
 		O<-c(O,i)
 		break}}
-		Oc<-Oc[Oc!=i]}			
+		Oc<-Oc[Oc!=i]}
 	for(i in arc){
 		if(length(which(arrow==i))==0){
 			O<-c(O,i)}}
@@ -1502,5 +2192,5 @@ RepMarDAG<-function(amat)
 			else{
 				amat[aarc[i,1],aarc[i,2]]<-0}}}
 	return(list(verify = TRUE, amat = amat))
-}	
+}
 ##################################################################################

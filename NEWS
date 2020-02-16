@@ -1,8 +1,17 @@
 ggm
 ===
 
+- February  2020
+  Corrections required by CRAN
+
+- December 2019
+  Corrections in namespace
+  
+- July 2016
+  Corrected data set marks (mechanics[57] is 35 not 36)
+  
 - December 2014
-  Changed the Title in Description
+  Changed the Title in DESCRIPTION
 
 - June 2014
   drawGraph uses layout, default adjust = FALSE. 

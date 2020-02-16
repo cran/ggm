@@ -31,7 +31,7 @@ fitConGraph(amat, S, n, cli = NULL, alg = 3, pri = FALSE, tol = 1e-06)
   fitting algorithm described  by Whittaker (1990, p. 184).
   If the cliques are not specified 
    the function uses the algorithm 
-   by Hastie et al. (2009, p. 446).   
+   by Hastie et al. (2009, p. 631ff).   
 }
 \value{
 \item{Shat}{the fitted covariance matrix.}  

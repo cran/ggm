@@ -16,4 +16,10 @@ export(basiSet, bd, edgematrix, swp, adjMatrix,
         binve, blkdiag, blodiag, diagv, fitmlogit,    
         mat.mlogit, marg.param, null, powerset)
 import(igraph)
+importFrom("graphics", "arrows", "lines", "locator", "par", "plot",
+     "points", "segments", "text")
+importFrom("stats", "binomial", "coef", "cor", "formula", "glm", "lm",
+     "model.frame", "model.matrix", "model.response", "pchisq",
+     "pt", "rnorm", "terms", "var")
+importFrom("methods", "is")
 

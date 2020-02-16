@@ -1,13 +1,14 @@
 Package: ggm
-Version: 2.3
-Date: 2015-01-21
-Title: Functions for graphical Markov models
+Title: Graphical Markov Models with Mixed Graphs
+Version: 2.5
+Date: 2020-02-014
 Author: Giovanni M. Marchetti, Mathias Drton, Kayvan Sadeghi
-Maintainer: Giovanni M. Marchetti <giovanni.marchetti@disia.unifi.it>
-Depends: igraph
-Description: Functions and datasets for maximum likelihood fitting of some classes of graphical Markov models.
-License: GPL (>= 2)
+Maintainer: Giovanni M. Marchetti <giovanni.marchetti@unifi.it>
+Depends: R (>= 3.6)
+Imports: igraph, methods, graph
+Description: Tools for marginalization, conditioning and fitting by maximum likelihood.
+License: GPL-2
 NeedsCompilation: no
 Repository: CRAN
-Packaged: 2015-01-21 09:40:09 UTC; gmm
-Date/Publication: 2015-01-21 12:47:19
+Packaged: 2020-02-14 16:50:01 UTC; gmm
+Date/Publication: 2020-02-16 14:00:02 UTC
