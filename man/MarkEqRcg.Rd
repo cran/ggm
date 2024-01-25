@@ -4,7 +4,7 @@
 Markov equivalence for regression chain graphs.
 }
 \description{
-\code{MarkEqMag} determines whether two RCGs (or subclasses of RCGs) are 
+\code{MarkEqMag} determines whether two RCGs (or subclasses of RCGs) are
 Markov equivalent.
 }
 \usage{
@@ -12,10 +12,10 @@ MarkEqRcg(amat, bmat)
 }
 \arguments{
   \item{amat}{
-An adjacency matrix of an RCG or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object 
-or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph, 
-that is a sequence of triples (type, node1label, node2label). The type 
-of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and 
+An adjacency matrix of an RCG or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object
+or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph,
+that is a sequence of triples (type, node1label, node2label). The type
+of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and
 \code{"l"} (lines).
 }
   \item{bmat}{
@@ -23,16 +23,14 @@ The same as \code{amat}.
 }
 }
 \details{
-The function checks whether the two graphs have the same skeleton and 
+The function checks whether the two graphs have the same skeleton and
 unshielded colliders.
 }
 \value{
-"Markov Equivalent" or "NOT Markov Equivalent". 
+"Markov Equivalent" or "NOT Markov Equivalent".
 }
 \references{
-Wermuth, N. and Sadeghi, K. (2011). Sequences of regressions and their independences.
-\emph{TEST}, To appear.
-\url{http://arxiv.org/abs/1103.2523}.
+Wermuth, N. and Sadeghi, K. (2012). Sequences of regressions and their independences. {Test} 21:215–252.
 }
 \author{
 Kayvan Sadeghi
@@ -57,5 +55,5 @@ H3<-matrix(c(0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,1,0),5,5)
 \keyword{directed acyclic graph}
 \keyword{Markov equivalence}
 \keyword{regression chain graph}
-\keyword{undirected graph}  
+\keyword{undirected graph}
 \keyword{multivariate}

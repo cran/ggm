@@ -2,7 +2,7 @@
 \alias{cycleMatrix}
 \title{Fundamental cycles}
 \description{
-Finds the matrix of fundamental cycles of a connected undirected graph. 
+Finds the matrix of fundamental cycles of a connected undirected graph.
 }
 \usage{
 cycleMatrix(amat)
@@ -24,7 +24,7 @@ cycleMatrix(amat)
   a Boolean matrix of the fundamental cycles of the undirected graph.
   If   there is no cycle the function returns \code{NULL}.}
 \references{
-  Thulasiraman, K. \& Swamy, M.N.S. (1992). \emph{Graphs: theory and
+  Thulasiraman, K. & Swamy, M.N.S. (1992). \emph{Graphs: theory and
     algorithms}. New York: Wiley.
 }
 \author{Giovanni M. Marchetti}

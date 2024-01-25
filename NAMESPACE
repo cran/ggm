@@ -1,19 +1,19 @@
-export(basiSet, bd, edgematrix, swp, adjMatrix, 
+export(basiSet, bd, edgematrix, swp, adjMatrix,
         bfsearch, ch, checkIdent,   cmpGraph,
-        conComp, correlations, cycleMatrix, 
+        conComp, correlations, cycleMatrix,
         DAG, dSep, shipley.test, allEdges, findPath,
         fitDag, fitDagLatent, fitCovGraph, fitConGraph,
         fundCycles, In, icf,topOrder,
         inducedCovGraph, transClos,
         inducedConGraph, inducedRegGraph,inducedChainGraph,
-        inducedDAG,isAcyclic, isGident, pa, parcor, 
-        pcor, pcor.test, rcorr, rsphere,  topSort, 
+        inducedDAG,isAcyclic, isGident, pa, parcor,
+        pcor, pcor.test, rcorr, rsphere,  topSort,
         triDec, UG, rnormDag, drawGraph, makeMG, icfmag,
-        fitAncestralGraph, unmakeMG, essentialGraph, 
-        AG, grMAT, MAG, MarkEqRcg, MarkEqMag, 
-        Max, MRG, msep, MSG, RepMarBG, RepMarDAG, 
+        fitAncestralGraph, unmakeMG, essentialGraph,
+        AG, grMAT, MAG, MarkEqRcg, MarkEqMag,
+        Max, MRG, msep, MSG, RepMarBG, RepMarDAG,
         RepMarUG, RG, RR, SG, SPl, rem, isAG, isADMG, plotGraph, DG,
-        binve, blkdiag, blodiag, diagv, fitmlogit,    
+        binve, blkdiag, blodiag, diagv, fitmlogit,
         mat.mlogit, marg.param, null, powerset)
 import(igraph)
 importFrom("graphics", "arrows", "lines", "locator", "par", "plot",
@@ -22,4 +22,19 @@ importFrom("stats", "binomial", "coef", "cor", "formula", "glm", "lm",
      "model.frame", "model.matrix", "model.response", "pchisq",
      "pt", "rnorm", "terms", "var")
 importFrom("methods", "is")
+importClassesFrom(graph,graphNEL)
+importFrom(igraph,get.adjacency)
+importFrom(igraph,graph.adjacency)
+importFrom(igraph,igraph.from.graphNEL)
+importFrom(igraph,igraph.to.graphNEL)
+importFrom(igraph,is.dag)
+importFrom(igraph,is.directed)
+importFrom(igraph,layout.graphopt)
+importFrom(igraph,layout.lgl)
+importFrom(igraph,plot.igraph)
+importFrom(igraph,union)
+importFrom(igraph,degree)
+importFrom(igraph,edges)
+importFrom(igraph,intersection)
+importFrom(BiocManager,install)
 

@@ -26,12 +26,12 @@ checkIdent(amat, latent)
 \value{
   a vector of length  four, indicating if the model is identified
   according to the conditions of theorems 1 and 2 in Stanghellini
-  \& Wermuth (2005). The answer is \code{TRUE} if the  condition holds
+  & Wermuth (2005). The answer is \code{TRUE} if the  condition holds
   and thus the model is globally identified or \code{FALSE} if the
   condition fails, and thus we do not know if the model is identifiable.
 }
 \references{
-  Stanghellini, E. \& Wermuth, N. (2005). On the
+  Stanghellini, E. & Wermuth, N. (2005). On the
   identification of path-analysis models with one
   hidden variable. \emph{Biometrika}, 92(2), 337-350.
 }

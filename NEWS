@@ -1,59 +1,66 @@
-ggm
-===
+Package ggm 
+
+- August 2023
+  Corrections of "\\&" into "&" and import from graph
+  updated references
+  corrected NAMESPACE
+  improved DESCRIPTION
+  corrected two man files with no description of the arguments
+  corrected some references
 
 - February  2020
   Corrections required by CRAN
 
 - December 2019
   Corrections in namespace
-  
+
 - July 2016
   Corrected data set marks (mechanics[57] is 35 not 36)
-  
+
 - December 2014
   Changed the Title in DESCRIPTION
 
 - June 2014
-  drawGraph uses layout, default adjust = FALSE. 
+  drawGraph uses layout, default adjust = FALSE.
   Now is possible to plot expressions in drawGraph
   Further options for edges.
 
-- May 2014 
+- May 2014
   Included further argument plotfun in functions SG, RG, MSG, MRG, MAG, AG.
 
-- March 2014 
+- March 2014
   Changed function isAcyclic eliminating dependence on RBGL
   Removed dependence on RBGL corrected the docs
-  Fixed function fitConGraph          
+  Fixed function fitConGraph
 
 - January 2014
   fixed function icfmag
   corrected email addresses
 
-- October 2012 
+- October 2012
   changed plotGraph
 
-- September 2012 
-  corrected isAG, 
+- September 2012
+  corrected isAG,
   added example in makeMG
   added functionality do plotGraph
 
-- September 2012 
+- September 2012
   added a new igraph output to plotGraph
 
-- August 2012 
-  removed function `vertices` 
+- August 2012
+  removed function `vertices`
   changed plotGraph
 
-- May 2012 
+- May 2012
   corrected isAcyclic
   Improved isAcyclic.  Thanks to David Edwards
   Changed conComp
-  Removed cliques, thanks to Castelo. 
+  Removed cliques, thanks to Castelo.
   Removed edgematrix
   Modified fitConGraph with algorithm from Tibshirani Hastie Friedman.
   Modified function DAG
-  New function fitDAG     
-  Modified icfmag (call to fitConGraph) 
+  New function fitDAG
+  Modified icfmag (call to fitConGraph)
   Removed makeAG and unmakeAG
   new functions makeMG, unmakeMG, isAG and isADMG

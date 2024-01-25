@@ -15,14 +15,14 @@ parcor(S)
 \details{
   The algorithm computes \eqn{- \sigma^{rs}/(\sigma^{rr}
     \sigma^{ss})^{1/2}} where the \eqn{\sigma^{rs}} are concentrations,
-    i.e. elements of the inverse covariance matrix.  
+    i.e. elements of the inverse covariance matrix.
 }
 \value{
   A symmetric matrix with ones along the diagonal and in position
   \eqn{(r,s)} the partial correlation between variables \eqn{r}
   and \eqn{s} given all the remaining variables.}
-\references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-    dependencies}. London: Chapman \& Hall.}
+\references{Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+    dependencies}. London: Chapman & Hall.}
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{var}}, \code{\link{cor}}, \code{\link{correlations}}}
 \examples{

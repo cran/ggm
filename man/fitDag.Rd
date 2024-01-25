@@ -34,8 +34,8 @@ fitDag(amat, S, n)
   \item{dev}{the `deviance' of the model.}
   \item{df}{the degrees of freedom.}
 }
-\references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-  dependencies}. London: Chapman \& Hall.}
+\references{Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+  dependencies}. London: Chapman & Hall.}
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{DAG}}, \code{\link{swp}}.}
 \examples{

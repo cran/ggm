@@ -2,7 +2,7 @@
 \alias{isGident}
 \title{G-identifiability of an UG}
 \description{
-Tests if an undirected graph is G-identifiable. 
+Tests if an undirected graph is G-identifiable.
 }
 \usage{
 isGident(amat)
@@ -21,17 +21,17 @@ isGident(amat)
   \code{FALSE} if it is not.
 }
 \references{
-  Stanghellini, E. \& Wermuth, N. (2005). On the
+  Stanghellini, E. & Wermuth, N. (2005). On the
   identification of path-analysis models with one
   hidden variable. \emph{Biometrika}, 92(2), 337-350.
 
   Stanghellini, E. (1997). Identification of a single-factor
   model using graphical Gaussian rules. \emph{Biometrika}, 84, 241--244.
 
-  Tarantola, C. \& Vicard, P. (2002). Spanning trees and identifiability
-  of a single-factor model. \emph{Statistical Methods \& Applications},
+  Tarantola, C. & Vicard, P. (2002). Spanning trees and identifiability
+  of a single-factor model. \emph{Statistical Methods & Applications},
   11, 139--152.
-  
+
   Vicard, P. (2000). On the identification of a single-factor model
   with correlated residuals. \emph{Biometrika}, 87, 199--205.
 }

@@ -19,9 +19,9 @@ correlations(x)
   a square correlation matrix with marginal correlations (lower
   triangle) and partial correlations (upper triangle).
 }
-\references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-  dependencies}. London: Chapman \& Hall.}
-\author{Giovanni M. Marchetti} 
+\references{Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+  dependencies}. London: Chapman & Hall.}
+\author{Giovanni M. Marchetti}
 \seealso{\code{\link{parcor}},  \code{\link{cor}}}
 \examples{
 ## See Table 6.1 in Cox & Wermuth (1996)

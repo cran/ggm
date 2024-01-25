@@ -2,8 +2,8 @@
 \alias{rcorr}
 \title{Random correlation matrix}
 \description{
-Generates a random correlation matrix 
-with the method of Marsaglia and Olkin (1984). 
+Generates a random correlation matrix
+with the method of Marsaglia and Olkin (1984).
 }
 \usage{
 rcorr(d)
@@ -21,7 +21,7 @@ rcorr(d)
 \value{
 a correlation matrix of order \code{d}.
 }
-\references{Marshall, G.\& Olkin, I. (1984).Generating correlation
+\references{Marshall, G.& Olkin, I. (1984).Generating correlation
   matrices. \emph{SIAM J. Sci. Stat. Comput.}, 5, 2, 470--475.}
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{rsphere}}}

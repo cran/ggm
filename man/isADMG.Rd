@@ -12,9 +12,7 @@ isADMG(amat)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{amat}{
-%%     ~~Describe \code{amat} here~~
-}
+  \item{amat}{An adjacency matrix.}
 }
 \details{
   Checks if the following conditions must hold:
@@ -34,18 +32,18 @@ Giovanni M. Marchetti, Mathias Drton
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{\code{\link{makeMG}}, \code{\link{isADMG}}}   
+\seealso{\code{\link{makeMG}}, \code{\link{isADMG}}}
 \examples{
 	## Examples from Richardson and Spirtes (2002)
-	a1 <- makeMG(dg=DAG(a~b, b~d, d~c), bg=UG(~a*c))  
-	isADMG(a1)    # Not an AG. (a2) p.969    
-	a2 <- makeMG(dg=DAG(b ~ a, d~c), bg=UG(~a*c+c*b+b*d))           # Fig. 3 (b1) p.969  
+	a1 <- makeMG(dg=DAG(a~b, b~d, d~c), bg=UG(~a*c))
+	isADMG(a1)    # Not an AG. (a2) p.969
+	a2 <- makeMG(dg=DAG(b ~ a, d~c), bg=UG(~a*c+c*b+b*d))           # Fig. 3 (b1) p.969
 	isADMG(a2)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{graphs} 
-\keyword{ancestral graph}      
+\keyword{graphs}
+\keyword{ancestral graph}
 \keyword{mixed graph}
 \keyword{models}
 \keyword{multivariate}

@@ -23,8 +23,7 @@ findPath(amat, st, en, path = c())
 \note{
   This function is not intended to be directly called by the user.
 }
-\references{Python Softftware Foundation (2003). Python Patterns ---
-  Implementing Graphs. \url{http://www.python.org/doc/essays/graphs/}.}
+\references{Python Softftware Foundation (2003). Python Patterns ---   Implementing Graphs. \url{https://www.python.org/doc/essays/graphs/}.}
 \author{Giovanni M. Marchetti, translating the original \pkg{Python}
   code (see references).}
 \seealso{\code{\link{fundCycles}}}

@@ -15,7 +15,7 @@ fundCycles(amat)
 }
 \details{
   All the cycles in an UG can be obtained from combination (ring sum)
-  of the set of fundamental cycles. 
+  of the set of fundamental cycles.
 }
 \value{
   a list of matrices with two columns. Every component of the list
@@ -24,7 +24,7 @@ fundCycles(amat)
   there is no cycle the function returns \code{NULL}.
 }
 \references{
-  Thulasiraman, K. \& Swamy, M.N.S. (1992). \emph{Graphs: theory and
+  Thulasiraman, K. & Swamy, M.N.S. (1992). \emph{Graphs: theory and
     algorithms}. New York: Wiley.
 }
 \author{Giovanni M. Marchetti}

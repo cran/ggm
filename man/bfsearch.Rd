@@ -17,7 +17,7 @@ bfsearch(amat, v = 1)
 }
 \details{
   Breadth-first search is a systematic method for exploring a graph.
-  The algorithm is taken from Aho, Hopcroft \& Ullman (1983).
+  The algorithm is taken from Aho, Hopcroft & Ullman (1983).
 }
 \value{
   \item{tree}{the edge matrix of the resulting spanning tree}
@@ -27,11 +27,10 @@ bfsearch(amat, v = 1)
     chords of the spanning tree}
 }
 \references{
-Aho, A.V., Hopcrtoft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
+Aho, A.V., Hopcrtoft, J.E. & Ullman, J.D. (1983). \emph{Data structures
   and algorithms.} Reading: Addison-Wesley.
 
-  Thulasiraman, K. \& Swamy, M.N.S. (1992). \emph{Graphs: theory and
-    algorithms}. New York: Wiley.
+  Thulasiraman, K. & Swamy, M.N.S. (1992). \emph{Graphs: theory and algorithms}. New York: Wiley.
 }
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{UG}}, \code{\link{findPath}}, \code{\link{cycleMatrix}}}

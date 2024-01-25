@@ -8,13 +8,13 @@ drawGraph(amat, coor = NULL, adjust = FALSE, alpha = 1.5,
 }
 \arguments{
   \item{amat}{the adjacency matrix representation of the graph. This
-    can be an undirected graph, a directed acyclic graph or a mixed 
+    can be an undirected graph, a directed acyclic graph or a mixed
     graph with at most a summary graph structure. See also \code{\link{plotGraph}}}.
   \item{coor}{an optional matrix of dimensions \code{p} x 2 where
     \eqn{p} is the number of vertices of the graph. If \code{coor=NULL}
     then the function chooses a default position for the nodes.}
   \item{adjust}{a logical value, defaults to \code{FALSE}. If \code{TRUE} the graph is plotted and the system waits until the mouse button is pressed (same behaviour
-    of \code{locator} function.}  
+    of \code{locator} function.}
   \item{alpha}{a positive value between controlling the
     distance from the end of the edges to the nodes of the graph.}
   \item{beta}{a positive value controlling the distance of the labels of
@@ -38,7 +38,7 @@ drawGraph(amat, coor = NULL, adjust = FALSE, alpha = 1.5,
   When the mouse button is pressed the node which is closer to the
   selected point is moved to that position.
   Thus, one must be careful to click closer to
-  the selected node than to any other node. 
+  the selected node than to any other node.
   The nodes can be moved to any position by repeating the
   previous operation.
   The adjustment process is terminated by pressing any mouse
@@ -49,10 +49,10 @@ drawGraph(amat, coor = NULL, adjust = FALSE, alpha = 1.5,
   redisplay the graph.
 }
 \references{
-\pkg{dynamicGraph}, \pkg{Rgraphwiz}, \url{http://www.bioconductor.org}.
-  
-  GraphViz, Graph Visualization Project. AT\&T Research.
-  \url{http://www.graphviz.org}.
+\pkg{dynamicGraph}, \pkg{Rgraphwiz}, \url{https://www.bioconductor.org}.
+
+  GraphViz, Graph Visualization Project. AT&T Research.
+  \url{https://www.graphviz.org}.
 }
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{UG}}, \code{\link{DAG}}, \code{\link{makeMG}}, \code{\link{plotGraph}}}
@@ -62,7 +62,7 @@ d <- DAG(y1 ~ y2+y6, y2 ~ y3, y3 ~ y5+y6, y4 ~ y5+y6)
 \dontrun{drawGraph(d)}
 
 ## An undirected graph
-g <- UG(~giova*anto*armo + anto*arj*sara) 
+g <- UG(~giova*anto*armo + anto*arj*sara)
 \dontrun{drawGraph(d)}
 
 ## An ancestral graph
@@ -72,12 +72,12 @@ drawGraph(ag, adjust = FALSE)
 
 ## A more complex example with coordinates: the UNIX evolution
 xy <-
-structure(c(5, 15, 23, 25, 26, 17, 8, 6, 6, 7, 39, 33, 23, 49, 
-19, 34, 13, 29, 50, 68, 70, 86, 89, 64, 81, 45, 64, 49, 64, 87, 
-65, 65, 44, 37, 64, 68, 73, 85, 83, 95, 84, 0, 7, 15, 27, 44, 
-37, 36, 20, 51, 65, 44, 64, 59, 73, 69, 78, 81, 90, 97, 89, 72, 
-85, 74, 62, 68, 59, 52, 48, 43, 50, 34, 21, 18, 5, 1, 10, 2, 
-11, 2, 1, 44), .Dim = c(41, 2), .Dimnames = list(NULL, c("x", 
+structure(c(5, 15, 23, 25, 26, 17, 8, 6, 6, 7, 39, 33, 23, 49,
+19, 34, 13, 29, 50, 68, 70, 86, 89, 64, 81, 45, 64, 49, 64, 87,
+65, 65, 44, 37, 64, 68, 73, 85, 83, 95, 84, 0, 7, 15, 27, 44,
+37, 36, 20, 51, 65, 44, 64, 59, 73, 69, 78, 81, 90, 97, 89, 72,
+85, 74, 62, 68, 59, 52, 48, 43, 50, 34, 21, 18, 5, 1, 10, 2,
+11, 2, 1, 44), .Dim = c(41, 2), .Dimnames = list(NULL, c("x",
 "y")))
 Unix <- DAG(
                 SystemV.3 ~ SystemV.2,

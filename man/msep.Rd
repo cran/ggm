@@ -11,10 +11,10 @@ msep(a, alpha, beta, C = c())
 }
 \arguments{
   \item{a}{
-An adjacency matrix, or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object 
-or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph, 
-that is a sequence of triples (type, node1label, node2label). The type 
-of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and 
+An adjacency matrix, or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object
+or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph,
+that is a sequence of triples (type, node1label, node2label). The type
+of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and
 \code{"l"} (lines).
 }
   \item{alpha}{
@@ -28,15 +28,14 @@ A third disjoint subset of the node set of \code{a}}
 %%  ~~ If necessary, more details than the description above ~~
 %}
 \value{
-A logical value. \code{TRUE}  if \code{alpha} and \code{beta} are m-separated given \code{C}. 
-\code{FALSE} otherwise.  
+A logical value. \code{TRUE}  if \code{alpha} and \code{beta} are m-separated given \code{C}.
+\code{FALSE} otherwise.
 }
 \references{
 Richardson, T.S. and Spirtes, P. (2002) Ancestral graph Markov models. \emph{Annals
 of Statistics}, 30(4), 962-1030.
 
-Sadeghi, K. and Lauritzen, S.L. (2011). Markov properties for loopless mixed graphs.
-\emph{Submitted}, 2011. URL \url{http://arxiv.org/abs/1109.5909}.
+Sadeghi, K. and Lauritzen, S.L. (2014). Markov properties for loopless mixed graphs. \emph{Bernoulli} 20(2), 676-696.
 }
 \author{
 Kayvan Sadeghi
@@ -46,7 +45,7 @@ Kayvan Sadeghi
 %}
 
 \seealso{
-\code{\link{dSep}}, \code{\link{MarkEqMag}} 
+\code{\link{dSep}}, \code{\link{MarkEqMag}}
 }
 \examples{
 H <-matrix(c(0,0,0,0,

@@ -2,7 +2,7 @@
 \alias{essentialGraph}
 \title{Essential graph}
 \description{
-  Find the essential graph from a given directed acyclic graph. 
+  Find the essential graph from a given directed acyclic graph.
 }
 \usage{
 essentialGraph(dagx)
@@ -19,14 +19,9 @@ essentialGraph(dagx)
   returns the adjacency matrix of the essential graph.
 }
 \references{
-  Chickering, D.M. (1995). A transformational characterization of
-  equivalent Bayesian network structures. \emph{Proceedings of Eleventh
-    Conference on Uncertainty in Artificial Intelligence}, Montreal, QU,
-  87-98. Morgan Kaufmann.
-  
-  \url{http://research.microsoft.com/~dmax/publications/uai95.pdf} 
+  Chickering, D.M. (1995). A transformational characterization of equivalent Bayesian network structures. \emph{Proceedings of Eleventh  Conference on Uncertainty in Artificial Intelligence}, Montreal, QU,  87-98. Morgan Kaufmann.
   }
-  \author{Giovanni M. Marchetti, translating a MATLAB function
+  \author{Giovanni M. Marchetti, from a MATLAB function
     by Tomas Kocka, AAU}
 \seealso{\code{\link{DAG}}, \code{\link{InducedGraphs}}}
 \examples{

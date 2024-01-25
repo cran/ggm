@@ -12,10 +12,10 @@ SG(amat,M=c(),C=c(),showmat=TRUE,plot=FALSE, plotfun = plotGraph, \dots)
 }
 \arguments{
 \item{amat}{
-An adjacency matrix, or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object 
-or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph, 
-that is a sequence of triples (type, node1label, node2label). The type 
-of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and 
+An adjacency matrix, or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object
+or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph,
+that is a sequence of triples (type, node1label, node2label). The type
+of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and
 \code{"l"} (lines).
 }
   \item{M}{
@@ -28,8 +28,8 @@ conditioned on.
 A logical value. \code{TRUE} (by default) to print the generated matrix.
 }
 \item{plot}{
-A logical value, \code{FALSE} (by default). \code{TRUE} to plot 
-the generated graph. 
+A logical value, \code{FALSE} (by default). \code{TRUE} to plot
+the generated graph.
 }
 \item{plotfun}{
 Function to plot the graph when \code{plot == TRUE}. Can be \code{plotGraph} (the default) or \code{drawGraph}.
@@ -38,17 +38,17 @@ Function to plot the graph when \code{plot == TRUE}. Can be \code{plotGraph} (th
 }
 
 \value{
-A matrix that consists 4 different integers as an \eqn{ij}-element: 0 for a missing 
-edge between \eqn{i} and \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between 
-\eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are 
-added to be associated with multiple edges of different types. The matrix is 
+A matrix that consists 4 different integers as an \eqn{ij}-element: 0 for a missing
+edge between \eqn{i} and \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j}, 10 for a full line between
+\eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers are
+added to be associated with multiple edges of different types. The matrix is
 symmetric w.r.t full lines and bi-directed arrows.
 }
 \references{
-Sadeghi, K. (2011). Stable classes of graphs containing directed acyclic graphs. 
-\emph{Submitted}.
+Sadeghi, K. (2013). Stable mixed graphs.
+\emph{Bernoulli} 19(5B), 2330–2358.
 
-Wermuth, N. (2011). Probability distributions with summary graph structure. 
+Wermuth, N. (2011). Probability distributions with summary graph structure.
 \emph{Bernoulli}, 17(3),845-879.
 }
 \author{

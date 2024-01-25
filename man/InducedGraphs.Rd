@@ -7,7 +7,7 @@
 \alias{InducedGraphs}
 \title{Graphs induced by marginalization or conditioning}
 \description{
-  Functions to find induced graphs after conditioning on a set of variables and marginalizing over another set. 
+  Functions to find induced graphs after conditioning on a set of variables and marginalizing over another set.
 }
 \usage{
 inducedCovGraph(amat, sel = rownames(amat), cond = NULL)
@@ -21,9 +21,9 @@ inducedDAG(amat, order, cond = NULL)
     acyclic graph. The names of rows and of the columns
     are the nodes of the DAG.}
   \item{sel}{a character vector representing a subset
-    of selected variables. 
+    of selected variables.
     The elements of the  vector must be a subset of
-    the names of the nodes i.e. of \code{rownames(A)}. 
+    the names of the nodes i.e. of \code{rownames(A)}.
     By default \code{sel} is the set of the nodes of the DAG.}
   \item{cond}{a character vector representing the variables on which you
     want to condition. \code{cond} must be disjoint from \code{sel} and
@@ -46,14 +46,14 @@ inducedDAG(amat, order, cond = NULL)
   of conditional independence implied after marginalizingover and
   conditionig on sets of nodes. Such graphs are
   the covariance graph, the concentration graph, the multivariate
-  regression graph and the chain graph with different interpretations  (see Cox \& Wermuth, 1996, 2004).
+  regression graph and the chain graph with different interpretations  (see Cox & Wermuth, 1996, 2004).
 }
 \value{
   \code{inducedCovGraph} returns the adjacency matrix of the covariance
   graph of the variables in set \code{sel} given the variables
   in set \code{cond}, implied by the original directed acyclic graph
-  with adjacency matrix \code{amat}. 
-  
+  with adjacency matrix \code{amat}.
+
   \code{inducedConGraph} returns the adjacency matrix of the concentration
   graph of the variables in set \code{sel} given the variables
   in set \code{cond}, implied by the original directed acyclic graph
@@ -63,7 +63,7 @@ inducedDAG(amat, order, cond = NULL)
   multivariate regression graph of the variables in set \code{sel}
   given the variables in set  \code{cond}, implied by the original
   directed acyclic graph with adjacency matrix \code{amat}.
-  
+
   \code{inducedChainGraph} returns the adjacency matrix of the
   chain graph for the variables in chain components
   \code{cc}, given the variables in set  \code{cond}, with
@@ -83,10 +83,10 @@ inducedDAG(amat, order, cond = NULL)
   you cannot specify a non \code{NULL} value of \code{cond}.
   }
   \references{
-    Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-      dependencies}. London: Chapman \& Hall.
-    
-    Wermuth, N. \& Cox, D.R. (2004). Joint response graphs
+    Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+      dependencies}. London: Chapman & Hall.
+
+    Wermuth, N. & Cox, D.R. (2004). Joint response graphs
     and separation induced by triangular systems. \emph{J.R. Statist. Soc. B},
     66, Part 3, 687-717.
   }

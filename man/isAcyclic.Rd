@@ -17,10 +17,10 @@ isAcyclic(amat, method = 2)
   otherwise.
 }
 \references{
-  Aho, A.V., Hopcroft, J.E. \& Ullman, J.D. (1983). \emph{Data structures
+  Aho, A.V., Hopcroft, J.E. & Ullman, J.D. (1983). \emph{Data structures
     and algorithms.} Reading: Addison-Wesley.
 }
-\author{David Edwards, Giovanni M. Marchetti} 
+\author{David Edwards, Giovanni M. Marchetti}
 \examples{
 ## A cyclic graph
 d <- matrix(0,3,3)

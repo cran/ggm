@@ -12,8 +12,7 @@ ch(nn, amat)
 pa(nn, amat)
 }
 \arguments{
-  \item{nn}{a vector of nodes. It may either a numeric vector, or a
-    character vector. If it is character vector must be a subset
+  \item{nn}{a vector of nodes. It may either a numeric vector, or a character vector. If it is character vector must be a subset
     of the \code{rownames} of the edge matrix.}
   \item{amat}{a square matrix with dimnames specifying the adjacency matrix of the graph}
 }

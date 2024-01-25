@@ -26,21 +26,21 @@ rnormDag(n, A, Delta)
 
   The value in position \eqn{i} of \code{Delta} is the residual
   variance in the above regression.
-  
+
 }
 \value{a matrix with \code{n} rows and \code{nrow(A)} columns,
   a sample from a multivariate normal distribution with mean zero
   and covariance matrix
   \code{S = solve(A) \%*\% diag(Delta) \%*\% t(solve(A))}.
 }
-\references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-  dependencies}. London: Chapman \& Hall.}
+\references{Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+  dependencies}. London: Chapman & Hall.}
 \author{Giovanni M. Marchetti}
 
 \seealso{\code{\link{triDec}}, \code{\link{fitDag}}}
 \examples{
 ## Generate a sample of 100 observation from a multivariate normal
-## The matrix of the path coefficients 
+## The matrix of the path coefficients
 A <- matrix(
 c(1, -2, -3,  0, 0,  0,  0,
   0,  1,  0, -4, 0,  0,  0,

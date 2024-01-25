@@ -39,13 +39,13 @@ Data on glucose control of diabetes patients.
   variables. Background   variables are \code{W}, the duration of the
   illness, \code{A} the duration of formal schooling and \code{B},
   gender. The background variables \code{A} and \code{B} are binary
-  variables with coding \code{-1}, \code{1}. 
+  variables with coding \code{-1}, \code{1}.
 }
 \source{
 Cox & Wermuth (1996), p. 229.
 }
-\references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-  dependencies}. London: Chapman \& Hall.}
+\references{Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+  dependencies}. London: Chapman & Hall.}
 \examples{
 data(glucose)
 ## See Cox & Wermuth (1996), Figure 6.3 p. 140

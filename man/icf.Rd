@@ -35,13 +35,13 @@ icfmag(mag, S, tol = 1e-06)
   \item{iterations}{the number of iterations.}
 }
 \references{
-  Drton, M. \& Richardson, T. S. (2003). A new algorithm for
+  Drton, M. & Richardson, T. S. (2003). A new algorithm for
   maximum likelihood estimation in Gaussian graphical models for
   marginal independence. \emph{Proceedings
     of the Ninetheen Conference on Uncertainty in Artificial
     Intelligence}, 184--191.
 
-    Drton, M. \& Richardson, T. S. (2004). Iterative Conditional Fitting
+    Drton, M. & Richardson, T. S. (2004). Iterative Conditional Fitting
   for Gaussian Ancestral Graph Models.  Proceedings
   of the 20th Conference on Uncertainty in Artificial Intelligence,
   Department of Statistics, 130--137.

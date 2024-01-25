@@ -3,7 +3,7 @@
 \title{Triangular decomposition of a covariance matrix}
 \description{
   Decomposes a symmetric positive definite matrix with a variant of the
-  Cholesky decomposition. 
+  Cholesky decomposition.
 }
 \usage{
 triDec(Sigma)
@@ -21,7 +21,7 @@ triDec(Sigma)
   matrix, the concentration matrix is \eqn{\Sigma^{-1} = A^T \Delta^{-1}
     A} where  \eqn{A = B^{-1}} is the matrix of the regression coefficients
   (with the sign changed) of a system of linear recursive regression
-  equations  with independent residuals. In the equations each variable 
+  equations  with independent residuals. In the equations each variable
   \eqn{i} is regressed on the variables \eqn{i+1, \dots, d}.
   The elements on the diagonal of \eqn{\Delta} are the partial variances.
 }
@@ -31,8 +31,8 @@ triDec(Sigma)
   \item{B}{the inverse of \code{A}, another triangular matrix with unit diagonal.}
   \item{Delta}{a vector containing the diagonal values of \eqn{\Delta}.}
 }
-\references{Cox, D. R. \& Wermuth, N. (1996). \emph{Multivariate
-  dependencies}. London: Chapman \& Hall.}
+\references{Cox, D. R. & Wermuth, N. (1996). \emph{Multivariate
+  dependencies}. London: Chapman & Hall.}
 \author{Giovanni M. Marchetti}
 \seealso{\code{\link{chol}}}
 \examples{
