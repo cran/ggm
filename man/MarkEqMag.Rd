@@ -12,7 +12,7 @@ MarkEqMag(amat, bmat)
 
 \arguments{
   \item{amat}{
-An adjacency matrix of a MAG, or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object 
+An adjacency matrix of a MAG, or a graph that can be a \code{graphNEL} or an \code{\link[igraph]{igraph}} object 
 or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph, 
 that is a sequence of triples (type, node1label, node2label). The type 
 of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and 

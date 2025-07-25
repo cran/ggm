@@ -26,7 +26,7 @@ the matrix \code{M} is square and of maximal rank.
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{Null}}, ~~~
+\code{\link[MASS]{Null}}, ~~~
 }
 \examples{
  null(c(1,1,1))

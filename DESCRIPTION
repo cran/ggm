@@ -1,7 +1,7 @@
 Package: ggm
 Title: Graphical Markov Models with Mixed Graphs
-Version: 2.5.1
-Authors@R: c(person(given = "Giovanni M.", family = "Marchetti", email = "giovanni.marchetti@unifi.it", role = c("aut", "cre")), person("Mathias", "Drton", email = "mathias.drton@tum.de", role = "aut"), person("Kayvan", "Sadeghi", email = "k.sadeghi@ucl.ac.uk", role = "aut"))
+Version: 2.5.2
+Authors@R: c(person(given = "Giovanni M.", family = "Marchetti", email = "giovanni.marchetti@unifi.it", role = c("aut", "cre"), comment = c(ORCID = "https://orcid.org/0000-0003-4413-9349")), person("Mathias", "Drton", email = "mathias.drton@tum.de", role = "aut", comment = c(ORCID = "https://orcid.org/0000-0001-5614-3025")), person("Kayvan", "Sadeghi", email = "k.sadeghi@ucl.ac.uk", role = "aut", comment = c(ORCID = "https://orcid.org/0000-0001-7314-744X")))
 Depends: R (>= 3.6.0), methods
 Imports: BiocManager, graph, igraph
 Description: Provides functions for defining 
@@ -25,10 +25,10 @@ Encoding: UTF-8
 LazyData: true
 NeedsCompilation: no
 Repository: CRAN
-URL: https://github.com/StaThin/ggm
-Packaged: 2024-01-25 14:00:11 UTC; gmm
-Author: Giovanni M. Marchetti [aut, cre],
-  Mathias Drton [aut],
-  Kayvan Sadeghi [aut]
+Packaged: 2025-07-25 13:41:29 UTC; gmm
+Author: Giovanni M. Marchetti [aut, cre] (ORCID:
+    <https://orcid.org/0000-0003-4413-9349>),
+  Mathias Drton [aut] (ORCID: <https://orcid.org/0000-0001-5614-3025>),
+  Kayvan Sadeghi [aut] (ORCID: <https://orcid.org/0000-0001-7314-744X>)
 Maintainer: Giovanni M. Marchetti <giovanni.marchetti@unifi.it>
-Date/Publication: 2024-01-25 14:50:02 UTC
+Date/Publication: 2025-07-25 14:10:02 UTC

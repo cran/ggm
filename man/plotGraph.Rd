@@ -4,7 +4,7 @@
 \title{Plot of a mixed graph}
 \description{
 Plots a mixed graph from an adjacency matrix,
-a \code{graphNEL} object, an \code{\link{igraph}} object, or
+a \code{graphNEL} object, an \code{\link[igraph]{igraph}} object, or
 a descriptive vector.
 }
 \usage{
@@ -19,7 +19,7 @@ An adjacency matrix: a matrix that consists of 4 different integers as an \eqn{i
 0 for a missing edge between \eqn{i} and \eqn{j}, 1 for an arrow from \eqn{i} to \eqn{j},
 10 for a full line between
 \eqn{i} and \eqn{j}, and 100 for a bi-directed arrow between \eqn{i} and \eqn{j}. These numbers can be added to generate multiple edges of different types. The matrix must be symmetric w.r.t full lines and bi-directed arrows.
-Or a graph that can be a \code{graphNEL} or an \code{\link{igraph}} object.Or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph, that is a sequence of triples (type,node1label,node2label). The type of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
+Or a graph that can be a \code{graphNEL} or an \code{\link[igraph]{igraph}} object.Or a vector of length \eqn{3e}, where \eqn{e} is the number of edges of the graph, that is a sequence of triples (type,node1label,node2label). The type of edge can be \code{"a"} (arrows from node1 to node2), \code{"b"} (arcs), and \code{"l"} (lines).
 }
 \item{dashed}{A logical value. If \code{TRUE} the bi-directed edges are plotted as undirected dashed edges.}
 \item{tcltk}{A logical value. If \code{TRUE} the function opens a tcltk device to plot the graphs, allowing the interactive manimulation of the graph. If \code{FALSE}the function opens a standard device without interaction.}
@@ -37,7 +37,7 @@ increased to accommodate larger labels.}
 \item{\dots}{Further arguments to be passed to \code{plot} or \code{tkplot}.}
 }
 \details{
-\code{plotGraph} uses \code{\link{plot}} and \code{\link{tkplot}} in \pkg{\link{igraph}} package.
+\code{plotGraph} uses \code{\link[igraph]{plot.igraph}} and \code{\link[igraph]{tkplot}} in \pkg{\link[igraph]{igraph}} package.
 }
 \value{
 Plot of the associated graph and returns invisibly a list with two slots:
@@ -57,8 +57,8 @@ Kayvan Sadeghi, Giovanni M. Marchetti
 %}
 
 \seealso{
-\code{\link{grMAT}}, \code{\link{tkplot}}, \code{\link{drawGraph}},
-\code{\link{plot.igraph}}
+\code{\link{grMAT}}, \code{\link[igraph]{tkplot}}, \code{\link{drawGraph}},
+\code{\link[igraph]{plot.igraph}}
 }
 \examples{
 exvec<-c("b",1,2,"b",1,14,"a",9,8,"l",9,11,

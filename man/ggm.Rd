@@ -15,7 +15,7 @@ The main functions can be classified as follows.
 ancestral and summary graphs): \code{\link{UG}}, \code{\link{DAG}}, \code{\link{makeMG}}, \code{\link{grMAT}};
 \item Functions for doing graph operations (parents, boundary,
 cliques, connected components, fundamental cycles, d-separation, m-separation):
-\code{\link{pa}}, \code{\link{bd}}, \code{\link{cliques}},
+\code{\link{pa}}, \code{\link{bd}},
 \code{\link{conComp}}, \code{\link{fundCycles}};
 \item Functions for testing independence statements and generating maximal graphs
 from non-maximal graphs:

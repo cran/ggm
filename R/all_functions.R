@@ -951,7 +951,9 @@
       }
     }
   }
-  df <- (sum(1 - amat) - k) / 2
+ df <- (sum(1 - amat) - k) / 2
+ # force the 10 to 1 ?
+
   Kh <- solve(W)
   dev <- likGau(Kh, S, n, k)
   list(Shat = W, dev = dev, df = df, it = it)

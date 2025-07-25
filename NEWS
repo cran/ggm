@@ -1,5 +1,7 @@
 Package ggm 
 
+- July 2025 
+  Corrected Rd file(s) with Rd \link{} targets missing package 
 - August 2023
   Corrections of "\\&" into "&" and import from graph
   updated references
